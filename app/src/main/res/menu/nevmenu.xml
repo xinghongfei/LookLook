@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android.support.design="http://schemas.android.com/tools">
+    <group android:id="@+id/g1">
+        <item
+            android:id="@+id/zhihuitem"
+            android:checkable="true"
+
+            android:icon="@mipmap/ic_launcher"
+            android:title="知乎周刊"
+            android.support.design:itemTextColor="@color/nev_item"
+            app:itemIconTint="@color/nev_item"
+           />
+        <item
+            android:id="@+id/wallet"
+            android:checkable="true"
+
+
+            android:icon="@mipmap/ic_launcher"
+            android:title="钱包" />
+    </group>
+    <group android:id="@+id/g2">
+        <item
+            android:id="@+id/photo"
+            android:checkable="true"
+
+            android:icon="@mipmap/ic_launcher"
+            android:title="相册" />
+    </group>
+
+</menu>
