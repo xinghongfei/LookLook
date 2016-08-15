@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/zhihu_item_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    <com.looklook.xinghongfei.looklook.widget.BadgedFourThreeImageView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/zhihu_image_id"
+        android:layout_width="90dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:elevation="@dimen/z_card"
+        android:stateListAnimator="@animator/raise"
+        android:foreground="@drawable/mid_grey_ripple"
+        app:badgeGravity="end|bottom"
+        app:badgePadding="@dimen/padding_normal" />
+
+    <TextView
+        android:id="@+id/zhihu_text_id"
+        android:layout_width="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+</LinearLayout>
