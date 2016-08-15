@@ -33,6 +33,7 @@ import android.widget.Toolbar;
 import com.looklook.xinghongfei.looklook.Acivity.BaseActivity;
 import com.looklook.xinghongfei.looklook.adapter.ZhihuAdapter;
 import com.looklook.xinghongfei.looklook.bean.zhihu.ZhihuDaily;
+import com.looklook.xinghongfei.looklook.config.Config;
 import com.looklook.xinghongfei.looklook.presenter.implPresenter.ZhihuPresenterImpl;
 import com.looklook.xinghongfei.looklook.presenter.implView.IZhihuFragment;
 import com.looklook.xinghongfei.looklook.util.AnimUtils;
@@ -52,10 +53,13 @@ public class MainActivity extends BaseActivity implements IZhihuFragment {
     boolean loading;
     ZhihuAdapter zhihuAdapter;
 
+    float toolbarArlp=100;
+
 
     //    boolean isLoadFromCache;
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView.OnScrollListener loadingMoreListener;
+    RecyclerView.OnScrollListener tooldimissListener;
     @InjectView(R.id.grid)
     RecyclerView grid;
     @InjectView(R.id.toolbar)
@@ -208,6 +212,51 @@ public class MainActivity extends BaseActivity implements IZhihuFragment {
             }
         };
 
+
+        tooldimissListener= new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+               if (mLinearLayoutManager.findFirstVisibleItemPosition()<2){
+                   if (dy>0){
+                       if (toolbarArlp>0){
+                           toolbarArlp-=dy;
+                       }else {
+                           toolbarArlp=0;
+                       }
+                   }
+                   if (dy<0){
+                       if (toolbarArlp<100){
+                           toolbarArlp-=dy;
+                       }else {
+                           toolbarArlp=100;
+                       }
+                   }
+
+                   toolbar.setAlpha(toolbarArlp/100);
+               }
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState ==RecyclerView.SCROLL_STATE_DRAGGING&&toolbar.getElevation()!=-1){
+                    toolbar.setElevation(-1f);
+
+                }else if (newState==RecyclerView.SCROLL_STATE_IDLE
+                        &&mLinearLayoutManager.findFirstVisibleItemPosition()==0
+                        &&toolbar.getElevation()!=0){
+                    toolbar.setElevation(0f);
+                    animateToolbar();
+                }
+            }
+        };
+
+
+
+
     }
 
     private void initialDate() {
@@ -256,8 +305,11 @@ public class MainActivity extends BaseActivity implements IZhihuFragment {
         grid.setItemAnimator(new DefaultItemAnimator());
         grid.setAdapter(zhihuAdapter);
         grid.addOnScrollListener(loadingMoreListener);
-        Log.d("maat", "initialgrid");
-    }
+        grid.addOnScrollListener(tooldimissListener);
+        if (Config.isDebug) {
+            Log.d("maat", "initialgrid");
+        }
+    }/**/
 
     @Override
     protected void onResume() {
@@ -382,7 +434,9 @@ public class MainActivity extends BaseActivity implements IZhihuFragment {
 
     @Override
     public void showError(String error) {
-        Log.d("maat", "main_erro");
+        if (Config.isDebug){
+            Log.d("maat", "main_erro");
+        }
 
         if (grid != null) {
             Snackbar.make(grid, getString(R.string.snack_infor), Snackbar.LENGTH_SHORT).setAction("重试", new View.OnClickListener() {

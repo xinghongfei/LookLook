@@ -14,5 +14,6 @@ public class Config {
     public static final String IT = "it";
 
     public static boolean isNight = false;
+    public static boolean isDebug=true;
 
 }
