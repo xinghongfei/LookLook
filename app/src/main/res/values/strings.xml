@@ -15,4 +15,7 @@
     <string name="pre_use_local" translatable="false">pre_use_local</string>
     <string name="pre_status_bar" translatable="false">pre_status_bar</string>
 
+
+    <string name="snack_infor">请检查网络</string>
+
 </resources>

@@ -385,7 +385,7 @@ public class MainActivity extends BaseActivity implements IZhihuFragment {
         Log.d("maat", "main_erro");
 
         if (grid != null) {
-            Snackbar.make(grid, getString(R.string.app_name) + error, Snackbar.LENGTH_SHORT).setAction("重试", new View.OnClickListener() {
+            Snackbar.make(grid, getString(R.string.snack_infor), Snackbar.LENGTH_SHORT).setAction("重试", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (currentLoadDate.equals("0")) {

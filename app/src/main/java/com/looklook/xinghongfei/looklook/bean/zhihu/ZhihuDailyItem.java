@@ -15,6 +15,7 @@ public class ZhihuDailyItem{
     @SerializedName("title")
     private String title;
     private String date;
+    public boolean hasFadedIn = false;
 
     public String[] getImages() {
         return images;
