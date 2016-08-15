@@ -4,4 +4,15 @@
 
     <string name="one_text">Be kind one another</string>
 
+
+    <string name="pre_refresh_data" translatable="false">refresh_data</string>
+    <string name="pre_get_image" translatable="false">get_image</string>
+    <string name="pre_cache_size" translatable="false">cache_size</string>
+    <string name="pre_feedback" translatable="false">feedback</string>
+    <string name="pre_author" translatable="false">author</string>
+    <string name="pre_version" translatable="false">version</string>
+    <string name="pre_nav_color" translatable="false">pre_nav_color</string>
+    <string name="pre_use_local" translatable="false">pre_use_local</string>
+    <string name="pre_status_bar" translatable="false">pre_status_bar</string>
+
 </resources>
