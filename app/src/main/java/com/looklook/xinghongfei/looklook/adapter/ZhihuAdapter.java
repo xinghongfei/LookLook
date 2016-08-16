@@ -23,7 +23,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.looklook.xinghongfei.looklook.Acivity.ZhihuStoryActivity;
+import com.looklook.xinghongfei.looklook.Acivity.ZhihuDescribeActivity;
 import com.looklook.xinghongfei.looklook.MainActivity;
 import com.looklook.xinghongfei.looklook.R;
 import com.looklook.xinghongfei.looklook.bean.zhihu.ZhihuDailyItem;
@@ -109,8 +109,8 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             public void onClick(View view) {
                 DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, zhihuDailyItem.getId(), 1);
                 holder.textView.setTextColor(Color.GRAY);
-                Intent intent = new Intent(mContext, ZhihuStoryActivity.class);
-//               intent.putExtra("type", ZhihuStoryActivity.TYPE_ZHIHU);
+                Intent intent = new Intent(mContext, ZhihuDescribeActivity.class);
+//               intent.putExtra("type", ZhihuDescribeActivity.TYPE_ZHIHU);
                 intent.putExtra("id", zhihuDailyItem.getId());
                 intent.putExtra("title", zhihuDailyItem.getTitle());
 

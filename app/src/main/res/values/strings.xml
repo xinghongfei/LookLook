@@ -18,4 +18,8 @@
 
     <string name="snack_infor">请检查网络</string>
 
+    <string name="transition_shot_background" translatable="false">shot_background</string>
+    <string name="transition_shot" translatable="false">shot</string>
+
+
 </resources>

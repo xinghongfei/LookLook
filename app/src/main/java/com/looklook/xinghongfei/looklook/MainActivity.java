@@ -39,6 +39,7 @@ import com.looklook.xinghongfei.looklook.presenter.implView.IZhihuFragment;
 import com.looklook.xinghongfei.looklook.util.AnimUtils;
 import com.looklook.xinghongfei.looklook.util.ViewUtils;
 import com.looklook.xinghongfei.looklook.view.GridItemDividerDecoration;
+import com.looklook.xinghongfei.looklook.widget.WrapContentLinearLayoutManager;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -248,8 +249,9 @@ public class MainActivity extends BaseActivity implements IZhihuFragment {
                 }else if (newState==RecyclerView.SCROLL_STATE_IDLE
                         &&mLinearLayoutManager.findFirstVisibleItemPosition()==0
                         &&toolbar.getElevation()!=0){
-                    toolbar.setElevation(0f);
-                    animateToolbar();
+                    toolbar.setElevation(1f);
+//                    animateToolbar();
+//                    zhihuPresenter.getLastZhihuNews();
                 }
             }
         };
@@ -297,7 +299,7 @@ public class MainActivity extends BaseActivity implements IZhihuFragment {
 
 
     private void initialgrid() {
-        mLinearLayoutManager=new LinearLayoutManager(MainActivity.this);
+        mLinearLayoutManager=new WrapContentLinearLayoutManager(this);
         grid.setLayoutManager(mLinearLayoutManager);
         grid.setHasFixedSize(true);
         grid.addItemDecoration(new GridItemDividerDecoration(this, R.dimen.divider_height, R.color.divider));
