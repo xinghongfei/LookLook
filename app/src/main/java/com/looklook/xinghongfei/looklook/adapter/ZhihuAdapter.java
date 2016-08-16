@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,26 +42,23 @@ import java.util.ArrayList;
 
 public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements MainActivity.LoadingMore {
 
+    public static final int REQUEST_CODE_VIEW_SHOT = 5407;
     private static final int TYPE_LOADING_MORE = -1;
     private static final int NOMAL_ITEM = 1;
-    public static final int REQUEST_CODE_VIEW_SHOT = 5407;
-
     boolean showLoadingMore;
-    private ArrayList<ZhihuDailyItem> zhihuDailyItems = new ArrayList<>();
-    private Context mContext;
-
     float width;
-
     int widthPx;
     int heighPx;
+    private ArrayList<ZhihuDailyItem> zhihuDailyItems = new ArrayList<>();
+    private Context mContext;
 
 
     public ZhihuAdapter(Context context) {
 
         this.mContext = context;
-        width=mContext.getResources().getDimension(R.dimen.image_width);
-        widthPx=DensityUtil.dip2px(mContext,width);
-        heighPx=widthPx*3/4;
+        width = mContext.getResources().getDimension(R.dimen.image_width);
+        widthPx = DensityUtil.dip2px(mContext, width);
+        heighPx = widthPx * 3 / 4;
     }
 
     @Override
@@ -99,7 +97,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         holder.progressBar.setVisibility(showLoadingMore == true ? View.VISIBLE : View.INVISIBLE);
     }
 
-    private void bindViewHolderNormal(final ZhihuViewHolder holder, int position) {
+    private void bindViewHolderNormal(final ZhihuViewHolder holder, final int position) {
 
         final ZhihuDailyItem zhihuDailyItem = zhihuDailyItems.get(holder.getAdapterPosition());
 
@@ -107,9 +105,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             holder.textView.setTextColor(Color.GRAY);
         else
             holder.textView.setTextColor(Color.BLACK);
-        holder.textView.setText(zhihuDailyItem.getTitle());
-        holder.linearLayout.setOnClickListener(
-                new View.OnClickListener() {
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, zhihuDailyItem.getId(), 1);
@@ -118,22 +114,45 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 //               intent.putExtra("type", ZhihuDescribeActivity.TYPE_ZHIHU);
                 intent.putExtra("id", zhihuDailyItem.getId());
                 intent.putExtra("title", zhihuDailyItem.getTitle());
-                ActivityOptions options = ActivityOptions
-                        .makeSceneTransitionAnimation((Activity) mContext, holder.imageView, mContext.getString(R.string.transition_shot));
-//                mContext.startActivity(intent,options.toBundle());
-                mContext.startActivity(intent);
+                intent.putExtra("image",zhihuDailyItems.get(position).getImages()[0]);
+//                ActivityOptions options = ActivityOptions
+//                        .makeSceneTransitionAnimation((Activity) mContext, holder.imageView, mContext.getString(R.string.transition_shot));
+//                mContext.startActivity(intent);
+                ActivityOptions options =
+                        ActivityOptions.makeSceneTransitionAnimation((Activity) mContext,
+
+                                Pair.create(view.findViewById(R.id.zhihu_image_id), mContext.getString(R.string.transition_shot)));
+                mContext.startActivity(intent, options.toBundle());
 
             }
         });
-//        Log.d("xinghongfei",zhihuDailyItems.get(position).getImages().toString());
+        holder.textView.setText(zhihuDailyItem.getTitle());
+        holder.linearLayout.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, zhihuDailyItem.getId(), 1);
+                        holder.textView.setTextColor(Color.GRAY);
+                        Intent intent = new Intent(mContext, ZhihuDescribeActivity.class);
+//               intent.putExtra("type", ZhihuDescribeActivity.TYPE_ZHIHU);
+                        intent.putExtra("id", zhihuDailyItem.getId());
+                        intent.putExtra("title", zhihuDailyItem.getTitle());
+//                ActivityOptions options = ActivityOptions
+//                        .makeSceneTransitionAnimation((Activity) mContext, holder.imageView, mContext.getString(R.string.transition_shot));
+//                mContext.startActivity(intent);
 
-//        if (zhihuDailyItems.get(position).getImages()!=null){
-//            Log.d(mContext.getClass().getSimpleName(),zhihuDailyItems.get(position).getImages().toString());
-//            ImageLoader.loadImage(mContext,zhihuDailyItem.getImages()[0],holder.imageView);
-//        }
+                        ActivityOptions options =
+                                ActivityOptions.makeSceneTransitionAnimation((Activity) mContext,
+                                        Pair.create(view.findViewById(R.id.zhihu_item_layout), mContext.getString(R.string.transition_shot_background)),
+                                        Pair.create(view.findViewById(R.id.zhihu_image_id), mContext.getString(R.string.transition_shot)));
+                        mContext.startActivity(intent, options.toBundle());
+                    }
+                });
 
 
-        Glide.with(mContext).load(zhihuDailyItems.get(position).getImages()[0]).listener(new RequestListener<String, GlideDrawable>() {
+        Glide.with(mContext)
+                .load(zhihuDailyItems.get(position).getImages()[0])
+                .listener(new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
                 return false;
@@ -169,12 +188,11 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 return false;
             }
         }).diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .centerCrop().override(widthPx,heighPx)
+                .centerCrop().override(widthPx, heighPx)
                 .into(new DribbbleTarget(holder.imageView, false));
 
 
     }
-
 
 
     @Override
@@ -246,9 +264,9 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     class ZhihuViewHolder extends RecyclerView.ViewHolder {
+        final TextView textView;
+        final LinearLayout linearLayout;
         BadgedFourThreeImageView imageView;
-        TextView textView;
-        LinearLayout linearLayout;
 
         ZhihuViewHolder(View itemView) {
             super(itemView);

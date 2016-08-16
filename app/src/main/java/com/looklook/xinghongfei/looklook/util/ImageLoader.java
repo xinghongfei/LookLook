@@ -21,6 +21,6 @@ public class ImageLoader {
             imageView.setAlpha(0.2f);
             imageView.setBackgroundColor(Color.BLACK);
         }
-        Glide.with(context).load(url).into(imageView);
+        Glide.with(context).load(url).centerCrop().into(imageView);
     }
 }

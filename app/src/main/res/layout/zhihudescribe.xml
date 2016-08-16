@@ -26,7 +26,7 @@
     app:dragDismissScale="0.95"
     tools:context=".Acivity.ZhihuDescribeActivity">
 
-    <LinearLayout
+    <com.looklook.xinghongfei.looklook.view.Linear
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/container_linear"
@@ -53,29 +53,39 @@
             app:maxScrimAlpha="0.4"
             app:parallaxFactor="-0.5"/>
 
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:actionBarSize"
+            android:title="@string/app_name"
+            android:outlineProvider="none"
+            android:elevation="1dp"
+            android:logo="@drawable/ic_arrow_back"
+            android:background="#3b000000"
+            style="@style/Widget.Plaid.HomeToolbar" />
+
         <!-- We're 'faking' a toolbar here as we just want a back button.
              This approach lets the borderless ripple extend beyond the back button's bounds,
              toolbar clips it. Wrapping layout needed for the ripple. -->
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:elevation="@dimen/z_fab_over_touchable_app_bar">
+        <!--<FrameLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@android:color/transparent"-->
+            <!--android:elevation="@dimen/z_fab_over_touchable_app_bar">-->
 
-            <!-- animate alpha in DribbleShot#enterAnimation
-                 margins push out parent for the borderless ripple -->
-            <ImageButton
-                android:id="@+id/back"
-                android:layout_width="?android:actionBarSize"
-                android:layout_height="?android:actionBarSize"
-                android:layout_marginEnd="@dimen/padding_normal"
-                android:layout_marginBottom="@dimen/padding_normal"
-                android:src="@drawable/ic_arrow_back"
-                android:alpha="0"
-                android:background="@drawable/mid_grey_ripple" />
-        </FrameLayout>
+            <!--&lt;!&ndash; animate alpha in DribbleShot#enterAnimation-->
+                 <!--margins push out parent for the borderless ripple &ndash;&gt;-->
+            <!--<ImageButton-->
+                <!--android:id="@+id/back"-->
+                <!--android:layout_width="?android:actionBarSize"-->
+                <!--android:layout_height="?android:actionBarSize"-->
+                <!--android:layout_marginEnd="@dimen/padding_normal"-->
+                <!--android:layout_marginBottom="@dimen/padding_normal"-->
+                <!--android:src="@drawable/ic_arrow_back"-->
+                <!--android:alpha="0"-->
+                <!--android:background="@drawable/mid_grey_ripple" />-->
+        <!--</FrameLayout>-->
     </FrameLayout>
-
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/nest"
             android:layout_width="match_parent"
@@ -87,5 +97,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </android.support.v4.widget.NestedScrollView>
-    </LinearLayout>
+
+
+    </com.looklook.xinghongfei.looklook.view.Linear>
     </com.looklook.xinghongfei.looklook.widget.HorizotalTopBottomElasticDragDismissFrameLayout>

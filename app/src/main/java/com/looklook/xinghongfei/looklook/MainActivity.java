@@ -293,7 +293,6 @@ public class MainActivity extends BaseActivity implements IZhihuFragment {
         }
         currentLoadDate = "0";
         zhihuPresenter.getLastZhihuNews();
-        Log.d("maat", "loaddata");
 
     }
 
@@ -401,7 +400,7 @@ public class MainActivity extends BaseActivity implements IZhihuFragment {
     @Override
     public void updateList(ZhihuDaily zhihuDaily) {
 
-        Log.d("maat", "updatelist"+zhihuDaily.getStories().size() + "");
+//        Log.d("maat", "updatelist"+zhihuDaily.getStories().size() + "");
 
         if (loading) {
             loading = false;

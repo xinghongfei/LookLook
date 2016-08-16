@@ -121,9 +121,9 @@ public class HorizotalTopBottomElasticDragDismissFrameLayout extends FrameLayout
 
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        return (nestedScrollAxes & View.SCROLL_AXIS_VERTICAL) != 0;
+//        return (nestedScrollAxes & View.SCROLL_AXIS_VERTICAL) != 0;
 
-//        return true;
+        return true;
     }
 
     @Override
@@ -139,10 +139,7 @@ public class HorizotalTopBottomElasticDragDismissFrameLayout extends FrameLayout
      }
 
 
-        Log.d("xing","dxa"+Math.abs(dx)+"  dya"+Math.abs(dy));
         if (Math.abs(dx)-Math.abs(dy)<3){
-
-
             isHorizontal=false;
         }
 
