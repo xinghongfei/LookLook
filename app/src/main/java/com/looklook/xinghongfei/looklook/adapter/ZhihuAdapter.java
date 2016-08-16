@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.Pair;
@@ -34,6 +35,7 @@ import com.looklook.xinghongfei.looklook.config.Config;
 import com.looklook.xinghongfei.looklook.util.DBUtils;
 import com.looklook.xinghongfei.looklook.util.DensityUtil;
 import com.looklook.xinghongfei.looklook.util.DribbbleTarget;
+import com.looklook.xinghongfei.looklook.util.Help;
 import com.looklook.xinghongfei.looklook.util.ObservableColorMatrix;
 import com.looklook.xinghongfei.looklook.widget.BadgedFourThreeImageView;
 
@@ -114,14 +116,20 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 //               intent.putExtra("type", ZhihuDescribeActivity.TYPE_ZHIHU);
                 intent.putExtra("id", zhihuDailyItem.getId());
                 intent.putExtra("title", zhihuDailyItem.getTitle());
-                intent.putExtra("image",zhihuDailyItems.get(position).getImages()[0]);
+                intent.putExtra("image", zhihuDailyItems.get(position).getImages()[0]);
 //                ActivityOptions options = ActivityOptions
 //                        .makeSceneTransitionAnimation((Activity) mContext, holder.imageView, mContext.getString(R.string.transition_shot));
 //                mContext.startActivity(intent);
-                ActivityOptions options =
-                        ActivityOptions.makeSceneTransitionAnimation((Activity) mContext,
+//                        new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)));
+//                ActivityOptions options =
+//                        ActivityOptions.makeSceneTransitionAnimation((Activity) mContext,
+//
+//                                Pair.create(view.findViewById(R.id.zhihu_image_id), mContext.getString(R.string.transition_shot)));
 
-                                Pair.create(view.findViewById(R.id.zhihu_image_id), mContext.getString(R.string.transition_shot)));
+                final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
+                        ((Activity) mContext, false, new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)),
+                                new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_shot_background)));
+                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
                 mContext.startActivity(intent, options.toBundle());
 
             }
@@ -143,7 +151,6 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                         ActivityOptions options =
                                 ActivityOptions.makeSceneTransitionAnimation((Activity) mContext,
-                                        Pair.create(view.findViewById(R.id.zhihu_item_layout), mContext.getString(R.string.transition_shot_background)),
                                         Pair.create(view.findViewById(R.id.zhihu_image_id), mContext.getString(R.string.transition_shot)));
                         mContext.startActivity(intent, options.toBundle());
                     }
@@ -153,41 +160,41 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         Glide.with(mContext)
                 .load(zhihuDailyItems.get(position).getImages()[0])
                 .listener(new RequestListener<String, GlideDrawable>() {
-            @Override
-            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                return false;
-            }
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        return false;
+                    }
 
-            @Override
-            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                if (!zhihuDailyItem.hasFadedIn) {
-                    holder.imageView.setHasTransientState(true);
-                    final ObservableColorMatrix cm = new ObservableColorMatrix();
-                    final ObjectAnimator animator = ObjectAnimator.ofFloat(cm, ObservableColorMatrix.SATURATION, 0f, 1f);
-                    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                            holder.imageView.setColorFilter(new ColorMatrixColorFilter(cm));
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        if (!zhihuDailyItem.hasFadedIn) {
+                            holder.imageView.setHasTransientState(true);
+                            final ObservableColorMatrix cm = new ObservableColorMatrix();
+                            final ObjectAnimator animator = ObjectAnimator.ofFloat(cm, ObservableColorMatrix.SATURATION, 0f, 1f);
+                            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                @Override
+                                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                    holder.imageView.setColorFilter(new ColorMatrixColorFilter(cm));
+                                }
+                            });
+                            animator.setDuration(2000L);
+                            animator.setInterpolator(new AccelerateInterpolator());
+                            animator.addListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    super.onAnimationEnd(animation);
+                                    holder.imageView.clearColorFilter();
+                                    holder.imageView.setHasTransientState(false);
+                                    animator.start();
+                                    zhihuDailyItem.hasFadedIn = true;
+
+                                }
+                            });
                         }
-                    });
-                    animator.setDuration(2000L);
-                    animator.setInterpolator(new AccelerateInterpolator());
-                    animator.addListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            holder.imageView.clearColorFilter();
-                            holder.imageView.setHasTransientState(false);
-                            animator.start();
-                            zhihuDailyItem.hasFadedIn = true;
 
-                        }
-                    });
-                }
-
-                return false;
-            }
-        }).diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                        return false;
+                    }
+                }).diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .centerCrop().override(widthPx, heighPx)
                 .into(new DribbbleTarget(holder.imageView, false));
 

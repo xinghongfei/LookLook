@@ -17,7 +17,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,6 @@ import android.widget.Toolbar;
 import com.looklook.xinghongfei.looklook.Acivity.BaseActivity;
 import com.looklook.xinghongfei.looklook.adapter.ZhihuAdapter;
 import com.looklook.xinghongfei.looklook.bean.zhihu.ZhihuDaily;
-import com.looklook.xinghongfei.looklook.config.Config;
 import com.looklook.xinghongfei.looklook.presenter.implPresenter.ZhihuPresenterImpl;
 import com.looklook.xinghongfei.looklook.presenter.implView.IZhihuFragment;
 import com.looklook.xinghongfei.looklook.util.AnimUtils;
@@ -56,8 +54,6 @@ public class MainActivity extends BaseActivity implements IZhihuFragment {
 
     float toolbarArlp=100;
 
-
-    //    boolean isLoadFromCache;
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView.OnScrollListener loadingMoreListener;
     RecyclerView.OnScrollListener tooldimissListener;
@@ -268,23 +264,6 @@ public class MainActivity extends BaseActivity implements IZhihuFragment {
             loadDate();
         }
 
-//        if (SharePreferenceUtil.isRefreshOnlyWifi(this)) {
-//            if (NetWorkUtil.isWifiConnected(this)) {
-//                loadDate();
-//            } else {
-//                isLoadFromCache=true;
-//                zhihuPresenter.getLastFromCache();
-//            }
-//        } else {
-//            if (NetWorkUtil.isNetWorkAvailable(this)) {
-//                loadDate();
-//            } else {
-//                isLoadFromCache=true;
-//                zhihuPresenter.getLastFromCache();
-//            }
-//
-//        }
-
     }
 
     private void loadDate() {
@@ -307,9 +286,7 @@ public class MainActivity extends BaseActivity implements IZhihuFragment {
         grid.setAdapter(zhihuAdapter);
         grid.addOnScrollListener(loadingMoreListener);
         grid.addOnScrollListener(tooldimissListener);
-        if (Config.isDebug) {
-            Log.d("maat", "initialgrid");
-        }
+
     }/**/
 
     @Override
@@ -400,8 +377,6 @@ public class MainActivity extends BaseActivity implements IZhihuFragment {
     @Override
     public void updateList(ZhihuDaily zhihuDaily) {
 
-//        Log.d("maat", "updatelist"+zhihuDaily.getStories().size() + "");
-
         if (loading) {
             loading = false;
             zhihuAdapter.loadingfinish();
@@ -409,9 +384,9 @@ public class MainActivity extends BaseActivity implements IZhihuFragment {
         currentLoadDate = zhihuDaily.getDate();
         zhihuAdapter.addItems(zhihuDaily.getStories());
 //        if the new data is not full of the screen, need load more data
-//        if (!grid.canScrollVertically(View.SCROLL_INDICATOR_BOTTOM)) {
-//            loadMoreDate();
-//        }
+        if (!grid.canScrollVertically(View.SCROLL_INDICATOR_BOTTOM)) {
+            loadMoreDate();
+        }
     }
 
     @Override
@@ -435,9 +410,7 @@ public class MainActivity extends BaseActivity implements IZhihuFragment {
 
     @Override
     public void showError(String error) {
-        if (Config.isDebug){
-            Log.d("maat", "main_erro");
-        }
+
 
         if (grid != null) {
             Snackbar.make(grid, getString(R.string.snack_infor), Snackbar.LENGTH_SHORT).setAction("重试", new View.OnClickListener() {

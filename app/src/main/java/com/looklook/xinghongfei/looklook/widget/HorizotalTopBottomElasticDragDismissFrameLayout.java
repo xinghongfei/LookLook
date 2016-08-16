@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -130,7 +129,6 @@ public class HorizotalTopBottomElasticDragDismissFrameLayout extends FrameLayout
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         // if we're in a drag gesture and the user reverses up the we should take those events
 
-        Log.d("maat","dx"+dx+"    dy"+dy);
      if ( Math.abs(dx)-Math.abs(dy)>1){
         isHorizontal=true;
          isRecervory=true;
@@ -193,7 +191,6 @@ public class HorizotalTopBottomElasticDragDismissFrameLayout extends FrameLayout
                 }
             }
 
-            Log.d("haha","totalDrag"+totalDrag+"  scale"+scale+"  dragFraction"+dragFraction);
 
 
 //            float dragTo = dragFraction * dragDismissDistance * dragElacticity;
