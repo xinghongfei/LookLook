@@ -23,7 +23,7 @@
     <transitionSet>
         <changeBounds android:duration="300" />
         <transition
-            class="io.plaidapp.ui.transitions.LiftOff"
+            class="com.looklook.xinghongfei.looklook.widget.LiftOff"
             android:duration="400"
             android:elevation="@dimen/touch_raise" />
         <targets>
@@ -32,7 +32,7 @@
     </transitionSet>
 
     <transition
-        class="io.plaidapp.ui.transitions.ShotSharedEnter"
+        class="com.looklook.xinghongfei.looklook.widget.ShotSharedEnter"
         android:duration="300">
         <targets>
             <target android:targetId="@id/shot" />

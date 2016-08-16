@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -41,6 +43,8 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private static final int TYPE_LOADING_MORE = -1;
     private static final int NOMAL_ITEM = 1;
+    public static final int REQUEST_CODE_VIEW_SHOT = 5407;
+
     boolean showLoadingMore;
     private ArrayList<ZhihuDailyItem> zhihuDailyItems = new ArrayList<>();
     private Context mContext;
@@ -104,7 +108,8 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         else
             holder.textView.setTextColor(Color.BLACK);
         holder.textView.setText(zhihuDailyItem.getTitle());
-        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+        holder.linearLayout.setOnClickListener(
+                new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, zhihuDailyItem.getId(), 1);
@@ -113,9 +118,11 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 //               intent.putExtra("type", ZhihuDescribeActivity.TYPE_ZHIHU);
                 intent.putExtra("id", zhihuDailyItem.getId());
                 intent.putExtra("title", zhihuDailyItem.getTitle());
-
-                // TODO: 16/8/13 add shara element and animation
+                ActivityOptions options = ActivityOptions
+                        .makeSceneTransitionAnimation((Activity) mContext, holder.imageView, mContext.getString(R.string.transition_shot));
+//                mContext.startActivity(intent,options.toBundle());
                 mContext.startActivity(intent);
+
             }
         });
 //        Log.d("xinghongfei",zhihuDailyItems.get(position).getImages().toString());
@@ -167,6 +174,8 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
     }
+
+
 
     @Override
     public int getItemCount() {
