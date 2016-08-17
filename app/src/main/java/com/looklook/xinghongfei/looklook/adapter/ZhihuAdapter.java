@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -13,7 +12,6 @@ import android.graphics.ColorMatrixColorFilter;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -113,21 +111,11 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, zhihuDailyItem.getId(), 1);
                 holder.textView.setTextColor(Color.GRAY);
                 Intent intent = new Intent(mContext, ZhihuDescribeActivity.class);
-//               intent.putExtra("type", ZhihuDescribeActivity.TYPE_ZHIHU);
                 intent.putExtra("id", zhihuDailyItem.getId());
                 intent.putExtra("title", zhihuDailyItem.getTitle());
                 intent.putExtra("image", zhihuDailyItems.get(position).getImages()[0]);
-//                ActivityOptions options = ActivityOptions
-//                        .makeSceneTransitionAnimation((Activity) mContext, holder.imageView, mContext.getString(R.string.transition_shot));
-//                mContext.startActivity(intent);
-//                        new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)));
-//                ActivityOptions options =
-//                        ActivityOptions.makeSceneTransitionAnimation((Activity) mContext,
-//
-//                                Pair.create(view.findViewById(R.id.zhihu_image_id), mContext.getString(R.string.transition_shot)));
-
                 final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
-                        ((Activity) mContext, false, new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)),
+                        ((Activity) mContext, false,new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)),
                                 new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_shot_background)));
                         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
                 mContext.startActivity(intent, options.toBundle());
@@ -142,17 +130,15 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, zhihuDailyItem.getId(), 1);
                         holder.textView.setTextColor(Color.GRAY);
                         Intent intent = new Intent(mContext, ZhihuDescribeActivity.class);
-//               intent.putExtra("type", ZhihuDescribeActivity.TYPE_ZHIHU);
                         intent.putExtra("id", zhihuDailyItem.getId());
                         intent.putExtra("title", zhihuDailyItem.getTitle());
-//                ActivityOptions options = ActivityOptions
-//                        .makeSceneTransitionAnimation((Activity) mContext, holder.imageView, mContext.getString(R.string.transition_shot));
-//                mContext.startActivity(intent);
-
-                        ActivityOptions options =
-                                ActivityOptions.makeSceneTransitionAnimation((Activity) mContext,
-                                        Pair.create(view.findViewById(R.id.zhihu_image_id), mContext.getString(R.string.transition_shot)));
+//
+                        final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
+                                ((Activity) mContext, false, new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)),
+                                        new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_shot_background)));
+                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
                         mContext.startActivity(intent, options.toBundle());
+
                     }
                 });
 

@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -161,10 +162,8 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
     private void enterAnimation() {
         float offSet = mToolbar.getHeight();
-
-        AccelerateInterpolator interpolator = new AccelerateInterpolator();
+        LinearInterpolator interpolator=new LinearInterpolator();
         viewEnterAnimation(mToolbar, offSet, interpolator);
-        float wvOffset = offSet * 2;
         viewEnterAnimationNest(mNest,0f,interpolator);
 
     }
@@ -230,6 +229,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     @Override
     protected void onResume() {
         super.onResume();
+
         mDraggableFrame.addListener(chromeFader);
         try {
             wvZhihu.getClass().getMethod("onResume").invoke(wvZhihu, (Object[]) null);
@@ -246,8 +246,6 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     protected void onPause() {
         super.onPause();
         mDraggableFrame.removeListener(chromeFader);
-
-
         try {
             wvZhihu.getClass().getMethod("onPause").invoke(wvZhihu, (Object[]) null);
         } catch (IllegalAccessException e) {
@@ -308,8 +306,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         ImageLoader.loadImage(ZhihuDescribeActivity.this, zhihuStory.getImage(), mShot);
         Glide.with(this)
                 .load(zhihuStory.getImage()).centerCrop()
-                .listener(shotLoadListener)
-
+                .listener(shotLoadListener).override(width,heigh)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(mShot);
         url = zhihuStory.getShareUrl();
@@ -377,8 +374,22 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                 public void onTransitionEnd(Transition transition) {
                     super.onTransitionEnd(transition);
 
-                    mShot.setOffset(0.1f);
+//                    解决5.0shara element bug
+                    ValueAnimator valueAnimator=ValueAnimator.ofFloat(0f,1f).setDuration(500L);
+
+                            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                            mShot.setOffset((Float) valueAnimator.getAnimatedValue()*10);
+                        }
+                    });
+                    valueAnimator.start();
+
+                    valueAnimator.setupStartValues();
+//                    mShot.setOffset(0.1f);
                     enterAnimation();
+                    mShot.setAlpha(0.5f);
+                    mShot.animate().alpha(1f).setDuration(500L).start();
                 }
 
 
@@ -414,7 +425,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                             }
 
 //                            if (isDark) { // make back icon dark on light images
-//                                mToolbar.setBackgroundColor(R.color.text_secondary_light);
+//                                mToolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary ));
 //                                mToolbar.setTitleTextColor();
 //                            }
 
