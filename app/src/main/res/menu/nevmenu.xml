@@ -6,7 +6,6 @@
         <item
             android:id="@+id/zhihuitem"
             android:checkable="true"
-
             android:icon="@mipmap/ic_launcher"
             android:title="知乎周刊"
             android.support.design:itemTextColor="@color/nev_item"

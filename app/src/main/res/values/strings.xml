@@ -21,5 +21,8 @@
     <string name="transition_shot_background" translatable="false">shot_background</string>
     <string name="transition_shot" translatable="false">shot</string>
 
+    <string name="nevigation_item" translatable="false">nevigation_item</string>
+
+    <string name="zhihu" translatable="false">知乎</string>
 
 </resources>

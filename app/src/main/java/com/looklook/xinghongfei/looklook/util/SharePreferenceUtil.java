@@ -44,4 +44,16 @@ public class SharePreferenceUtil {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPreferences.getBoolean(context.getString(R.string.pre_use_local), false);
     }
+
+    public static int getNevigationItem(Context context){
+        SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getInt(context.getString(R.string.nevigation_item),-1);
+    }
+    public static void putNevigationItem(Context context,int t){
+        SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putInt(context.getString(R.string.nevigation_item),t);
+        editor.commit();
+    }
+
 }
