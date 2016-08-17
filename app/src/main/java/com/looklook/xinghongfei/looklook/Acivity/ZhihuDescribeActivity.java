@@ -12,13 +12,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.ActionBar;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.transition.ChangeBounds;
 import android.transition.Transition;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -139,7 +137,6 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 //        type = getIntent().getIntExtra("type", 0);
         id = getIntent().getStringExtra("id");
         title = getIntent().getStringExtra("title");
-        Log.d("maatx",title+"  ");
         mImageUrl = getIntent().getStringExtra("image");
         mIZhihuStoryPresenter = new ZhihuStoryPresenterImpl(this);
         mNest.setOnScrollChangeListener(scrollListener);
@@ -204,12 +201,17 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                 expandImageAndFinish();
             }
         });
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
+        android.support.v7.app.ActionBar actionBar1=getSupportActionBar();
+
+//
+        if (actionBar1!=null){
+            actionBar1.setTitle("  "+title);
+//            actionBar1.setLogo(R.drawable.ic_arrow_back);
+            actionBar1.setDefaultDisplayHomeAsUpEnabled(true);
+            actionBar1.setHomeButtonEnabled(true);
+            actionBar1.setDisplayUseLogoEnabled(true);
 
         }
-
 
         WebSettings settings = wvZhihu.getSettings();
         settings.setJavaScriptEnabled(true);

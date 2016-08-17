@@ -4,6 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="horizontal"
+              android:foreground="@drawable/mid_grey_ripple"
               android:stateListAnimator="@animator/raise">
 
     <com.looklook.xinghongfei.looklook.widget.BadgedFourThreeImageView
@@ -28,5 +29,8 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="10dp"
-        android:layout_weight="1"/>
+        android:stateListAnimator="@animator/raise"
+        android:layout_weight="1"
+        android:textSize="16sp"
+        android:textColor="@color/text_color"/>
 </LinearLayout>

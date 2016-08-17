@@ -62,6 +62,7 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        setRetainInstance(true);
         View view = inflater.inflate(R.layout.zhihu_fragment_layout, container, false);
 //        checkConnectivity(view);
         ButterKnife.inject(this, view);

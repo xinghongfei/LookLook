@@ -70,4 +70,7 @@
     <color name="fab_heart_full">#ffffffff</color>
     <color name="gif_badge_light_image">#40000000</color>
     <color name="gif_badge_dark_image">#b3ffffff</color>
+
+    <color name="text_color">#f6000000</color>
+
 </resources>

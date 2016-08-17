@@ -45,8 +45,6 @@ public class MainActivity extends BaseActivity {
     SimpleArrayMap<Integer,String> mTitleArryMap =new SimpleArrayMap<>();
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +62,7 @@ public class MainActivity extends BaseActivity {
 
         if (savedInstanceState == null) {
             if (currentMenuItem == null) {
-//                drawer.openDrawer(GravityCompat.END);
+//              drawer.openDrawer(GravityCompat.END);
                 nevigationId= SharePreferenceUtil.getNevigationItem(this);
                 if (nevigationId!=-1){
                     currentMenuItem = navView.getMenu().findItem(nevigationId);
@@ -75,9 +73,11 @@ public class MainActivity extends BaseActivity {
                 if (currentMenuItem != null) {
                     currentMenuItem.setChecked(true);
                     // TODO: 16/8/17 add a fragment and set toolbar title
-                    Fragment fragment= mFragmentArrayMap.get((Integer)currentMenuItem.getItemId());
+                    Fragment fragment= getFragmentById(currentMenuItem.getItemId());
                     String title=mTitleArryMap.get((Integer)currentMenuItem.getItemId());
-                    switchFragment(fragment,title);
+                    if (fragment!=null){
+                        switchFragment(fragment,title);
+                    }
                 }
             }
         }
@@ -88,7 +88,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
 
-                if (currentMenuItem != item) {
+                if (currentMenuItem != item&&currentFragment!=null) {
                     currentMenuItem.setChecked(false);
                     int id=item.getItemId();
                     SharePreferenceUtil.putNevigationItem(MainActivity.this,id);
@@ -135,6 +135,18 @@ public class MainActivity extends BaseActivity {
             }
         });
 
+    }
+
+    private Fragment getFragmentById(int id) {
+        Fragment fragment=null;
+        switch (id){
+            case R.id.zhihuitem:
+            fragment= new ZhihuFragment();
+                break;
+
+
+        }
+        return fragment;
     }
 
     private void addfragmentsAndTitle() {
