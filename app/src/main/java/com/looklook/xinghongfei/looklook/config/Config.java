@@ -10,8 +10,9 @@ public class Config {
     public static final String WEIXIN = "weixin";
     public static final String GUOKR = "guokr";
     public static final String ZHIHU = "zhihu";
-    public static final String VIDEO = "video";
     public static final String IT = "it";
+    public static final String TOPNEWS= "topnews";
+
 
     public static boolean isNight = false;
     public static boolean isDebug=true;

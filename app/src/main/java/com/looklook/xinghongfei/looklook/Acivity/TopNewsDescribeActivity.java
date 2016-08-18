@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,22 +11,18 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.ActionBar;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.transition.ChangeBounds;
 import android.transition.Transition;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -35,23 +30,18 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.looklook.xinghongfei.looklook.R;
-import com.looklook.xinghongfei.looklook.bean.guokr.GuokrArticle;
-import com.looklook.xinghongfei.looklook.bean.zhihu.ZhihuStory;
-import com.looklook.xinghongfei.looklook.config.Config;
-import com.looklook.xinghongfei.looklook.presenter.IZhihuStoryPresenter;
-import com.looklook.xinghongfei.looklook.presenter.implPresenter.ZhihuStoryPresenterImpl;
-import com.looklook.xinghongfei.looklook.presenter.implView.IZhihuStory;
+import com.looklook.xinghongfei.looklook.bean.news.NewsDetailBean;
+import com.looklook.xinghongfei.looklook.presenter.implPresenter.TopNewsDesPresenterImpl;
+import com.looklook.xinghongfei.looklook.presenter.implView.ITopNewsDesFragment;
 import com.looklook.xinghongfei.looklook.util.AnimUtils;
 import com.looklook.xinghongfei.looklook.util.ColorUtils;
 import com.looklook.xinghongfei.looklook.util.DensityUtil;
 import com.looklook.xinghongfei.looklook.util.GlideUtils;
-import com.looklook.xinghongfei.looklook.util.ImageLoader;
 import com.looklook.xinghongfei.looklook.util.ViewUtils;
-import com.looklook.xinghongfei.looklook.util.WebUtil;
 import com.looklook.xinghongfei.looklook.widget.HorizotalTopBottomElasticDragDismissFrameLayout;
 import com.looklook.xinghongfei.looklook.widget.ParallaxScrimageView;
 
-import java.lang.reflect.InvocationTargetException;
+import org.sufficientlysecure.htmltextview.HtmlTextView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -60,75 +50,83 @@ import butterknife.OnClick;
 /**
  * Created by xinghongfei on 16/8/13.
  */
-public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
+public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDesFragment {
     private static final float SCRIM_ADJUSTMENT = 0.075f;
 
+
+    boolean isEmpty;
+    String mBody;
+    String[] scc;
+
+    int[] mDeviceInfo;
+    int width;
+    int heigh;
+
+    NestedScrollView.OnScrollChangeListener scrollListener = new NestedScrollView.OnScrollChangeListener() {
+        @Override
+        public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+            if (oldScrollY < 168) {
+                mShot.setOffset(-oldScrollY);
+            }
+        }
+    };
+    @InjectView(R.id.progress)
+    ProgressBar mProgress;
+    @InjectView(R.id.htNewsContent)
+    HtmlTextView mHtNewsContent;
     @InjectView(R.id.shot)
     ParallaxScrimageView mShot;
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
     @InjectView(R.id.container)
     FrameLayout mContainer;
-    @InjectView(R.id.wv_zhihu)
-    WebView wvZhihu;
+    @InjectView(R.id.draggable_frame)
+    HorizotalTopBottomElasticDragDismissFrameLayout mDraggableFrame;
     @InjectView(R.id.nest)
     NestedScrollView mNest;
 
-    boolean isEmpty;
-    String mBody;
-    String[] scc;
-
-    @InjectView(R.id.draggable_frame)
-    HorizotalTopBottomElasticDragDismissFrameLayout mDraggableFrame;
-
-    int[] mDeviceInfo;
-    int width;
-    int heigh;
-
-
-    NestedScrollView.OnScrollChangeListener scrollListener = new NestedScrollView.OnScrollChangeListener() {
-        @Override
-        public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-         if (oldScrollY<168){
-             mShot.setOffset(-oldScrollY);
-
-         }
-
-        }
-    };
     private String id;
     private String title;
     private String url;
     private String mImageUrl;
-    private IZhihuStoryPresenter mIZhihuStoryPresenter;
     private HorizotalTopBottomElasticDragDismissFrameLayout.SystemChromeFader chromeFader;
+    private TopNewsDesPresenterImpl mTopNewsDesPresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.zhihudescribe);
+        setContentView(R.layout.topnews_describe);
         ButterKnife.inject(this);
-//        setSupportActionBar(mToolbar);
+        setSupportActionBar(mToolbar);
+        mDeviceInfo = DensityUtil.getDeviceInfo(this);
+        width = mDeviceInfo[0];
+        heigh = width * 3 / 4;
         initData();
         initView();
         getData();
 
         chromeFader = new HorizotalTopBottomElasticDragDismissFrameLayout.SystemChromeFader(this);
 
-        getWindow().getSharedElementReturnTransition().addListener(zhihuReturnHomeListener);
-        getWindow().getSharedElementEnterTransition().addListener(zhihuEnterListener);
-        getWindow().setSharedElementEnterTransition(new ChangeBounds());
+        getWindow().getSharedElementReturnTransition().addListener(ReturnHomeListener);
+        getWindow().getSharedElementEnterTransition().addListener(enterTrasitionListener);
+//        getWindow().setSharedElementEnterTransition(new ChangeBounds());
 
-        mDeviceInfo = DensityUtil.getDeviceInfo(this);
-        width = mDeviceInfo[0];
-        heigh = width * 3 / 4;
     }
 
     private void initData() {
-        id = getIntent().getStringExtra("id");
+        id = getIntent().getStringExtra("docid");
         title = getIntent().getStringExtra("title");
         mImageUrl = getIntent().getStringExtra("image");
-        mIZhihuStoryPresenter = new ZhihuStoryPresenterImpl(this);
+        Glide.with(this)
+                .load(mImageUrl)
+                .override(width,heigh)
+                .listener(glideLoadListener)
+                .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(mShot);
+
+
+        mTopNewsDesPresenter = new TopNewsDesPresenterImpl(this);
         mNest.setOnScrollChangeListener(scrollListener);
 
         postponeEnterTransition();
@@ -142,89 +140,54 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                 return true;
             }
         });
-
     }
-
     private void initView() {
+        mNest.setAlpha(0.5f);
         mToolbar.setTitle(title);
-        mToolbar.setTitleMargin(0,20,0,10);
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         mToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mNest.smoothScrollTo(0,0);
+                mNest.smoothScrollTo(0, 0);
             }
         });
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 expandImageAndFinish();
             }
         });
-        android.support.v7.app.ActionBar actionBar1=getSupportActionBar();
-        if (actionBar1!=null){
+        ActionBar actionBar1 = getSupportActionBar();
+        if (actionBar1 != null) {
             actionBar1.setTitle(title);
-
-
+            // TODO: 16/8/17 add go back arrow
+//            actionBar1.setLogo(R.drawable.ic_arrow_back);
+            actionBar1.setDefaultDisplayHomeAsUpEnabled(true);
+            actionBar1.setHomeButtonEnabled(true);
+            actionBar1.setDisplayUseLogoEnabled(true);
         }
-
-        WebSettings settings = wvZhihu.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        settings.setLoadWithOverviewMode(true);
-        settings.setBuiltInZoomControls(true);
-        //settings.setUseWideViewPort(true);造成文字太小
-        settings.setDomStorageEnabled(true);
-        settings.setDatabaseEnabled(true);
-        settings.setAppCachePath(getCacheDir().getAbsolutePath() + "/webViewCache");
-        settings.setAppCacheEnabled(true);
-        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-        wvZhihu.setWebChromeClient(new WebChromeClient());
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         mDraggableFrame.addListener(chromeFader);
-        try {
-            wvZhihu.getClass().getMethod("onResume").invoke(wvZhihu, (Object[]) null);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         mDraggableFrame.removeListener(chromeFader);
-        try {
-            wvZhihu.getClass().getMethod("onPause").invoke(wvZhihu, (Object[]) null);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+
     }
 
     @Override
     protected void onDestroy() {
-        getWindow().getSharedElementReturnTransition().removeListener(zhihuReturnHomeListener);
-        getWindow().getSharedElementEnterTransition().removeListener(zhihuEnterListener);
-        //webview内存泄露
-        if (wvZhihu != null) {
-            ((ViewGroup) wvZhihu.getParent()).removeView(wvZhihu);
-            wvZhihu.destroy();
-            wvZhihu = null;
-        }
-        mIZhihuStoryPresenter.unsubcrible();
+        getWindow().getSharedElementReturnTransition().removeListener(ReturnHomeListener);
+        getWindow().getSharedElementEnterTransition().removeListener(enterTrasitionListener);
+
+        mTopNewsDesPresenter.unsubcrible();
         super.onDestroy();
 
     }
@@ -237,7 +200,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     }
 
     private void getData() {
-        mIZhihuStoryPresenter.getZhihuStory(id);
+        mTopNewsDesPresenter.getDescrible(id);
 
     }
 
@@ -248,8 +211,19 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     }
 
     @Override
+    public void showProgressDialog() {
+        mProgress.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hidProgressDialog() {
+        mProgress.setVisibility(View.INVISIBLE);
+
+    }
+
+    @Override
     public void showError(String error) {
-        Snackbar.make(wvZhihu, getString(R.string.snack_infor), Snackbar.LENGTH_INDEFINITE).setAction("重试", new View.OnClickListener() {
+        Snackbar.make(mDraggableFrame, getString(R.string.snack_infor), Snackbar.LENGTH_INDEFINITE).setAction("重试", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getData();
@@ -257,36 +231,8 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         }).show();
     }
 
-    @Override
-    public void showZhihuStory(ZhihuStory zhihuStory) {
-        ImageLoader.loadImage(ZhihuDescribeActivity.this, zhihuStory.getImage(), mShot);
-        Glide.with(this)
-                .load(zhihuStory.getImage()).centerCrop()
-                .listener(shotLoadListener).override(width,heigh)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(mShot);
-        url = zhihuStory.getShareUrl();
-        isEmpty=TextUtils.isEmpty(zhihuStory.getBody());
-        mBody=zhihuStory.getBody();
-        scc=zhihuStory.getCss();
-        if (isEmpty) {
-            wvZhihu.loadUrl(url);
-        } else {
-            String data = WebUtil.buildHtmlWithCss(mBody, scc, Config.isNight);
-            wvZhihu.loadDataWithBaseURL(WebUtil.BASE_URL, data, WebUtil.MIME_TYPE, WebUtil.ENCODING, WebUtil.FAIL_URL);
-        }
-
-
-    }
-
-    @Override
-    public void showGuokrArticle(GuokrArticle guokrArticle) {
-
-    }
 
     private void expandImageAndFinish() {
-        final Intent resultData = new Intent();
-
         if (mShot.getOffset() != 0f) {
             Animator expandImage = ObjectAnimator.ofFloat(mShot, ParallaxScrimageView.OFFSET,
                     0f);
@@ -303,12 +249,14 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
             finishAfterTransition();
         }
     }
-    private Transition.TransitionListener zhihuReturnHomeListener =
+
+    private Transition.TransitionListener ReturnHomeListener =
             new AnimUtils.TransitionListenerAdapter() {
                 @Override
                 public void onTransitionStart(Transition transition) {
                     super.onTransitionStart(transition);
                     // hide the fab as for some reason it jumps position??  TODO work out why
+
                     mToolbar.animate()
                             .alpha(0f)
                             .setDuration(100)
@@ -322,25 +270,28 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                 }
             };
 
-    private Transition.TransitionListener zhihuEnterListener =
+    private Transition.TransitionListener enterTrasitionListener =
             new AnimUtils.TransitionListenerAdapter() {
                 @Override
                 public void onTransitionEnd(Transition transition) {
                     super.onTransitionEnd(transition);
+
 //                    解决5.0 shara element bug
-                 ValueAnimator valueAnimator = ValueAnimator.ofInt(0,100).setDuration(1000L);
+                    ValueAnimator valueAnimator = ValueAnimator.ofInt(0,100).setDuration(100);
+
 
                     valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                         @Override
                         public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                            mShot.setOffset((Float) valueAnimator.getAnimatedValue() * 10);
-                            mNest.smoothScrollTo((Integer) valueAnimator.getAnimatedValue()/100,0);
+//                            mShot.setOffset((Integer) valueAnimator.getAnimatedValue() * 10);
+                            mNest.smoothScrollTo((Integer) valueAnimator.getAnimatedValue()/10,0);
+
                         }
                     });
                     valueAnimator.start();
                     enterAnimation();
-                    mShot.setAlpha(0.5f);
-                    mShot.animate().alpha(1f).setDuration(50).start();
+//                    mShot.setAlpha(0.5f);
+//                    mShot.animate().alpha(1f).setDuration(800L).start();
                 }
 
 
@@ -350,14 +301,14 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
                 }
             };
-    private RequestListener shotLoadListener = new RequestListener<String, GlideDrawable>() {
+    private RequestListener glideLoadListener = new RequestListener<String, GlideDrawable>() {
         @Override
         public boolean onResourceReady(GlideDrawable resource, String model,
                                        Target<GlideDrawable> target, boolean isFromMemoryCache,
                                        boolean isFirstResource) {
             final Bitmap bitmap = GlideUtils.getBitmap(resource);
             final int twentyFourDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    24, ZhihuDescribeActivity.this.getResources().getDisplayMetrics());
+                    24, TopNewsDescribeActivity.this.getResources().getDisplayMetrics());
             Palette.from(bitmap)
                     .maximumColorCount(3)
                     .clearFilters() /* by default palette ignore certain hues
@@ -424,7 +375,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                             // slightly more opaque ripple on the pinned image to compensate
                             // for the scrim
                             mShot.setForeground(ViewUtils.createRipple(palette, 0.3f, 0.6f,
-                                    ContextCompat.getColor(ZhihuDescribeActivity.this, R.color.mid_grey),
+                                    ContextCompat.getColor(TopNewsDescribeActivity.this, R.color.mid_grey),
                                     true));
                         }
                     });
@@ -441,11 +392,20 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         }
     };
 
+    @Override
+    public void upListItem(NewsDetailBean newsList) {
+        mProgress.setVisibility(View.INVISIBLE);
+        mHtNewsContent.setHtmlFromString(newsList.getBody(),new HtmlTextView.LocalImageGetter());
+
+    }
+
+
     private void enterAnimation() {
         float offSet = mToolbar.getHeight();
-        LinearInterpolator interpolator=new LinearInterpolator();
-        viewEnterAnimation(mToolbar, offSet, interpolator);
-        viewEnterAnimationNest(mNest,0f,interpolator);
+        LinearInterpolator interpolator = new LinearInterpolator();
+        AccelerateInterpolator accelerateInterpolator=new AccelerateInterpolator();
+//        viewEnterAnimation(mToolbar, offSet, interpolator);
+        viewEnterAnimationNest(mNest, 0f, accelerateInterpolator);
 
     }
 
@@ -460,16 +420,15 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                 .setListener(null)
                 .start();
     }
+
     private void viewEnterAnimationNest(View view, float offset, Interpolator interp) {
         view.setTranslationY(-offset);
-        view.setAlpha(0.3f);
         view.animate()
                 .translationY(0f)
                 .alpha(1f)
-                .setDuration(100)
+                .setDuration(50L)
                 .setInterpolator(interp)
                 .setListener(null)
                 .start();
     }
-
 }

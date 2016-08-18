@@ -72,5 +72,7 @@
     <color name="gif_badge_dark_image">#b3ffffff</color>
 
     <color name="text_color">#f6000000</color>
+    <color name="text_source">#9a000000</color>
+
 
 </resources>

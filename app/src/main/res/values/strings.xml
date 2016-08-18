@@ -23,6 +23,12 @@
 
     <string name="nevigation_item" translatable="false">nevigation_item</string>
 
-    <string name="zhihu" translatable="false">知乎</string>
+    <string name="zhihu" translatable="false">知乎日报</string>
+    <string name="topnews" translatable="false">网易头条</string>
+
+
+    <string name="transition_topnew" translatable="false">topnewsimage</string>
+    <string name="transition_topnew_linear" translatable="false">topnewlinear</string>
+
 
 </resources>

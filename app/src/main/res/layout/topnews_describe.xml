@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/background_light"
-        android:transitionName="@string/transition_shot_background"
+        android:transitionName="@string/transition_topnew_linear"
         android:transitionGroup="false">
         <com.looklook.xinghongfei.looklook.widget.ParallaxScrimageView
             android:id="@+id/shot"
@@ -41,7 +41,7 @@
             android:minHeight="168dp"
             android:foreground="@drawable/mid_grey_ripple"
             android:stateListAnimator="@animator/app_bar_pin"
-            android:transitionName="@string/transition_shot"
+            android:transitionName="@string/transition_topnew"
             app:scrimColor="@color/scrim"
             app:scrimAlpha="0"
             app:maxScrimAlpha="0.4"
@@ -54,7 +54,7 @@
             android:layout_height="?android:actionBarSize"
             android:outlineProvider="none"
             android:elevation="1dp"
-            android:scrollbarDefaultDelayBeforeFade="1"
+            android:logo="@drawable/ic_arrow_back"
             android:background="#3b000000"
             style="@style/Widget.Plaid.HomeToolbar" />
 
@@ -84,19 +84,33 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_marginTop="250dp"
                 android:layout_height="match_parent"
+                android:layout_marginTop="250dp"
                 android:orientation="vertical">
+                <ProgressBar
+                    android:id="@+id/progress"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"/>
 
-            <WebView
-                android:id="@+id/wv_zhihu"
-                android:background="@color/nev_item"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                <org.sufficientlysecure.htmltextview.HtmlTextView
+                    android:id="@+id/htNewsContent"
+                    android:layout_width="match_parent"
+                    android:background="@color/nev_item"
+                    android:layout_height="match_parent"
+                    android:padding="12dp"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@color/accent"/>
 
             </LinearLayout>
+
         </android.support.v4.widget.NestedScrollView>
     </FrameLayout>
 

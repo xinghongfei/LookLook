@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.looklook.xinghongfei.looklook.Acivity.BaseActivity;
+import com.looklook.xinghongfei.looklook.fragment.TopNewsFragment;
 import com.looklook.xinghongfei.looklook.fragment.ZhihuFragment;
 import com.looklook.xinghongfei.looklook.util.AnimUtils;
 import com.looklook.xinghongfei.looklook.util.SharePreferenceUtil;
@@ -41,8 +42,8 @@ public class MainActivity extends BaseActivity {
     DrawerLayout drawer;
     int nevigationId;
 
-    SimpleArrayMap<Integer,Fragment> mFragmentArrayMap =new SimpleArrayMap<>();
-    SimpleArrayMap<Integer,String> mTitleArryMap =new SimpleArrayMap<>();
+    SimpleArrayMap<Integer, Fragment> mFragmentArrayMap = new SimpleArrayMap<>();
+    SimpleArrayMap<Integer, String> mTitleArryMap = new SimpleArrayMap<>();
 
 
     @Override
@@ -59,41 +60,52 @@ public class MainActivity extends BaseActivity {
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
 
-
         if (savedInstanceState == null) {
-            if (currentMenuItem == null) {
-//              drawer.openDrawer(GravityCompat.END);
-                nevigationId= SharePreferenceUtil.getNevigationItem(this);
-                if (nevigationId!=-1){
-                    currentMenuItem = navView.getMenu().findItem(nevigationId);
-                }else{
-                    currentMenuItem = navView.getMenu().findItem(R.id.zhihuitem);
-
-                }
-                if (currentMenuItem != null) {
-                    currentMenuItem.setChecked(true);
-                    // TODO: 16/8/17 add a fragment and set toolbar title
-                    Fragment fragment= getFragmentById(currentMenuItem.getItemId());
-                    String title=mTitleArryMap.get((Integer)currentMenuItem.getItemId());
-                    if (fragment!=null){
-                        switchFragment(fragment,title);
-                    }
+            nevigationId = SharePreferenceUtil.getNevigationItem(this);
+            if (nevigationId != -1) {
+                currentMenuItem = navView.getMenu().findItem(nevigationId);
+            }
+            if (currentMenuItem==null){
+                currentMenuItem = navView.getMenu().findItem(R.id.zhihuitem);
+            }
+            if (currentMenuItem != null) {
+                currentMenuItem.setChecked(true);
+                // TODO: 16/8/17 add a fragment and set toolbar title
+                Fragment fragment = getFragmentById(currentMenuItem.getItemId());
+                String title = mTitleArryMap.get((Integer) currentMenuItem.getItemId());
+                if (fragment != null) {
+                    switchFragment(fragment, title);
                 }
             }
-        }
+        } else {
+            if (currentMenuItem!=null){
+                Fragment fragment = getFragmentById(currentMenuItem.getItemId());
+                String title = mTitleArryMap.get((Integer) currentMenuItem.getItemId());
+                if (fragment != null) {
+                    switchFragment(fragment, title);
+                }
+            }else {
+                switchFragment(new ZhihuFragment(), " ");
+                currentMenuItem=navView.getMenu().findItem(R.id.zhihuitem);
 
+            }
+
+
+        }
 
 
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
 
-                if (currentMenuItem != item&&currentFragment!=null) {
+
+                if (currentMenuItem != item && currentMenuItem != null) {
                     currentMenuItem.setChecked(false);
-                    int id=item.getItemId();
-                    SharePreferenceUtil.putNevigationItem(MainActivity.this,id);
+                    int id = item.getItemId();
+                    SharePreferenceUtil.putNevigationItem(MainActivity.this, id);
                     currentMenuItem = item;
                     currentMenuItem.setChecked(true);
+                    switchFragment(getFragmentById(currentMenuItem.getItemId()),mTitleArryMap.get(currentMenuItem.getItemId()));
                 }
                 drawer.closeDrawer(GravityCompat.END, true);
                 return true;
@@ -138,10 +150,13 @@ public class MainActivity extends BaseActivity {
     }
 
     private Fragment getFragmentById(int id) {
-        Fragment fragment=null;
-        switch (id){
+        Fragment fragment = null;
+        switch (id) {
             case R.id.zhihuitem:
-            fragment= new ZhihuFragment();
+                fragment = new ZhihuFragment();
+                break;
+            case R.id.topnewsitem:
+                fragment=new TopNewsFragment();
                 break;
 
 
@@ -150,8 +165,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void addfragmentsAndTitle() {
-        mFragmentArrayMap.put(R.id.zhihuitem,new ZhihuFragment());
-        mTitleArryMap.put(R.id.zhihuitem,getResources().getString(R.string.zhihu));
+        mTitleArryMap.put(R.id.zhihuitem, getResources().getString(R.string.zhihu));
+        mTitleArryMap.put(R.id.topnewsitem, getResources().getString(R.string.topnews));
 
     }
 
@@ -176,12 +191,12 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private void switchFragment(Fragment fragment,String title){
+    private void switchFragment(Fragment fragment, String title) {
 
-        if (currentFragment==null||!currentFragment.getClass().getName().equals(fragment.getClass().getName()))
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,fragment)
+        if (currentFragment == null || !currentFragment.getClass().getName().equals(fragment.getClass().getName()))
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment)
                     .commit();
-        currentFragment=fragment;
+        currentFragment = fragment;
 //        ActionBar actionBar=getActionBar();
 //        actionBar.setTitle(title);
     }

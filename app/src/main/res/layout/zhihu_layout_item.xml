@@ -10,7 +10,7 @@
     <com.looklook.xinghongfei.looklook.widget.BadgedFourThreeImageView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/zhihu_image_id"
+        android:id="@+id/item_image_id"
         android:layout_width="@dimen/image_width"
         android:layout_height="@dimen/image_hight"
         android:layout_marginBottom="5dp"
@@ -23,7 +23,7 @@
         app:badgePadding="@dimen/padding_normal"/>
 
     <TextView
-        android:id="@+id/zhihu_text_id"
+        android:id="@+id/item_text_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"

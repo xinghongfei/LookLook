@@ -22,6 +22,8 @@ public class BasePresenterImpl implements BasePresenter {
 
     @Override
     public void unsubcrible() {
+
+        // TODO: 16/8/17 find when unsubcrible
         if (this.mCompositeSubscription != null) {
             this.mCompositeSubscription.unsubscribe();
         }

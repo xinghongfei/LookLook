@@ -24,10 +24,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.looklook.xinghongfei.looklook.Acivity.ZhihuDescribeActivity;
+import com.looklook.xinghongfei.looklook.Acivity.TopNewsDescribeActivity;
 import com.looklook.xinghongfei.looklook.MainActivity;
 import com.looklook.xinghongfei.looklook.R;
-import com.looklook.xinghongfei.looklook.bean.zhihu.ZhihuDailyItem;
+import com.looklook.xinghongfei.looklook.bean.news.NewsBean;
 import com.looklook.xinghongfei.looklook.config.Config;
 import com.looklook.xinghongfei.looklook.util.DBUtils;
 import com.looklook.xinghongfei.looklook.util.DensityUtil;
@@ -39,7 +39,7 @@ import com.looklook.xinghongfei.looklook.widget.BadgedFourThreeImageView;
 import java.util.ArrayList;
 
 
-public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements MainActivity.LoadingMore {
+public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements MainActivity.LoadingMore {
 
     public static final int REQUEST_CODE_VIEW_SHOT = 5407;
     private static final int TYPE_LOADING_MORE = -1;
@@ -48,11 +48,11 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     float width;
     int widthPx;
     int heighPx;
-    private ArrayList<ZhihuDailyItem> zhihuDailyItems = new ArrayList<>();
+    private ArrayList<NewsBean> topNewitems = new ArrayList<>();
     private Context mContext;
 
 
-    public ZhihuAdapter(Context context) {
+    public TopNewsAdapter(Context context) {
 
         this.mContext = context;
         width = mContext.getResources().getDimension(R.dimen.image_width);
@@ -65,7 +65,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         switch (viewType) {
             case NOMAL_ITEM:
-                return new ZhihuViewHolder(LayoutInflater.from(mContext).inflate(R.layout.zhihu_layout_item, parent, false));
+                return new TopNewsViewHolder(LayoutInflater.from(mContext).inflate(R.layout.topnews_layout_item, parent, false));
 
             case TYPE_LOADING_MORE:
                 return new LoadingMoreHolder(LayoutInflater.from(mContext).inflate(R.layout.infinite_loading, parent, false));
@@ -82,7 +82,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         int type = getItemViewType(position);
         switch (type) {
             case NOMAL_ITEM:
-                bindViewHolderNormal((ZhihuViewHolder) holder, position);
+                bindViewHolderNormal((TopNewsViewHolder) holder, position);
                 break;
             case TYPE_LOADING_MORE:
                 bindLoadingViewHold((LoadingMoreHolder) holder, position);
@@ -93,57 +93,55 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private void bindLoadingViewHold(LoadingMoreHolder holder, int position) {
-        holder.progressBar.setVisibility(showLoadingMore == true ? View.VISIBLE : View.INVISIBLE);
+        holder.progressBar.setVisibility(showLoadingMore? View.VISIBLE : View.INVISIBLE);
     }
 
-    private void bindViewHolderNormal(final ZhihuViewHolder holder, final int position) {
+    private void bindViewHolderNormal(final TopNewsViewHolder holder, final int position) {
 
-        final ZhihuDailyItem zhihuDailyItem = zhihuDailyItems.get(holder.getAdapterPosition());
+        final NewsBean newsBeanItem = topNewitems.get(holder.getAdapterPosition());
 
-        if (DBUtils.getDB(mContext).isRead(Config.ZHIHU, zhihuDailyItem.getId(), 1))
+        if (DBUtils.getDB(mContext).isRead(Config.TOPNEWS, newsBeanItem.getTitle(), 1)){
+
             holder.textView.setTextColor(Color.GRAY);
-        else
+            holder.sourceTextview.setTextColor(Color.GRAY);
+        }
+
+        else {
             holder.textView.setTextColor(Color.BLACK);
+            holder.sourceTextview.setTextColor(Color.BLACK);
+        }
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, zhihuDailyItem.getId(), 1);
+                DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, newsBeanItem.getTitle(), 1);
                 holder.textView.setTextColor(Color.GRAY);
-                Intent intent = new Intent(mContext, ZhihuDescribeActivity.class);
-                intent.putExtra("id", zhihuDailyItem.getId());
-                intent.putExtra("title", zhihuDailyItem.getTitle());
-                intent.putExtra("image", zhihuDailyItems.get(position).getImages()[0]);
+                holder.sourceTextview.setTextColor(Color.GRAY);
+                Intent intent = new Intent(mContext, TopNewsDescribeActivity.class);
+                intent.putExtra("docid", newsBeanItem.getDocid());
+                intent.putExtra("title", newsBeanItem.getTitle());
+                intent.putExtra("image", newsBeanItem.getImgsrc());
                 final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
-                        ((Activity) mContext, false,new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)),
-                                new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_shot_background)));
+                        ((Activity) mContext, false,new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_topnew)),
+                                new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_topnew_linear)));
                         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
                 mContext.startActivity(intent, options.toBundle());
 
             }
         });
-        holder.textView.setText(zhihuDailyItem.getTitle());
+        holder.textView.setText(newsBeanItem.getTitle());
+        holder.sourceTextview.setText(newsBeanItem.getSource());
         holder.linearLayout.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, zhihuDailyItem.getId(), 1);
-                        holder.textView.setTextColor(Color.GRAY);
-                        Intent intent = new Intent(mContext, ZhihuDescribeActivity.class);
-                        intent.putExtra("id", zhihuDailyItem.getId());
-                        intent.putExtra("title", zhihuDailyItem.getTitle());
-//
-                        final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
-                                ((Activity) mContext, false, new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)),
-                                        new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_shot_background)));
-                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
-                        mContext.startActivity(intent, options.toBundle());
 
+                        // TODO: 16/8/18  add intent
                     }
                 });
 
 
         Glide.with(mContext)
-                .load(zhihuDailyItems.get(position).getImages()[0])
+                .load(newsBeanItem.getImgsrc())
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -152,7 +150,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                     @Override
                     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        if (!zhihuDailyItem.hasFadedIn) {
+                        if (!newsBeanItem.hasFadedIn) {
                             holder.imageView.setHasTransientState(true);
                             final ObservableColorMatrix cm = new ObservableColorMatrix();
                             final ObjectAnimator animator = ObjectAnimator.ofFloat(cm, ObservableColorMatrix.SATURATION, 0f, 1f);
@@ -171,7 +169,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                     holder.imageView.clearColorFilter();
                                     holder.imageView.setHasTransientState(false);
                                     animator.start();
-                                    zhihuDailyItem.hasFadedIn = true;
+                                    newsBeanItem.hasFadedIn = true;
 
                                 }
                             });
@@ -189,14 +187,16 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return zhihuDailyItems.size();
+        return topNewitems.size();
     }
 
 
-    public void addItems(ArrayList<ZhihuDailyItem> list) {
-
+    public void addItems(ArrayList<NewsBean> list) {
+//
+////        remove first unuse data
+        list.remove(0);
         int n = list.size();
-        zhihuDailyItems.addAll(list);
+        topNewitems.addAll(list);
         notifyDataSetChanged();
     }
 
@@ -213,7 +213,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private int getDataItemCount() {
 
-        return zhihuDailyItems.size();
+        return topNewitems.size();
     }
 
     private int getLoadingMoreItemPosition() {
@@ -238,7 +238,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
     public void clearData() {
-        zhihuDailyItems.clear();
+        topNewitems.clear();
         notifyDataSetChanged();
     }
 
@@ -251,16 +251,18 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    class ZhihuViewHolder extends RecyclerView.ViewHolder {
+    class TopNewsViewHolder extends RecyclerView.ViewHolder {
         final TextView textView;
         final LinearLayout linearLayout;
+        final TextView sourceTextview;
         BadgedFourThreeImageView imageView;
 
-        ZhihuViewHolder(View itemView) {
+        TopNewsViewHolder(View itemView) {
             super(itemView);
             imageView = (BadgedFourThreeImageView) itemView.findViewById(R.id.item_image_id);
             textView = (TextView) itemView.findViewById(R.id.item_text_id);
             linearLayout = (LinearLayout) itemView.findViewById(R.id.zhihu_item_layout);
+            sourceTextview= (TextView) itemView.findViewById(R.id.item_text_source_id);
         }
     }
 

@@ -1,7 +1,6 @@
 package com.looklook.xinghongfei.looklook.presenter.implPresenter;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.looklook.xinghongfei.looklook.api.ApiManage;
@@ -52,20 +51,17 @@ public class ZhihuPresenterImpl extends BasePresenterImpl implements IZhihuPrese
                 .subscribe(new Observer<ZhihuDaily>() {
                     @Override
                     public void onCompleted() {
-                        Log.d("maat","complete");
 
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d("maat","erro");
                         mZhihuFragment.hidProgressDialog();
                         mZhihuFragment.showError(e.getMessage());
                     }
 
                     @Override
                     public void onNext(ZhihuDaily zhihuDaily) {
-                        Log.d("maat","next");
                         mZhihuFragment.hidProgressDialog();
                         mCacheUtil.put(Config.ZHIHU, gson.toJson(zhihuDaily));
                         mZhihuFragment.updateList(zhihuDaily);
