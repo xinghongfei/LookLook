@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.looklook.xinghongfei.looklook.Acivity.BaseActivity;
+import com.looklook.xinghongfei.looklook.fragment.MeiziFragment;
 import com.looklook.xinghongfei.looklook.fragment.TopNewsFragment;
 import com.looklook.xinghongfei.looklook.fragment.ZhihuFragment;
 import com.looklook.xinghongfei.looklook.util.AnimUtils;
@@ -42,7 +43,6 @@ public class MainActivity extends BaseActivity {
     DrawerLayout drawer;
     int nevigationId;
 
-    SimpleArrayMap<Integer, Fragment> mFragmentArrayMap = new SimpleArrayMap<>();
     SimpleArrayMap<Integer, String> mTitleArryMap = new SimpleArrayMap<>();
 
 
@@ -158,7 +158,9 @@ public class MainActivity extends BaseActivity {
             case R.id.topnewsitem:
                 fragment=new TopNewsFragment();
                 break;
-
+            case R.id.meiziitem:
+                fragment=new MeiziFragment();
+                break;
 
         }
         return fragment;
@@ -167,6 +169,7 @@ public class MainActivity extends BaseActivity {
     private void addfragmentsAndTitle() {
         mTitleArryMap.put(R.id.zhihuitem, getResources().getString(R.string.zhihu));
         mTitleArryMap.put(R.id.topnewsitem, getResources().getString(R.string.topnews));
+        mTitleArryMap.put(R.id.meiziitem, getResources().getString(R.string.meizi));
 
     }
 

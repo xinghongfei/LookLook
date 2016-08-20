@@ -7,7 +7,7 @@
             android:id="@+id/zhihuitem"
             android:checkable="true"
             android:icon="@mipmap/ic_launcher"
-            android:title="知乎日报"
+            android:title="@string/zhihu"
             android.support.design:itemTextColor="@color/nev_item"
             app:itemIconTint="@color/nev_item"
            />
@@ -15,7 +15,14 @@
             android:id="@+id/topnewsitem"
             android:checkable="true"
             android:icon="@mipmap/ic_launcher"
-            android:title="网易头条"
+            android:title="@string/topnews"
+            android.support.design:itemTextColor="@color/nev_item"
+            app:itemIconTint="@color/nev_item"/>
+        <item
+            android:id="@+id/meiziitem"
+            android:checkable="true"
+            android:icon="@mipmap/ic_launcher"
+            android:title="@string/meizi"
             android.support.design:itemTextColor="@color/nev_item"
             app:itemIconTint="@color/nev_item"/>
     </group>

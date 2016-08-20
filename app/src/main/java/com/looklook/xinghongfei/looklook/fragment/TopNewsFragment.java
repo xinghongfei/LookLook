@@ -187,6 +187,7 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
 
     @Override
     public void upListItem(NewsList newsList) {
+        loading=false;
         progress.setVisibility(View.INVISIBLE);
         mTopNewsAdapter.addItems(newsList.getNewsList());
     }
@@ -222,6 +223,7 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mTopNewsPrensenter.unsubcrible();
         ButterKnife.reset(this);
     }
 }

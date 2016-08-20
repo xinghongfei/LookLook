@@ -99,5 +99,27 @@ public class ApiManage {
         return topNews;
     }
 
+    public GankApi ganK;
+    public GankApi getGankService(){
+        if (ganK==null){
+            synchronized (zhihuMonitor){
+                if (ganK==null){
+                    ganK=new Retrofit.Builder()
+                            .baseUrl("http://gank.io")
+                            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                            .client(client)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build().create(GankApi.class);
+
+
+                }
+
+
+            }
+
+
+        }
+        return ganK;
+    }
 
 }

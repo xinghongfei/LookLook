@@ -34,6 +34,11 @@
         android:background="@color/background_light"
         android:transitionName="@string/transition_topnew_linear"
         android:transitionGroup="false">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
         <com.looklook.xinghongfei.looklook.widget.ParallaxScrimageView
             android:id="@+id/shot"
             android:layout_width="match_parent"
@@ -47,6 +52,21 @@
             app:maxScrimAlpha="0.4"
             app:parallaxFactor="-0.5"/>
 
+            <com.looklook.xinghongfei.looklook.widget.TranslateYTextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:textSize="23sp"
+                android:textColor="@color/text_primary_light"
+                android:layout_margin="20dp"
+                app:scrimColor="@color/scrim"
+                android:stateListAnimator="@animator/app_bar_pin"
+                app:scrimAlpha="0"
+                app:maxScrimAlpha="0.4"
+                app:parallaxFactor="-0.5"
+                />
+        </FrameLayout>
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -56,7 +76,8 @@
             android:elevation="1dp"
             android:logo="@drawable/ic_arrow_back"
             android:background="#3b000000"
-            style="@style/Widget.Plaid.HomeToolbar" />
+            style="@style/Widget.Plaid.HomeToolbar"
+            app:title="@string/topnews"/>
 
         <!-- We're 'faking' a toolbar here as we just want a back button.
              This approach lets the borderless ripple extend beyond the back button's bounds,
@@ -106,8 +127,8 @@
                     android:textAppearance="@android:style/TextAppearance.Medium" />
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@color/accent"/>
+                    android:layout_height="250dp"
+                    android:background="@color/background_light"/>
 
             </LinearLayout>
 

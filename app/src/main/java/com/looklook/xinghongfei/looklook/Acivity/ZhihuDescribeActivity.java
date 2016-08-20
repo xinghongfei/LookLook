@@ -50,6 +50,7 @@ import com.looklook.xinghongfei.looklook.util.ViewUtils;
 import com.looklook.xinghongfei.looklook.util.WebUtil;
 import com.looklook.xinghongfei.looklook.widget.HorizotalTopBottomElasticDragDismissFrameLayout;
 import com.looklook.xinghongfei.looklook.widget.ParallaxScrimageView;
+import com.looklook.xinghongfei.looklook.widget.TranslateYTextView;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -73,10 +74,13 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     WebView wvZhihu;
     @InjectView(R.id.nest)
     NestedScrollView mNest;
+    @InjectView(R.id.title)
+    TranslateYTextView mTranslateYTextView;
 
     boolean isEmpty;
     String mBody;
     String[] scc;
+    String mImageUrl;
 
     @InjectView(R.id.draggable_frame)
     HorizotalTopBottomElasticDragDismissFrameLayout mDraggableFrame;
@@ -91,6 +95,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
          if (oldScrollY<168){
              mShot.setOffset(-oldScrollY);
+//             mTranslateYTextView.setOffset(-oldScrollY);
 
          }
 
@@ -99,7 +104,6 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     private String id;
     private String title;
     private String url;
-    private String mImageUrl;
     private IZhihuStoryPresenter mIZhihuStoryPresenter;
     private HorizotalTopBottomElasticDragDismissFrameLayout.SystemChromeFader chromeFader;
 
@@ -108,7 +112,6 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.zhihudescribe);
         ButterKnife.inject(this);
-//        setSupportActionBar(mToolbar);
         initData();
         initView();
         getData();
@@ -146,7 +149,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     }
 
     private void initView() {
-        mToolbar.setTitle(title);
+//        mToolbar.setTitle(title);
         mToolbar.setTitleMargin(0,20,0,10);
         mToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,11 +165,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
             }
         });
         android.support.v7.app.ActionBar actionBar1=getSupportActionBar();
-        if (actionBar1!=null){
-            actionBar1.setTitle(title);
-
-
-        }
+        mTranslateYTextView.setText(title);
 
         WebSettings settings = wvZhihu.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -186,6 +185,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     @Override
     protected void onResume() {
         super.onResume();
+        mNest.smoothScrollTo(0,0);
 
         mDraggableFrame.addListener(chromeFader);
         try {
@@ -328,19 +328,19 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                 public void onTransitionEnd(Transition transition) {
                     super.onTransitionEnd(transition);
 //                    解决5.0 shara element bug
-                 ValueAnimator valueAnimator = ValueAnimator.ofInt(0,100).setDuration(1000L);
-
-                    valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                            mShot.setOffset((Float) valueAnimator.getAnimatedValue() * 10);
-                            mNest.smoothScrollTo((Integer) valueAnimator.getAnimatedValue()/100,0);
-                        }
-                    });
-                    valueAnimator.start();
-                    enterAnimation();
-                    mShot.setAlpha(0.5f);
-                    mShot.animate().alpha(1f).setDuration(50).start();
+//                 ValueAnimator valueAnimator = ValueAnimator.ofInt(0,100).setDuration(1000L);
+//
+//                    valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//                        @Override
+//                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+//                            mShot.setOffset((Float) valueAnimator.getAnimatedValue() * 10);
+//                            mNest.smoothScrollTo((Integer) valueAnimator.getAnimatedValue()/100,0);
+//                        }
+//                    });
+//                    valueAnimator.start();
+//                    enterAnimation();
+//                    mShot.setAlpha(0.5f);
+//                    mShot.animate().alpha(1f).setDuration(50).start();
                 }
 
 
@@ -445,7 +445,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         float offSet = mToolbar.getHeight();
         LinearInterpolator interpolator=new LinearInterpolator();
         viewEnterAnimation(mToolbar, offSet, interpolator);
-        viewEnterAnimationNest(mNest,0f,interpolator);
+//        viewEnterAnimationNest(mNest,0f,interpolator);
 
     }
 

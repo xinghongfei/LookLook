@@ -25,10 +25,19 @@
 
     <string name="zhihu" translatable="false">知乎日报</string>
     <string name="topnews" translatable="false">网易头条</string>
+    <string name="meizi" translatable="false">每日看看</string>
+
 
 
     <string name="transition_topnew" translatable="false">topnewsimage</string>
     <string name="transition_topnew_linear" translatable="false">topnewlinear</string>
+
+    <string name="meizitips" translatable="false">每日推送一个漂亮妹子和经典视频,看不看随小主</string>
+    <string name="meiziaction" translatable="false">我懂</string>
+
+    <string name="save_meizi" translatable="false">金屋藏娇</string>
+
+
 
 
 </resources>

@@ -40,6 +40,7 @@ import com.looklook.xinghongfei.looklook.util.GlideUtils;
 import com.looklook.xinghongfei.looklook.util.ViewUtils;
 import com.looklook.xinghongfei.looklook.widget.HorizotalTopBottomElasticDragDismissFrameLayout;
 import com.looklook.xinghongfei.looklook.widget.ParallaxScrimageView;
+import com.looklook.xinghongfei.looklook.widget.TranslateYTextView;
 
 import org.sufficientlysecure.htmltextview.HtmlTextView;
 
@@ -52,12 +53,6 @@ import butterknife.OnClick;
  */
 public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDesFragment {
     private static final float SCRIM_ADJUSTMENT = 0.075f;
-
-
-    boolean isEmpty;
-    String mBody;
-    String[] scc;
-
     int[] mDeviceInfo;
     int width;
     int heigh;
@@ -67,6 +62,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
         public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
             if (oldScrollY < 168) {
                 mShot.setOffset(-oldScrollY);
+                mTextView.setOffset(-oldScrollY);
             }
         }
     };
@@ -84,6 +80,8 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     HorizotalTopBottomElasticDragDismissFrameLayout mDraggableFrame;
     @InjectView(R.id.nest)
     NestedScrollView mNest;
+    @InjectView(R.id.title)
+    TranslateYTextView mTextView;
 
     private String id;
     private String title;
@@ -104,6 +102,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
         initData();
         initView();
         getData();
+        enterAnimation();
 
         chromeFader = new HorizotalTopBottomElasticDragDismissFrameLayout.SystemChromeFader(this);
 
@@ -116,6 +115,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     private void initData() {
         id = getIntent().getStringExtra("docid");
         title = getIntent().getStringExtra("title");
+        mTextView.setText(title);
         mImageUrl = getIntent().getStringExtra("image");
         Glide.with(this)
                 .load(mImageUrl)
@@ -143,7 +143,6 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     }
     private void initView() {
         mNest.setAlpha(0.5f);
-        mToolbar.setTitle(title);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         mToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,14 +157,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
             }
         });
         ActionBar actionBar1 = getSupportActionBar();
-        if (actionBar1 != null) {
-            actionBar1.setTitle(title);
-            // TODO: 16/8/17 add go back arrow
-//            actionBar1.setLogo(R.drawable.ic_arrow_back);
-            actionBar1.setDefaultDisplayHomeAsUpEnabled(true);
-            actionBar1.setHomeButtonEnabled(true);
-            actionBar1.setDisplayUseLogoEnabled(true);
-        }
+
     }
 
     @Override
@@ -289,7 +281,6 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                         }
                     });
                     valueAnimator.start();
-                    enterAnimation();
 //                    mShot.setAlpha(0.5f);
 //                    mShot.animate().alpha(1f).setDuration(800L).start();
                 }
