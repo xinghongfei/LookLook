@@ -50,8 +50,8 @@ public class ApiManage {
             .cache(cache)
             .build();
     public ZhihuApi zhihuApi;
+    public TopNews topNews;
     private Object zhihuMonitor = new Object();
-
 
     public static ApiManage getInstence() {
         if (apiManage == null) {
@@ -65,17 +65,39 @@ public class ApiManage {
     }
 
     public ZhihuApi getZhihuApiService() {
-
-        synchronized (zhihuMonitor) {
-            if (zhihuApi == null) {
-                zhihuApi = new Retrofit.Builder()
-                        .baseUrl("http://news-at.zhihu.com")
-                        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                        .client(client)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build().create(ZhihuApi.class);
+        if (zhihuApi == null) {
+            synchronized (zhihuMonitor) {
+                if (zhihuApi == null) {
+                    zhihuApi = new Retrofit.Builder()
+                            .baseUrl("http://news-at.zhihu.com")
+                            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                            .client(client)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build().create(ZhihuApi.class);
+                }
             }
         }
+
         return zhihuApi;
     }
+
+    public TopNews getTopNewsService() {
+        if (topNews == null) {
+            synchronized (zhihuMonitor) {
+                if (topNews == null) {
+                    topNews = new Retrofit.Builder()
+                            .baseUrl("http://c.m.163.com")
+                            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                            .client(client)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build().create(TopNews.class);
+
+                }
+            }
+        }
+
+        return topNews;
+    }
+
+
 }

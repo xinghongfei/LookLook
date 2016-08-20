@@ -26,4 +26,4 @@
     android:elevation="@dimen/z_fab"
     android:outlineProvider="none"
     android:src="@drawable/avd_uploading"
-    tools:showIn="@layout/main_layout" />
+    tools:showIn="@layout/zhihu_layout" />

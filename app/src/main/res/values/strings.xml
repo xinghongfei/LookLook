@@ -4,4 +4,31 @@
 
     <string name="one_text">Be kind one another</string>
 
+
+    <string name="pre_refresh_data" translatable="false">refresh_data</string>
+    <string name="pre_get_image" translatable="false">get_image</string>
+    <string name="pre_cache_size" translatable="false">cache_size</string>
+    <string name="pre_feedback" translatable="false">feedback</string>
+    <string name="pre_author" translatable="false">author</string>
+    <string name="pre_version" translatable="false">version</string>
+    <string name="pre_nav_color" translatable="false">pre_nav_color</string>
+    <string name="pre_use_local" translatable="false">pre_use_local</string>
+    <string name="pre_status_bar" translatable="false">pre_status_bar</string>
+
+
+    <string name="snack_infor">请检查网络</string>
+
+    <string name="transition_shot_background" translatable="false">shot_background</string>
+    <string name="transition_shot" translatable="false">shot</string>
+
+    <string name="nevigation_item" translatable="false">nevigation_item</string>
+
+    <string name="zhihu" translatable="false">知乎日报</string>
+    <string name="topnews" translatable="false">网易头条</string>
+
+
+    <string name="transition_topnew" translatable="false">topnewsimage</string>
+    <string name="transition_topnew_linear" translatable="false">topnewlinear</string>
+
+
 </resources>

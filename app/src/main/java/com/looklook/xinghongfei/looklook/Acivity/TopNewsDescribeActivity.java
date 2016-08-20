@@ -1,0 +1,434 @@
+package com.looklook.xinghongfei.looklook.Acivity;
+
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.graphics.Bitmap;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.ActionBar;
+import android.support.v7.graphics.Palette;
+import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
+import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.looklook.xinghongfei.looklook.R;
+import com.looklook.xinghongfei.looklook.bean.news.NewsDetailBean;
+import com.looklook.xinghongfei.looklook.presenter.implPresenter.TopNewsDesPresenterImpl;
+import com.looklook.xinghongfei.looklook.presenter.implView.ITopNewsDesFragment;
+import com.looklook.xinghongfei.looklook.util.AnimUtils;
+import com.looklook.xinghongfei.looklook.util.ColorUtils;
+import com.looklook.xinghongfei.looklook.util.DensityUtil;
+import com.looklook.xinghongfei.looklook.util.GlideUtils;
+import com.looklook.xinghongfei.looklook.util.ViewUtils;
+import com.looklook.xinghongfei.looklook.widget.HorizotalTopBottomElasticDragDismissFrameLayout;
+import com.looklook.xinghongfei.looklook.widget.ParallaxScrimageView;
+
+import org.sufficientlysecure.htmltextview.HtmlTextView;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+
+/**
+ * Created by xinghongfei on 16/8/13.
+ */
+public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDesFragment {
+    private static final float SCRIM_ADJUSTMENT = 0.075f;
+
+
+    boolean isEmpty;
+    String mBody;
+    String[] scc;
+
+    int[] mDeviceInfo;
+    int width;
+    int heigh;
+
+    NestedScrollView.OnScrollChangeListener scrollListener = new NestedScrollView.OnScrollChangeListener() {
+        @Override
+        public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+            if (oldScrollY < 168) {
+                mShot.setOffset(-oldScrollY);
+            }
+        }
+    };
+    @InjectView(R.id.progress)
+    ProgressBar mProgress;
+    @InjectView(R.id.htNewsContent)
+    HtmlTextView mHtNewsContent;
+    @InjectView(R.id.shot)
+    ParallaxScrimageView mShot;
+    @InjectView(R.id.toolbar)
+    Toolbar mToolbar;
+    @InjectView(R.id.container)
+    FrameLayout mContainer;
+    @InjectView(R.id.draggable_frame)
+    HorizotalTopBottomElasticDragDismissFrameLayout mDraggableFrame;
+    @InjectView(R.id.nest)
+    NestedScrollView mNest;
+
+    private String id;
+    private String title;
+    private String url;
+    private String mImageUrl;
+    private HorizotalTopBottomElasticDragDismissFrameLayout.SystemChromeFader chromeFader;
+    private TopNewsDesPresenterImpl mTopNewsDesPresenter;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.topnews_describe);
+        ButterKnife.inject(this);
+        setSupportActionBar(mToolbar);
+        mDeviceInfo = DensityUtil.getDeviceInfo(this);
+        width = mDeviceInfo[0];
+        heigh = width * 3 / 4;
+        initData();
+        initView();
+        getData();
+
+        chromeFader = new HorizotalTopBottomElasticDragDismissFrameLayout.SystemChromeFader(this);
+
+        getWindow().getSharedElementReturnTransition().addListener(ReturnHomeListener);
+        getWindow().getSharedElementEnterTransition().addListener(enterTrasitionListener);
+//        getWindow().setSharedElementEnterTransition(new ChangeBounds());
+
+    }
+
+    private void initData() {
+        id = getIntent().getStringExtra("docid");
+        title = getIntent().getStringExtra("title");
+        mImageUrl = getIntent().getStringExtra("image");
+        Glide.with(this)
+                .load(mImageUrl)
+                .override(width,heigh)
+                .listener(glideLoadListener)
+                .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(mShot);
+
+
+        mTopNewsDesPresenter = new TopNewsDesPresenterImpl(this);
+        mNest.setOnScrollChangeListener(scrollListener);
+
+        postponeEnterTransition();
+        mShot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mShot.getViewTreeObserver().removeOnPreDrawListener(this);
+                // TODO: 16/8/16 posotion
+//                enterAnimation();
+                startPostponedEnterTransition();
+                return true;
+            }
+        });
+    }
+    private void initView() {
+        mNest.setAlpha(0.5f);
+        mToolbar.setTitle(title);
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        mToolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mNest.smoothScrollTo(0, 0);
+            }
+        });
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                expandImageAndFinish();
+            }
+        });
+        ActionBar actionBar1 = getSupportActionBar();
+        if (actionBar1 != null) {
+            actionBar1.setTitle(title);
+            // TODO: 16/8/17 add go back arrow
+//            actionBar1.setLogo(R.drawable.ic_arrow_back);
+            actionBar1.setDefaultDisplayHomeAsUpEnabled(true);
+            actionBar1.setHomeButtonEnabled(true);
+            actionBar1.setDisplayUseLogoEnabled(true);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mDraggableFrame.addListener(chromeFader);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mDraggableFrame.removeListener(chromeFader);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        getWindow().getSharedElementReturnTransition().removeListener(ReturnHomeListener);
+        getWindow().getSharedElementEnterTransition().removeListener(enterTrasitionListener);
+
+        mTopNewsDesPresenter.unsubcrible();
+        super.onDestroy();
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        expandImageAndFinish();
+
+    }
+
+    private void getData() {
+        mTopNewsDesPresenter.getDescrible(id);
+
+    }
+
+    @OnClick(R.id.shot)
+    public void onClick() {
+        mNest.smoothScrollTo(0, 0);
+
+    }
+
+    @Override
+    public void showProgressDialog() {
+        mProgress.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hidProgressDialog() {
+        mProgress.setVisibility(View.INVISIBLE);
+
+    }
+
+    @Override
+    public void showError(String error) {
+        Snackbar.make(mDraggableFrame, getString(R.string.snack_infor), Snackbar.LENGTH_INDEFINITE).setAction("重试", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getData();
+            }
+        }).show();
+    }
+
+
+    private void expandImageAndFinish() {
+        if (mShot.getOffset() != 0f) {
+            Animator expandImage = ObjectAnimator.ofFloat(mShot, ParallaxScrimageView.OFFSET,
+                    0f);
+            expandImage.setDuration(80);
+            expandImage.setInterpolator(new AccelerateInterpolator());
+            expandImage.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    finishAfterTransition();
+                }
+            });
+            expandImage.start();
+        } else {
+            finishAfterTransition();
+        }
+    }
+
+    private Transition.TransitionListener ReturnHomeListener =
+            new AnimUtils.TransitionListenerAdapter() {
+                @Override
+                public void onTransitionStart(Transition transition) {
+                    super.onTransitionStart(transition);
+                    // hide the fab as for some reason it jumps position??  TODO work out why
+
+                    mToolbar.animate()
+                            .alpha(0f)
+                            .setDuration(100)
+                            .setInterpolator(new AccelerateInterpolator());
+                    mShot.setElevation(1f);
+                    mToolbar.setElevation(0f);
+                    mNest.animate()
+                            .alpha(0f)
+                            .setDuration(50)
+                            .setInterpolator(new AccelerateInterpolator());
+                }
+            };
+
+    private Transition.TransitionListener enterTrasitionListener =
+            new AnimUtils.TransitionListenerAdapter() {
+                @Override
+                public void onTransitionEnd(Transition transition) {
+                    super.onTransitionEnd(transition);
+
+//                    解决5.0 shara element bug
+                    ValueAnimator valueAnimator = ValueAnimator.ofInt(0,100).setDuration(100);
+
+
+                    valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+//                            mShot.setOffset((Integer) valueAnimator.getAnimatedValue() * 10);
+                            mNest.smoothScrollTo((Integer) valueAnimator.getAnimatedValue()/10,0);
+
+                        }
+                    });
+                    valueAnimator.start();
+                    enterAnimation();
+//                    mShot.setAlpha(0.5f);
+//                    mShot.animate().alpha(1f).setDuration(800L).start();
+                }
+
+
+                @Override
+                public void onTransitionResume(Transition transition) {
+                    super.onTransitionResume(transition);
+
+                }
+            };
+    private RequestListener glideLoadListener = new RequestListener<String, GlideDrawable>() {
+        @Override
+        public boolean onResourceReady(GlideDrawable resource, String model,
+                                       Target<GlideDrawable> target, boolean isFromMemoryCache,
+                                       boolean isFirstResource) {
+            final Bitmap bitmap = GlideUtils.getBitmap(resource);
+            final int twentyFourDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    24, TopNewsDescribeActivity.this.getResources().getDisplayMetrics());
+            Palette.from(bitmap)
+                    .maximumColorCount(3)
+                    .clearFilters() /* by default palette ignore certain hues
+                        (e.g. pure black/white) but we don't want this. */
+                    .setRegion(0, 0, bitmap.getWidth() - 1, twentyFourDip) /* - 1 to work around
+                        https://code.google.com/p/android/issues/detail?id=191013 */
+                    .generate(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(Palette palette) {
+                            boolean isDark;
+                            @ColorUtils.Lightness int lightness = ColorUtils.isDark(palette);
+                            if (lightness == ColorUtils.LIGHTNESS_UNKNOWN) {
+                                isDark = ColorUtils.isDark(bitmap, bitmap.getWidth() / 2, 0);
+                            } else {
+                                isDark = lightness == ColorUtils.IS_DARK;
+                            }
+
+//                            if (isDark) { // make back icon dark on light images
+//                                mToolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary ));
+//                                mToolbar.setTitleTextColor();
+//                            }
+
+                            // color the status bar. Set a complementary dark color on L,
+                            // light or dark color on M (with matching status bar icons)
+                            int statusBarColor = getWindow().getStatusBarColor();
+                            final Palette.Swatch topColor =
+                                    ColorUtils.getMostPopulousSwatch(palette);
+                            if (topColor != null &&
+                                    (isDark || Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
+                                statusBarColor = ColorUtils.scrimify(topColor.getRgb(),
+                                        isDark, SCRIM_ADJUSTMENT);
+                                // set a light status bar on M+
+                                if (!isDark && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    ViewUtils.setLightStatusBar(mShot);
+                                }
+                            }
+
+                            if (statusBarColor != getWindow().getStatusBarColor()) {
+                                mShot.setScrimColor(statusBarColor);
+                                ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
+                                        getWindow().getStatusBarColor(), statusBarColor);
+                                statusBarColorAnim.addUpdateListener(new ValueAnimator
+                                        .AnimatorUpdateListener() {
+                                    @Override
+                                    public void onAnimationUpdate(ValueAnimator animation) {
+                                        getWindow().setStatusBarColor(
+                                                (int) animation.getAnimatedValue());
+                                    }
+                                });
+                                statusBarColorAnim.setDuration(1000L);
+                                statusBarColorAnim.setInterpolator(
+                                        new AccelerateInterpolator());
+                                statusBarColorAnim.start();
+                            }
+                        }
+                    });
+
+            Palette.from(bitmap)
+                    .clearFilters()
+                    .generate(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(Palette palette) {
+
+                            // slightly more opaque ripple on the pinned image to compensate
+                            // for the scrim
+                            mShot.setForeground(ViewUtils.createRipple(palette, 0.3f, 0.6f,
+                                    ContextCompat.getColor(TopNewsDescribeActivity.this, R.color.mid_grey),
+                                    true));
+                        }
+                    });
+
+            // TODO should keep the background if the image contains transparency?!
+            mShot.setBackground(null);
+            return false;
+        }
+
+        @Override
+        public boolean onException(Exception e, String model, Target<GlideDrawable> target,
+                                   boolean isFirstResource) {
+            return false;
+        }
+    };
+
+    @Override
+    public void upListItem(NewsDetailBean newsList) {
+        mProgress.setVisibility(View.INVISIBLE);
+        mHtNewsContent.setHtmlFromString(newsList.getBody(),new HtmlTextView.LocalImageGetter());
+
+    }
+
+
+    private void enterAnimation() {
+        float offSet = mToolbar.getHeight();
+        LinearInterpolator interpolator = new LinearInterpolator();
+        AccelerateInterpolator accelerateInterpolator=new AccelerateInterpolator();
+//        viewEnterAnimation(mToolbar, offSet, interpolator);
+        viewEnterAnimationNest(mNest, 0f, accelerateInterpolator);
+
+    }
+
+    private void viewEnterAnimation(View view, float offset, Interpolator interp) {
+        view.setTranslationY(-offset);
+        view.setAlpha(0.6f);
+        view.animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setDuration(600L)
+                .setInterpolator(interp)
+                .setListener(null)
+                .start();
+    }
+
+    private void viewEnterAnimationNest(View view, float offset, Interpolator interp) {
+        view.setTranslationY(-offset);
+        view.animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setDuration(50L)
+                .setInterpolator(interp)
+                .setListener(null)
+                .start();
+    }
+}
