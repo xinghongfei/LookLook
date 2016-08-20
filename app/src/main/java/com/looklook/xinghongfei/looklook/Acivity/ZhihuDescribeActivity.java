@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -45,10 +46,9 @@ import com.looklook.xinghongfei.looklook.util.AnimUtils;
 import com.looklook.xinghongfei.looklook.util.ColorUtils;
 import com.looklook.xinghongfei.looklook.util.DensityUtil;
 import com.looklook.xinghongfei.looklook.util.GlideUtils;
-import com.looklook.xinghongfei.looklook.util.ImageLoader;
 import com.looklook.xinghongfei.looklook.util.ViewUtils;
 import com.looklook.xinghongfei.looklook.util.WebUtil;
-import com.looklook.xinghongfei.looklook.widget.HorizotalTopBottomElasticDragDismissFrameLayout;
+import com.looklook.xinghongfei.looklook.widget.ElasticDragDismissFrameLayout;
 import com.looklook.xinghongfei.looklook.widget.ParallaxScrimageView;
 import com.looklook.xinghongfei.looklook.widget.TranslateYTextView;
 
@@ -83,7 +83,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     String mImageUrl;
 
     @InjectView(R.id.draggable_frame)
-    HorizotalTopBottomElasticDragDismissFrameLayout mDraggableFrame;
+    ElasticDragDismissFrameLayout mDraggableFrame;
 
     int[] mDeviceInfo;
     int width;
@@ -95,8 +95,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
          if (oldScrollY<168){
              mShot.setOffset(-oldScrollY);
-//             mTranslateYTextView.setOffset(-oldScrollY);
-
+             mTranslateYTextView.setOffset(-oldScrollY);
          }
 
         }
@@ -105,26 +104,32 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     private String title;
     private String url;
     private IZhihuStoryPresenter mIZhihuStoryPresenter;
-    private HorizotalTopBottomElasticDragDismissFrameLayout.SystemChromeFader chromeFader;
+    private ElasticDragDismissFrameLayout.SystemChromeFader chromeFader;
+    private Handler mHandler=new Handler();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.zhihudescribe);
         ButterKnife.inject(this);
+        mDeviceInfo = DensityUtil.getDeviceInfo(this);
+        width = mDeviceInfo[0];
+        heigh = width * 3 / 4;
+        setSupportActionBar(mToolbar);
+
         initData();
         initView();
         getData();
 
-        chromeFader = new HorizotalTopBottomElasticDragDismissFrameLayout.SystemChromeFader(this);
+        chromeFader = new ElasticDragDismissFrameLayout.SystemChromeFader(this);
 
         getWindow().getSharedElementReturnTransition().addListener(zhihuReturnHomeListener);
         getWindow().getSharedElementEnterTransition().addListener(zhihuEnterListener);
         getWindow().setSharedElementEnterTransition(new ChangeBounds());
 
-        mDeviceInfo = DensityUtil.getDeviceInfo(this);
-        width = mDeviceInfo[0];
-        heigh = width * 3 / 4;
+//        trydownloadImage();
+        enterAnimation();
+
     }
 
     private void initData() {
@@ -133,7 +138,6 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         mImageUrl = getIntent().getStringExtra("image");
         mIZhihuStoryPresenter = new ZhihuStoryPresenterImpl(this);
         mNest.setOnScrollChangeListener(scrollListener);
-
         postponeEnterTransition();
         mShot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
@@ -148,23 +152,31 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
     }
 
+    private void trydownloadImage() {
+        if (mImageUrl!=null){
+
+            Glide.with(this)
+                    .load(mImageUrl).centerCrop()
+                    .listener(shotLoadListener).override(width,heigh)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .into(mShot);
+        }
+    }
+
     private void initView() {
-//        mToolbar.setTitle(title);
-        mToolbar.setTitleMargin(0,20,0,10);
+        mToolbar.setTitleMargin(20,20,0,10);
         mToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mNest.smoothScrollTo(0,0);
             }
         });
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 expandImageAndFinish();
             }
         });
-        android.support.v7.app.ActionBar actionBar1=getSupportActionBar();
         mTranslateYTextView.setText(title);
 
         WebSettings settings = wvZhihu.getSettings();
@@ -182,11 +194,18 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
     }
 
+
+    Runnable runnable=new Runnable() {
+        @Override
+        public void run() {
+        mNest.smoothScrollTo(0,0);
+        }
+    };
     @Override
     protected void onResume() {
         super.onResume();
-        mNest.smoothScrollTo(0,0);
-
+//      解决图片加载不完整bug
+        mHandler.postDelayed(runnable,1000L);
         mDraggableFrame.addListener(chromeFader);
         try {
             wvZhihu.getClass().getMethod("onResume").invoke(wvZhihu, (Object[]) null);
@@ -259,12 +278,12 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
     @Override
     public void showZhihuStory(ZhihuStory zhihuStory) {
-        ImageLoader.loadImage(ZhihuDescribeActivity.this, zhihuStory.getImage(), mShot);
-        Glide.with(this)
-                .load(zhihuStory.getImage()).centerCrop()
-                .listener(shotLoadListener).override(width,heigh)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(mShot);
+
+            Glide.with(this)
+                    .load(zhihuStory.getImage()).centerCrop()
+                    .listener(shotLoadListener).override(width,heigh)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .into(mShot);
         url = zhihuStory.getShareUrl();
         isEmpty=TextUtils.isEmpty(zhihuStory.getBody());
         mBody=zhihuStory.getBody();
@@ -444,18 +463,18 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     private void enterAnimation() {
         float offSet = mToolbar.getHeight();
         LinearInterpolator interpolator=new LinearInterpolator();
-        viewEnterAnimation(mToolbar, offSet, interpolator);
-//        viewEnterAnimationNest(mNest,0f,interpolator);
+        viewEnterAnimation(mShot, offSet, interpolator);
+        viewEnterAnimationNest(mNest,0f,interpolator);
 
     }
 
     private void viewEnterAnimation(View view, float offset, Interpolator interp) {
         view.setTranslationY(-offset);
-        view.setAlpha(0.6f);
+        view.setAlpha(0f);
         view.animate()
                 .translationY(0f)
                 .alpha(1f)
-                .setDuration(600L)
+                .setDuration(1000L)
                 .setInterpolator(interp)
                 .setListener(null)
                 .start();
@@ -466,7 +485,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         view.animate()
                 .translationY(0f)
                 .alpha(1f)
-                .setDuration(100)
+                .setDuration(1000L)
                 .setInterpolator(interp)
                 .setListener(null)
                 .start();

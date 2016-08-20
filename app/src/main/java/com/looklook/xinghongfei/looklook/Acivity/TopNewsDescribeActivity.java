@@ -38,7 +38,7 @@ import com.looklook.xinghongfei.looklook.util.ColorUtils;
 import com.looklook.xinghongfei.looklook.util.DensityUtil;
 import com.looklook.xinghongfei.looklook.util.GlideUtils;
 import com.looklook.xinghongfei.looklook.util.ViewUtils;
-import com.looklook.xinghongfei.looklook.widget.HorizotalTopBottomElasticDragDismissFrameLayout;
+import com.looklook.xinghongfei.looklook.widget.ElasticDragDismissFrameLayout;
 import com.looklook.xinghongfei.looklook.widget.ParallaxScrimageView;
 import com.looklook.xinghongfei.looklook.widget.TranslateYTextView;
 
@@ -77,7 +77,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     @InjectView(R.id.container)
     FrameLayout mContainer;
     @InjectView(R.id.draggable_frame)
-    HorizotalTopBottomElasticDragDismissFrameLayout mDraggableFrame;
+    ElasticDragDismissFrameLayout mDraggableFrame;
     @InjectView(R.id.nest)
     NestedScrollView mNest;
     @InjectView(R.id.title)
@@ -87,7 +87,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     private String title;
     private String url;
     private String mImageUrl;
-    private HorizotalTopBottomElasticDragDismissFrameLayout.SystemChromeFader chromeFader;
+    private ElasticDragDismissFrameLayout.SystemChromeFader chromeFader;
     private TopNewsDesPresenterImpl mTopNewsDesPresenter;
 
     @Override
@@ -104,7 +104,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
         getData();
         enterAnimation();
 
-        chromeFader = new HorizotalTopBottomElasticDragDismissFrameLayout.SystemChromeFader(this);
+        chromeFader = new ElasticDragDismissFrameLayout.SystemChromeFader(this);
 
         getWindow().getSharedElementReturnTransition().addListener(ReturnHomeListener);
         getWindow().getSharedElementEnterTransition().addListener(enterTrasitionListener);

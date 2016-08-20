@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 
-<com.looklook.xinghongfei.looklook.widget.HorizotalTopBottomElasticDragDismissFrameLayout
+<com.looklook.xinghongfei.looklook.widget.ElasticDragDismissFrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -135,4 +135,4 @@
         </android.support.v4.widget.NestedScrollView>
     </FrameLayout>
 
-</com.looklook.xinghongfei.looklook.widget.HorizotalTopBottomElasticDragDismissFrameLayout>
+</com.looklook.xinghongfei.looklook.widget.ElasticDragDismissFrameLayout>

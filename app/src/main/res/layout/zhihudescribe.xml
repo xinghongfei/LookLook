@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 
-<com.looklook.xinghongfei.looklook.widget.HorizotalTopBottomElasticDragDismissFrameLayout
+<com.looklook.xinghongfei.looklook.widget.ElasticDragDismissFrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -81,18 +81,19 @@
             android:elevation="1dp"
             android:outlineProvider="none"
             android:scrollbarDefaultDelayBeforeFade="1"
-            app:title="@string/zhihu"/>
+            app:title="@string/zhihu"
+            app:logo="@drawable/ic_arrow_back"/>
 
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/nest"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+           >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="300dp"
+                android:layout_marginTop="260dp"
                 android:orientation="vertical">
 
                 <WebView
@@ -110,4 +111,4 @@
         </android.support.v4.widget.NestedScrollView>
     </FrameLayout>
 
-</com.looklook.xinghongfei.looklook.widget.HorizotalTopBottomElasticDragDismissFrameLayout>
+</com.looklook.xinghongfei.looklook.widget.ElasticDragDismissFrameLayout>

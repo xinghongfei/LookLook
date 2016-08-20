@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class HorizotalTopBottomElasticDragDismissFrameLayout extends FrameLayout {
+public class ElasticDragDismissFrameLayout extends FrameLayout {
 
     // configurable attribs
     private float dragDismissDistance = Float.MAX_VALUE;
@@ -56,40 +56,40 @@ public class HorizotalTopBottomElasticDragDismissFrameLayout extends FrameLayout
 
     private List<ElasticDragDismissCallback> callbacks;
 
-    public HorizotalTopBottomElasticDragDismissFrameLayout(Context context) {
+    public ElasticDragDismissFrameLayout(Context context) {
         this(context, null, 0, 0);
     }
 
-    public HorizotalTopBottomElasticDragDismissFrameLayout(Context context, AttributeSet attrs) {
+    public ElasticDragDismissFrameLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0, 0);
     }
 
-    public HorizotalTopBottomElasticDragDismissFrameLayout(Context context, AttributeSet attrs,
-                                                           int defStyleAttr) {
+    public ElasticDragDismissFrameLayout(Context context, AttributeSet attrs,
+                                         int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public HorizotalTopBottomElasticDragDismissFrameLayout(Context context, AttributeSet attrs,
-                                                           int defStyleAttr, int defStyleRes) {
+    public ElasticDragDismissFrameLayout(Context context, AttributeSet attrs,
+                                         int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
 
         final TypedArray a = getContext().obtainStyledAttributes(
-                attrs, R.styleable.HorizotalTopBottomElasticDragDismissFrameLayout, 0, 0);
+                attrs, R.styleable.ElasticDragDismissFrameLayout, 0, 0);
 
-        if (a.hasValue(R.styleable.HorizotalTopBottomElasticDragDismissFrameLayout_dragDismissDistance)) {
+        if (a.hasValue(R.styleable.ElasticDragDismissFrameLayout_dragDismissDistance)) {
             dragDismissDistance = a.getDimensionPixelSize(R.styleable
-                    .HorizotalTopBottomElasticDragDismissFrameLayout_dragDismissDistance, 0);
-        } else if (a.hasValue(R.styleable.HorizotalTopBottomElasticDragDismissFrameLayout_dragDismissFraction)) {
+                    .ElasticDragDismissFrameLayout_dragDismissDistance, 0);
+        } else if (a.hasValue(R.styleable.ElasticDragDismissFrameLayout_dragDismissFraction)) {
             dragDismissFraction = a.getFloat(R.styleable
-                    .HorizotalTopBottomElasticDragDismissFrameLayout_dragDismissFraction, dragDismissFraction);
+                    .ElasticDragDismissFrameLayout_dragDismissFraction, dragDismissFraction);
         }
-        if (a.hasValue(R.styleable.HorizotalTopBottomElasticDragDismissFrameLayout_dragDismissScale)) {
+        if (a.hasValue(R.styleable.ElasticDragDismissFrameLayout_dragDismissScale)) {
             dragDismissScale = a.getFloat(R.styleable
-                    .HorizotalTopBottomElasticDragDismissFrameLayout_dragDismissScale, dragDismissScale);
+                    .ElasticDragDismissFrameLayout_dragDismissScale, dragDismissScale);
             shouldScale = dragDismissScale != 1f;
         }
-        if (a.hasValue(R.styleable.HorizotalTopBottomElasticDragDismissFrameLayout_dragElasticity)) {
-            dragElacticity = a.getFloat(R.styleable.HorizotalTopBottomElasticDragDismissFrameLayout_dragElasticity,
+        if (a.hasValue(R.styleable.ElasticDragDismissFrameLayout_dragElasticity)) {
+            dragElacticity = a.getFloat(R.styleable.ElasticDragDismissFrameLayout_dragElasticity,
                     dragElacticity);
         }
         a.recycle();
