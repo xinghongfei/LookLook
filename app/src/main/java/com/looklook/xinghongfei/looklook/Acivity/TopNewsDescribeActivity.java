@@ -56,16 +56,6 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     int[] mDeviceInfo;
     int width;
     int heigh;
-
-    NestedScrollView.OnScrollChangeListener scrollListener = new NestedScrollView.OnScrollChangeListener() {
-        @Override
-        public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-            if (oldScrollY < 168) {
-                mShot.setOffset(-oldScrollY);
-                mTextView.setOffset(-oldScrollY);
-            }
-        }
-    };
     @InjectView(R.id.progress)
     ProgressBar mProgress;
     @InjectView(R.id.htNewsContent)
@@ -82,166 +72,21 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     NestedScrollView mNest;
     @InjectView(R.id.title)
     TranslateYTextView mTextView;
-
+    NestedScrollView.OnScrollChangeListener scrollListener = new NestedScrollView.OnScrollChangeListener() {
+        @Override
+        public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+            if (oldScrollY < 168) {
+                mShot.setOffset(-oldScrollY);
+                mTextView.setOffset(-oldScrollY);
+            }
+        }
+    };
     private String id;
     private String title;
     private String url;
     private String mImageUrl;
     private ElasticDragDismissFrameLayout.SystemChromeFader chromeFader;
     private TopNewsDesPresenterImpl mTopNewsDesPresenter;
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.topnews_describe);
-        ButterKnife.inject(this);
-        setSupportActionBar(mToolbar);
-        mDeviceInfo = DensityUtil.getDeviceInfo(this);
-        width = mDeviceInfo[0];
-        heigh = width * 3 / 4;
-        initData();
-        initView();
-        getData();
-        enterAnimation();
-
-        chromeFader = new ElasticDragDismissFrameLayout.SystemChromeFader(this);
-
-        getWindow().getSharedElementReturnTransition().addListener(ReturnHomeListener);
-        getWindow().getSharedElementEnterTransition().addListener(enterTrasitionListener);
-//        getWindow().setSharedElementEnterTransition(new ChangeBounds());
-
-    }
-
-    private void initData() {
-        id = getIntent().getStringExtra("docid");
-        title = getIntent().getStringExtra("title");
-        mTextView.setText(title);
-        mImageUrl = getIntent().getStringExtra("image");
-        Glide.with(this)
-                .load(mImageUrl)
-                .override(width,heigh)
-                .listener(glideLoadListener)
-                .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(mShot);
-
-
-        mTopNewsDesPresenter = new TopNewsDesPresenterImpl(this);
-        mNest.setOnScrollChangeListener(scrollListener);
-
-        postponeEnterTransition();
-        mShot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                mShot.getViewTreeObserver().removeOnPreDrawListener(this);
-                // TODO: 16/8/16 posotion
-//                enterAnimation();
-                startPostponedEnterTransition();
-                return true;
-            }
-        });
-    }
-    private void initView() {
-        mNest.setAlpha(0.5f);
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-        mToolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mNest.smoothScrollTo(0, 0);
-            }
-        });
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                expandImageAndFinish();
-            }
-        });
-        ActionBar actionBar1 = getSupportActionBar();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mDraggableFrame.addListener(chromeFader);
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mDraggableFrame.removeListener(chromeFader);
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        getWindow().getSharedElementReturnTransition().removeListener(ReturnHomeListener);
-        getWindow().getSharedElementEnterTransition().removeListener(enterTrasitionListener);
-
-        mTopNewsDesPresenter.unsubcrible();
-        super.onDestroy();
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        expandImageAndFinish();
-
-    }
-
-    private void getData() {
-        mTopNewsDesPresenter.getDescrible(id);
-
-    }
-
-    @OnClick(R.id.shot)
-    public void onClick() {
-        mNest.smoothScrollTo(0, 0);
-
-    }
-
-    @Override
-    public void showProgressDialog() {
-        mProgress.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hidProgressDialog() {
-        mProgress.setVisibility(View.INVISIBLE);
-
-    }
-
-    @Override
-    public void showError(String error) {
-        Snackbar.make(mDraggableFrame, getString(R.string.snack_infor), Snackbar.LENGTH_INDEFINITE).setAction("重试", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getData();
-            }
-        }).show();
-    }
-
-
-    private void expandImageAndFinish() {
-        if (mShot.getOffset() != 0f) {
-            Animator expandImage = ObjectAnimator.ofFloat(mShot, ParallaxScrimageView.OFFSET,
-                    0f);
-            expandImage.setDuration(80);
-            expandImage.setInterpolator(new AccelerateInterpolator());
-            expandImage.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    finishAfterTransition();
-                }
-            });
-            expandImage.start();
-        } else {
-            finishAfterTransition();
-        }
-    }
-
     private Transition.TransitionListener ReturnHomeListener =
             new AnimUtils.TransitionListenerAdapter() {
                 @Override
@@ -253,15 +98,16 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                             .alpha(0f)
                             .setDuration(100)
                             .setInterpolator(new AccelerateInterpolator());
-                    mShot.setElevation(1f);
-                    mToolbar.setElevation(0f);
+                    if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                        mShot.setElevation(1f);
+                        mToolbar.setElevation(0f);
+                    }
                     mNest.animate()
                             .alpha(0f)
                             .setDuration(50)
                             .setInterpolator(new AccelerateInterpolator());
                 }
             };
-
     private Transition.TransitionListener enterTrasitionListener =
             new AnimUtils.TransitionListenerAdapter() {
                 @Override
@@ -269,14 +115,14 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                     super.onTransitionEnd(transition);
 
 //                    解决5.0 shara element bug
-                    ValueAnimator valueAnimator = ValueAnimator.ofInt(0,100).setDuration(100);
+                    ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 100).setDuration(100);
 
 
                     valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                         @Override
                         public void onAnimationUpdate(ValueAnimator valueAnimator) {
 //                            mShot.setOffset((Integer) valueAnimator.getAnimatedValue() * 10);
-                            mNest.smoothScrollTo((Integer) valueAnimator.getAnimatedValue()/10,0);
+                            mNest.smoothScrollTo((Integer) valueAnimator.getAnimatedValue() / 10, 0);
 
                         }
                     });
@@ -337,22 +183,25 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                                 }
                             }
 
-                            if (statusBarColor != getWindow().getStatusBarColor()) {
-                                mShot.setScrimColor(statusBarColor);
-                                ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
-                                        getWindow().getStatusBarColor(), statusBarColor);
-                                statusBarColorAnim.addUpdateListener(new ValueAnimator
-                                        .AnimatorUpdateListener() {
-                                    @Override
-                                    public void onAnimationUpdate(ValueAnimator animation) {
-                                        getWindow().setStatusBarColor(
-                                                (int) animation.getAnimatedValue());
-                                    }
-                                });
-                                statusBarColorAnim.setDuration(1000L);
-                                statusBarColorAnim.setInterpolator(
-                                        new AccelerateInterpolator());
-                                statusBarColorAnim.start();
+                            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+
+                                if (statusBarColor != getWindow().getStatusBarColor()) {
+                                    mShot.setScrimColor(statusBarColor);
+                                    ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
+                                            getWindow().getStatusBarColor(), statusBarColor);
+                                    statusBarColorAnim.addUpdateListener(new ValueAnimator
+                                            .AnimatorUpdateListener() {
+                                        @Override
+                                        public void onAnimationUpdate(ValueAnimator animation) {
+                                            getWindow().setStatusBarColor(
+                                                    (int) animation.getAnimatedValue());
+                                        }
+                                    });
+                                    statusBarColorAnim.setDuration(1000L);
+                                    statusBarColorAnim.setInterpolator(
+                                            new AccelerateInterpolator());
+                                    statusBarColorAnim.start();
+                                }
                             }
                         }
                     });
@@ -365,9 +214,12 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
 
                             // slightly more opaque ripple on the pinned image to compensate
                             // for the scrim
-                            mShot.setForeground(ViewUtils.createRipple(palette, 0.3f, 0.6f,
-                                    ContextCompat.getColor(TopNewsDescribeActivity.this, R.color.mid_grey),
-                                    true));
+                            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                                mShot.setForeground(ViewUtils.createRipple(palette, 0.3f, 0.6f,
+                                        ContextCompat.getColor(TopNewsDescribeActivity.this, R.color.mid_grey),
+                                        true));
+                            }
+
                         }
                     });
 
@@ -384,9 +236,178 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     };
 
     @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.topnews_describe);
+        ButterKnife.inject(this);
+        setSupportActionBar(mToolbar);
+        mDeviceInfo = DensityUtil.getDeviceInfo(this);
+        width = mDeviceInfo[0];
+        heigh = width * 3 / 4;
+        initData();
+        initView();
+        getData();
+        enterAnimation();
+
+        chromeFader = new ElasticDragDismissFrameLayout.SystemChromeFader(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().getSharedElementReturnTransition().addListener(ReturnHomeListener);
+            getWindow().getSharedElementEnterTransition().addListener(enterTrasitionListener);
+        }
+
+//        getWindow().setSharedElementEnterTransition(new ChangeBounds());
+
+    }
+
+    private void initData() {
+        id = getIntent().getStringExtra("docid");
+        title = getIntent().getStringExtra("title");
+        mTextView.setText(title);
+        mImageUrl = getIntent().getStringExtra("image");
+        Glide.with(this)
+                .load(mImageUrl)
+                .override(width, heigh)
+                .listener(glideLoadListener)
+                .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(mShot);
+
+
+        mTopNewsDesPresenter = new TopNewsDesPresenterImpl(this);
+        mNest.setOnScrollChangeListener(scrollListener);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            postponeEnterTransition();
+            mShot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    mShot.getViewTreeObserver().removeOnPreDrawListener(this);
+                    // TODO: 16/8/16 posotion
+//                enterAnimation();
+                    startPostponedEnterTransition();
+                    return true;
+                }
+            });
+        }
+
+
+    }
+
+    private void initView() {
+        mNest.setAlpha(0.5f);
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        mToolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mNest.smoothScrollTo(0, 0);
+            }
+        });
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                expandImageAndFinish();
+            }
+        });
+        ActionBar actionBar1 = getSupportActionBar();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mDraggableFrame.addListener(chromeFader);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mDraggableFrame.removeListener(chromeFader);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().getSharedElementReturnTransition().removeListener(ReturnHomeListener);
+            getWindow().getSharedElementEnterTransition().removeListener(enterTrasitionListener);
+
+        }
+        mTopNewsDesPresenter.unsubcrible();
+        super.onDestroy();
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        expandImageAndFinish();
+
+    }
+
+    private void getData() {
+        mTopNewsDesPresenter.getDescrible(id);
+
+    }
+
+    @OnClick(R.id.shot)
+    public void onClick() {
+        mNest.smoothScrollTo(0, 0);
+
+    }
+
+    @Override
+    public void showProgressDialog() {
+        mProgress.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hidProgressDialog() {
+        mProgress.setVisibility(View.INVISIBLE);
+
+    }
+
+    @Override
+    public void showError(String error) {
+        Snackbar.make(mDraggableFrame, getString(R.string.snack_infor), Snackbar.LENGTH_INDEFINITE).setAction("重试", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getData();
+            }
+        }).show();
+    }
+
+    private void expandImageAndFinish() {
+
+        if (mShot.getOffset() != 0f) {
+            Animator expandImage = ObjectAnimator.ofFloat(mShot, ParallaxScrimageView.OFFSET,
+                    0f);
+            expandImage.setDuration(80);
+            expandImage.setInterpolator(new AccelerateInterpolator());
+            expandImage.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        finishAfterTransition();
+                    } else {
+                        finish();
+                    }
+                }});
+                expandImage.start();
+            }else{
+            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                finishAfterTransition();
+            }else {
+                finish();
+            }
+            }
+
+
+    }
+
+    @Override
     public void upListItem(NewsDetailBean newsList) {
         mProgress.setVisibility(View.INVISIBLE);
-        mHtNewsContent.setHtmlFromString(newsList.getBody(),new HtmlTextView.LocalImageGetter());
+        mHtNewsContent.setHtmlFromString(newsList.getBody(), new HtmlTextView.LocalImageGetter());
 
     }
 
@@ -394,7 +415,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     private void enterAnimation() {
         float offSet = mToolbar.getHeight();
         LinearInterpolator interpolator = new LinearInterpolator();
-        AccelerateInterpolator accelerateInterpolator=new AccelerateInterpolator();
+        AccelerateInterpolator accelerateInterpolator = new AccelerateInterpolator();
 //        viewEnterAnimation(mToolbar, offSet, interpolator);
         viewEnterAnimationNest(mNest, 0f, accelerateInterpolator);
 

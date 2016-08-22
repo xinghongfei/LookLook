@@ -74,7 +74,6 @@
             android:layout_height="?android:actionBarSize"
             android:outlineProvider="none"
             android:elevation="1dp"
-            android:logo="@drawable/ic_arrow_back"
             android:background="#3b000000"
             style="@style/Widget.Plaid.HomeToolbar"
             app:title="@string/topnews"/>

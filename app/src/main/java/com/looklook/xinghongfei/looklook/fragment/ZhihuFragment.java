@@ -1,12 +1,12 @@
 package com.looklook.xinghongfei.looklook.fragment;
 
 import android.content.Context;
-import android.graphics.drawable.AnimatedVectorDrawable;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.NetworkRequest;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -37,17 +36,14 @@ import butterknife.InjectView;
  */
 public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
 
-    ImageView noConnection;
     TextView noConnectionText;
     boolean loading;
     ZhihuAdapter zhihuAdapter;
     boolean connected = true;
     boolean monitoringConnectivity;
 
-    float toolbarArlp = 100;
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView.OnScrollListener loadingMoreListener;
-    RecyclerView.OnScrollListener tooldimissListener;
 
 
     ZhihuPresenterImpl zhihuPresenter;
@@ -87,7 +83,9 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
         if (monitoringConnectivity) {
             final ConnectivityManager connectivityManager
                     = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-            connectivityManager.unregisterNetworkCallback(connectivityCallback);
+            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                connectivityManager.unregisterNetworkCallback(connectivityCallback);
+            }
             monitoringConnectivity = false;
         }
     }
@@ -109,7 +107,12 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
 
         initialListener();
 
-        mLinearLayoutManager = new WrapContentLinearLayoutManager(getContext());
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            mLinearLayoutManager = new WrapContentLinearLayoutManager(getContext());
+
+        }else {
+            mLinearLayoutManager=new LinearLayoutManager(getContext());
+        }
         recycle.setLayoutManager(mLinearLayoutManager);
         recycle.setHasFixedSize(true);
         recycle.addItemDecoration(new GridItemDividerDecoration(getContext(), R.dimen.divider_height, R.color.divider));
@@ -117,7 +120,7 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
         recycle.setItemAnimator(new DefaultItemAnimator());
         recycle.setAdapter(zhihuAdapter);
         recycle.addOnScrollListener(loadingMoreListener);
-//        recycle.addOnScrollListener(tooldimissListener);
+//      recycle.addOnScrollListener(tooldimissListener);
 
         if (connected) {
             loadDate();
@@ -153,7 +156,6 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-//
                 if (dy > 0) //向下滚动
                 {
                     int visibleItemCount = mLinearLayoutManager.getChildCount();
@@ -168,48 +170,28 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
             }
         };
 
-//
-//        tooldimissListener = new RecyclerView.OnScrollListener() {
-//
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//
-//                if (mLinearLayoutManager.findFirstVisibleItemPosition() < 2) {
-//                    if (dy > 0) {
-//                        if (toolbarArlp > 0) {
-//                            toolbarArlp -= dy;
-//                        } else {
-//                            toolbarArlp = 0;
-//                        }
-//                    }
-//                    if (dy < 0) {
-//                        if (toolbarArlp < 100) {
-//                            toolbarArlp -= dy;
-//                        } else {
-//                            toolbarArlp = 100;
-//                        }
-//                    }
-//
-//                    toolbar.setAlpha(toolbarArlp / 100);
-//                }
-//            }
-//
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//                if (newState == RecyclerView.SCROLL_STATE_DRAGGING && toolbar.getElevation() != -1) {
-//                    toolbar.setElevation(-1f);
-//
-//                } else if (newState == RecyclerView.SCROLL_STATE_IDLE
-//                        && mLinearLayoutManager.findFirstVisibleItemPosition() == 0
-//                        && toolbar.getElevation() != 0) {
-//                    toolbar.setElevation(1f);
-////                    animateToolbar();
-////                    zhihuPresenter.getLastZhihuNews();
-//                }
-//            }
-//        };
+
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            connectivityCallback = new ConnectivityManager.NetworkCallback() {
+                @Override
+                public void onAvailable(Network network) {
+                    connected = true;
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            noConnectionText.setVisibility(View.GONE);
+                            loadDate();
+                        }
+                    });
+                }
+
+                @Override
+                public void onLost(Network network) {
+                    connected = false;
+                }
+            };
+
+        }
 
 
     }
@@ -275,50 +257,34 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
         connected = activeNetworkInfo != null && activeNetworkInfo.isConnected();
         if (!connected) {
             progress.setVisibility(View.INVISIBLE);
-            if (noConnection == null) {
-                final ViewStub stub = (ViewStub) view.findViewById(R.id.stub_no_connection);
-                noConnection = (ImageView) stub.inflate();
-            }
+
             if (noConnectionText == null) {
 
                 ViewStub stub_text = (ViewStub) view.findViewById(R.id.stub_no_connection_text);
                 noConnectionText = (TextView) stub_text.inflate();
             }
 
-            final AnimatedVectorDrawable avd =
-                    (AnimatedVectorDrawable) getContext().getDrawable(R.drawable.avd_no_connection);
-            noConnection.setImageDrawable(avd);
-            avd.start();
-            connectivityManager.registerNetworkCallback(
-                    new NetworkRequest.Builder()
-                            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build(),
-                    connectivityCallback);
+//            final AnimatedVectorDrawable avd =
+//                    (AnimatedVectorDrawable) getContext().getDrawable(R.drawable.avd_no_connection);
+//            noConnection.setImageDrawable(avd);
+//            avd.start();
+            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                connectivityManager.registerNetworkCallback(
+                        new NetworkRequest.Builder()
+                                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build(),
+                        connectivityCallback);
 
-            monitoringConnectivity = true;
+                monitoringConnectivity = true;
+            }
+
         }
 
     }
 
 
 
-    private ConnectivityManager.NetworkCallback connectivityCallback = new ConnectivityManager.NetworkCallback() {
-        @Override
-        public void onAvailable(Network network) {
-            connected = true;
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    noConnection.setVisibility(View.GONE);
-                    noConnectionText.setVisibility(View.GONE);
-                    loadDate();
-                }
-            });
-        }
 
-        @Override
-        public void onLost(Network network) {
-            connected = false;
-        }
-    };
+        private ConnectivityManager.NetworkCallback connectivityCallback;
+
 
 }

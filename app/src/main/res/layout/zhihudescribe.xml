@@ -72,17 +72,16 @@
 
         </FrameLayout>
 
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
-            style="@style/Widget.Plaid.HomeToolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:actionBarSize"
-            android:background="#3b000000"
-            android:elevation="1dp"
             android:outlineProvider="none"
-            android:scrollbarDefaultDelayBeforeFade="1"
-            app:title="@string/zhihu"
-            app:logo="@drawable/ic_arrow_back"/>
+            android:elevation="1dp"
+            android:background="#3b000000"
+            style="@style/Widget.Plaid.HomeToolbar"
+            app:title="@string/zhihu"/>
 
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/nest"

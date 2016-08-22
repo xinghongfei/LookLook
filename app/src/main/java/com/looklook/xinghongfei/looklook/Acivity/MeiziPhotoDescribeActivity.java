@@ -65,9 +65,11 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
         setupPhotoAttacher();
         mToolbar.setAlpha(0.7f);
         mRelativeLayout.setAlpha(0.3f);
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            getWindow().getSharedElementEnterTransition().addListener(mListener);
+            getWindow().setSharedElementEnterTransition(new ChangeBounds());
+        }
 
-        getWindow().getSharedElementEnterTransition().addListener(mListener);
-        getWindow().setSharedElementEnterTransition(new ChangeBounds());
     }
 
     void setupPhotoAttacher() {
@@ -111,14 +113,20 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        getWindow().getSharedElementEnterTransition().removeListener(mListener);
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            getWindow().getSharedElementEnterTransition().removeListener(mListener);
+        }
         super.onDestroy();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finishAfterTransition();
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            finishAfterTransition();
+        }else {
+            finish();
+        }
     }
 
     private void getData() {
@@ -130,6 +138,19 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
                 .into(mShot);
 
         mPhotoViewAttacher = new PhotoViewAttacher(mShot);
+
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        mToolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                expandImageAndFinish();
+            }
+        });
 
     }
 
@@ -186,6 +207,13 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
 
 
 
+    private void expandImageAndFinish() {
+            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                finishAfterTransition();
+            }else {
+                finish();
+            }
+    }
 
     private RequestListener shotLoadListener = new RequestListener<String, GlideDrawable>() {
         @Override
@@ -212,13 +240,12 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
                                 isDark = lightness == ColorUtils.IS_DARK;
                             }
 
-//                            if (isDark) { // make back icon dark on light images
-//                                mToolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary ));
-//                                mToolbar.setTitleTextColor();
-//                            }
+
 
                             // color the status bar. Set a complementary dark color on L,
                             // light or dark color on M (with matching status bar icons)
+                            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+
                             int statusBarColor = getWindow().getStatusBarColor();
                             final Palette.Swatch topColor =
                                     ColorUtils.getMostPopulousSwatch(palette);
@@ -243,6 +270,8 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
                                 statusBarColorAnim.setInterpolator(
                                         new AccelerateInterpolator());
                                 statusBarColorAnim.start();
+                            }
+
                             }
                         }
                     });

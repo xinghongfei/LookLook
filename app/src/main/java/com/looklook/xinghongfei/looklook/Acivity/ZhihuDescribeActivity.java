@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -122,10 +121,13 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         getData();
 
         chromeFader = new ElasticDragDismissFrameLayout.SystemChromeFader(this);
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
 
-        getWindow().getSharedElementReturnTransition().addListener(zhihuReturnHomeListener);
-        getWindow().getSharedElementEnterTransition().addListener(zhihuEnterListener);
-        getWindow().setSharedElementEnterTransition(new ChangeBounds());
+            getWindow().getSharedElementReturnTransition().addListener(zhihuReturnHomeListener);
+            getWindow().getSharedElementEnterTransition().addListener(zhihuEnterListener);
+            getWindow().setSharedElementEnterTransition(new ChangeBounds());
+        }
+
 
 //        trydownloadImage();
         enterAnimation();
@@ -138,33 +140,28 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         mImageUrl = getIntent().getStringExtra("image");
         mIZhihuStoryPresenter = new ZhihuStoryPresenterImpl(this);
         mNest.setOnScrollChangeListener(scrollListener);
-        postponeEnterTransition();
-        mShot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                mShot.getViewTreeObserver().removeOnPreDrawListener(this);
-                // TODO: 16/8/16 posotion
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            postponeEnterTransition();
+            mShot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    mShot.getViewTreeObserver().removeOnPreDrawListener(this);
+                    // TODO: 16/8/16 posotion
 //                enterAnimation();
-                startPostponedEnterTransition();
-                return true;
-            }
-        });
-
-    }
-
-    private void trydownloadImage() {
-        if (mImageUrl!=null){
-
-            Glide.with(this)
-                    .load(mImageUrl).centerCrop()
-                    .listener(shotLoadListener).override(width,heigh)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .into(mShot);
+                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+                        startPostponedEnterTransition();
+                    }
+                    return true;
+                }
+            });
         }
+
+
     }
 
     private void initView() {
         mToolbar.setTitleMargin(20,20,0,10);
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         mToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -235,8 +232,11 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
     @Override
     protected void onDestroy() {
-        getWindow().getSharedElementReturnTransition().removeListener(zhihuReturnHomeListener);
-        getWindow().getSharedElementEnterTransition().removeListener(zhihuEnterListener);
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+
+            getWindow().getSharedElementReturnTransition().removeListener(zhihuReturnHomeListener);
+            getWindow().getSharedElementEnterTransition().removeListener(zhihuEnterListener);
+        }
         //webview内存泄露
         if (wvZhihu != null) {
             ((ViewGroup) wvZhihu.getParent()).removeView(wvZhihu);
@@ -304,8 +304,6 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     }
 
     private void expandImageAndFinish() {
-        final Intent resultData = new Intent();
-
         if (mShot.getOffset() != 0f) {
             Animator expandImage = ObjectAnimator.ofFloat(mShot, ParallaxScrimageView.OFFSET,
                     0f);
@@ -314,12 +312,21 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
             expandImage.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    finishAfterTransition();
+
+                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+                        finishAfterTransition();
+                    }else {
+                        finish();
+                    }
                 }
             });
             expandImage.start();
         } else {
-            finishAfterTransition();
+            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+                finishAfterTransition();
+            }else {
+                finish();
+            }
         }
     }
     private Transition.TransitionListener zhihuReturnHomeListener =
@@ -332,8 +339,10 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                             .alpha(0f)
                             .setDuration(100)
                             .setInterpolator(new AccelerateInterpolator());
-                    mShot.setElevation(1f);
-                    mToolbar.setElevation(0f);
+                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+                        mShot.setElevation(1f);
+                        mToolbar.setElevation(0f);
+                    }
                     mNest.animate()
                             .alpha(0f)
                             .setDuration(50)
@@ -401,38 +410,44 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
                             // color the status bar. Set a complementary dark color on L,
                             // light or dark color on M (with matching status bar icons)
-                            int statusBarColor = getWindow().getStatusBarColor();
-                            final Palette.Swatch topColor =
-                                    ColorUtils.getMostPopulousSwatch(palette);
-                            if (topColor != null &&
-                                    (isDark || Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
-                                statusBarColor = ColorUtils.scrimify(topColor.getRgb(),
-                                        isDark, SCRIM_ADJUSTMENT);
-                                // set a light status bar on M+
-                                if (!isDark && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    ViewUtils.setLightStatusBar(mShot);
+                            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+
+
+                                int statusBarColor = getWindow().getStatusBarColor();
+                                final Palette.Swatch topColor =
+                                        ColorUtils.getMostPopulousSwatch(palette);
+                                if (topColor != null &&
+                                        (isDark || Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
+                                    statusBarColor = ColorUtils.scrimify(topColor.getRgb(),
+                                            isDark, SCRIM_ADJUSTMENT);
+                                    // set a light status bar on M+
+                                    if (!isDark && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                        ViewUtils.setLightStatusBar(mShot);
+                                    }
+                                }
+
+                                if (statusBarColor != getWindow().getStatusBarColor()) {
+                                    mShot.setScrimColor(statusBarColor);
+                                    ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
+                                            getWindow().getStatusBarColor(), statusBarColor);
+                                    statusBarColorAnim.addUpdateListener(new ValueAnimator
+                                            .AnimatorUpdateListener() {
+                                        @Override
+                                        public void onAnimationUpdate(ValueAnimator animation) {
+                                            getWindow().setStatusBarColor(
+                                                    (int) animation.getAnimatedValue());
+                                        }
+                                    });
+                                    statusBarColorAnim.setDuration(1000L);
+                                    statusBarColorAnim.setInterpolator(
+                                            new AccelerateInterpolator());
+                                    statusBarColorAnim.start();
                                 }
                             }
 
-                            if (statusBarColor != getWindow().getStatusBarColor()) {
-                                mShot.setScrimColor(statusBarColor);
-                                ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
-                                        getWindow().getStatusBarColor(), statusBarColor);
-                                statusBarColorAnim.addUpdateListener(new ValueAnimator
-                                        .AnimatorUpdateListener() {
-                                    @Override
-                                    public void onAnimationUpdate(ValueAnimator animation) {
-                                        getWindow().setStatusBarColor(
-                                                (int) animation.getAnimatedValue());
-                                    }
-                                });
-                                statusBarColorAnim.setDuration(1000L);
-                                statusBarColorAnim.setInterpolator(
-                                        new AccelerateInterpolator());
-                                statusBarColorAnim.start();
-                            }
                         }
                     });
+
 
             Palette.from(bitmap)
                     .clearFilters()
@@ -442,9 +457,12 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
                             // slightly more opaque ripple on the pinned image to compensate
                             // for the scrim
-                            mShot.setForeground(ViewUtils.createRipple(palette, 0.3f, 0.6f,
-                                    ContextCompat.getColor(ZhihuDescribeActivity.this, R.color.mid_grey),
-                                    true));
+                            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+
+                                mShot.setForeground(ViewUtils.createRipple(palette, 0.3f, 0.6f,
+                                        ContextCompat.getColor(ZhihuDescribeActivity.this, R.color.mid_grey),
+                                        true));
+                            }
                         }
                     });
 
@@ -474,7 +492,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         view.animate()
                 .translationY(0f)
                 .alpha(1f)
-                .setDuration(1000L)
+                .setDuration(500L)
                 .setInterpolator(interp)
                 .setListener(null)
                 .start();
@@ -485,7 +503,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         view.animate()
                 .translationY(0f)
                 .alpha(1f)
-                .setDuration(1000L)
+                .setDuration(500L)
                 .setInterpolator(interp)
                 .setListener(null)
                 .start();

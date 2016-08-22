@@ -9,9 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.looklook.xinghongfei.looklook.R;
 import com.looklook.xinghongfei.looklook.adapter.TopNewsAdapter;
@@ -29,20 +27,15 @@ import butterknife.InjectView;
  */
 public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
 
-    ImageView noConnection;
-    TextView noConnectionText;
+
     boolean loading;
     boolean connected = true;
     TopNewsAdapter mTopNewsAdapter;
-    boolean monitoringConnectivity;
 
-    float toolbarArlp = 100;
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView.OnScrollListener loadingMoreListener;
-    RecyclerView.OnScrollListener tooldimissListener;
 
     int currentIndex;
-
 
     TopNewsPrensenterImpl mTopNewsPrensenter;
 
@@ -88,7 +81,6 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
         recycle.setItemAnimator(new DefaultItemAnimator());
         recycle.setAdapter(mTopNewsAdapter);
         recycle.addOnScrollListener(loadingMoreListener);
-//        recycle.addOnScrollListener(tooldimissListener);
         if (connected) {
             loadDate();
         }
@@ -124,7 +116,6 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-//
                 if (dy > 0) //向下滚动
                 {
                     int visibleItemCount = mLinearLayoutManager.getChildCount();
@@ -138,50 +129,6 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
                 }
             }
         };
-
-//
-//        tooldimissListener = new RecyclerView.OnScrollListener() {
-//
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//
-//                if (mLinearLayoutManager.findFirstVisibleItemPosition() < 2) {
-//                    if (dy > 0) {
-//                        if (toolbarArlp > 0) {
-//                            toolbarArlp -= dy;
-//                        } else {
-//                            toolbarArlp = 0;
-//                        }
-//                    }
-//                    if (dy < 0) {
-//                        if (toolbarArlp < 100) {
-//                            toolbarArlp -= dy;
-//                        } else {
-//                            toolbarArlp = 100;
-//                        }
-//                    }
-//
-//                    toolbar.setAlpha(toolbarArlp / 100);
-//                }
-//            }
-//
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//                if (newState == RecyclerView.SCROLL_STATE_DRAGGING && toolbar.getElevation() != -1) {
-//                    toolbar.setElevation(-1f);
-//
-//                } else if (newState == RecyclerView.SCROLL_STATE_IDLE
-//                        && mLinearLayoutManager.findFirstVisibleItemPosition() == 0
-//                        && toolbar.getElevation() != 0) {
-//                    toolbar.setElevation(1f);
-////                    animateToolbar();
-////                    zhihuPresenter.getLastZhihuNews();
-//                }
-//            }
-//        };
-
 
     }
 

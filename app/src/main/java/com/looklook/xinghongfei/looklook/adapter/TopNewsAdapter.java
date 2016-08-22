@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
+import android.os.Build;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -41,7 +42,6 @@ import java.util.ArrayList;
 
 public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements MainActivity.LoadingMore {
 
-    public static final int REQUEST_CODE_VIEW_SHOT = 5407;
     private static final int TYPE_LOADING_MORE = -1;
     private static final int NOMAL_ITEM = 1;
     boolean showLoadingMore;
@@ -110,21 +110,15 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             holder.textView.setTextColor(Color.BLACK);
             holder.sourceTextview.setTextColor(Color.BLACK);
         }
+
+
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, newsBeanItem.getTitle(), 1);
                 holder.textView.setTextColor(Color.GRAY);
                 holder.sourceTextview.setTextColor(Color.GRAY);
-                Intent intent = new Intent(mContext, TopNewsDescribeActivity.class);
-                intent.putExtra("docid", newsBeanItem.getDocid());
-                intent.putExtra("title", newsBeanItem.getTitle());
-                intent.putExtra("image", newsBeanItem.getImgsrc());
-                final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
-                        ((Activity) mContext, false,new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_topnew)),
-                                new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_topnew_linear)));
-                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
-                mContext.startActivity(intent, options.toBundle());
+                startTopnewsActivity( newsBeanItem, holder );
 
             }
         });
@@ -134,8 +128,7 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
-                        // TODO: 16/8/18  add intent
+                        startTopnewsActivity( newsBeanItem, holder );
                     }
                 });
 
@@ -183,7 +176,25 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 
     }
+    private void startTopnewsActivity(NewsBean newsBeanItem,RecyclerView.ViewHolder holder){
 
+            Intent intent = new Intent(mContext, TopNewsDescribeActivity.class);
+            intent.putExtra("docid", newsBeanItem.getDocid());
+            intent.putExtra("title", newsBeanItem.getTitle());
+            intent.putExtra("image", newsBeanItem.getImgsrc());
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
+                    ((Activity) mContext, false,new android.support.v4.util.Pair<>(((TopNewsViewHolder)holder).imageView, mContext.getString(R.string.transition_topnew)),
+                            new android.support.v4.util.Pair<>(((TopNewsViewHolder)holder).linearLayout, mContext.getString(R.string.transition_topnew_linear)));
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
+            mContext.startActivity(intent, options.toBundle());
+        }else {
+
+            mContext.startActivity(intent);
+
+        }
+
+    }
 
     @Override
     public int getItemCount() {

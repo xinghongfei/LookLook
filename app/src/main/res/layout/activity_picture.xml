@@ -21,8 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/background"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                >
+    >
 
 
     <ImageView
@@ -40,8 +39,7 @@
         android:elevation="1dp"
         android:scrollbarDefaultDelayBeforeFade="1"
         android:background="#3b000000"
-        app:logo="@drawable/ic_arrow_back"
-        android:title=""
+        android:title="@string/app_name"
         style="@style/Widget.Plaid.HomeToolbar" />
 
 </RelativeLayout>

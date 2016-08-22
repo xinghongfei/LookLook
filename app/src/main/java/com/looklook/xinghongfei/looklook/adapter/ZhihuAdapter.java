@@ -256,6 +256,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         final TextView textView;
         final LinearLayout linearLayout;
         BadgedFourThreeImageView imageView;
+//        FourThreeImageView imageView;
 
         ZhihuViewHolder(View itemView) {
             super(itemView);

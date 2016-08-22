@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.ColorMatrixColorFilter;
+import android.os.Build;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -94,34 +94,20 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         final Meizi meizi = meiziItemes.get(holder.getAdapterPosition());
 
-//        if (DBUtils.getDB(mContext).isRead(Config.MEIZI, meizi.getUrl(), 1)){
-//
-//            holder.textView.setTextColor(Color.GRAY);
-//        }
-//        else {
-//            holder.textView.setTextColor(Color.BLACK);
-//        }
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, MeiziPhotoDescribeActivity.class);
-                intent.putExtra("image",meizi.getUrl());
-
-                final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
-                        ((Activity) mContext, false,new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.meizi)));
-                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
-                mContext.startActivity(intent, options.toBundle());
-
+                startDescribeActivity(meizi,holder);
             }
         });
-        holder.textView.setText("视频");
+//        holder.textView.setText("视频");
 
-        holder.textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
+//        holder.textView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                startDescribeActivity(meizi,holder);
+//            }
+//        });
         Glide.with(mContext)
                 .load(meizi.getUrl())
                 .listener(new RequestListener<String, GlideDrawable>() {
@@ -163,6 +149,22 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 .centerCrop()
                 .into(new DribbbleTarget(holder.imageView, false));
 
+
+    }
+
+    private void startDescribeActivity(Meizi meizi,RecyclerView.ViewHolder holder){
+
+        Intent intent = new Intent(mContext, MeiziPhotoDescribeActivity.class);
+        intent.putExtra("image",meizi.getUrl());
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+
+            final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
+                    ((Activity) mContext, false,new android.support.v4.util.Pair<>(((MeiziViewHolder)holder).imageView, mContext.getString(R.string.meizi)));
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
+            mContext.startActivity(intent, options.toBundle());
+        }else {
+            mContext.startActivity(intent);
+        }
 
     }
 
@@ -232,14 +234,14 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     class MeiziViewHolder extends RecyclerView.ViewHolder {
-        final TextView textView;
+//        final TextView textView;
 
         BadgedFourThreeImageView imageView;
 
         MeiziViewHolder(View itemView) {
             super(itemView);
             imageView = (BadgedFourThreeImageView) itemView.findViewById(R.id.item_image_id);
-            textView = (TextView) itemView.findViewById(R.id.item_text_id);
+//            textView = (TextView) itemView.findViewById(R.id.item_text_id);
 
         }
     }

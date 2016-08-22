@@ -1,5 +1,6 @@
 package com.looklook.xinghongfei.looklook;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -7,6 +8,7 @@ import android.support.v4.util.SimpleArrayMap;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.ActionMenuView;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +16,6 @@ import android.view.WindowInsets;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.looklook.xinghongfei.looklook.Acivity.BaseActivity;
 import com.looklook.xinghongfei.looklook.fragment.MeiziFragment;
@@ -51,9 +52,12 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
         ButterKnife.inject(this);
-        setActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
-        animateToolbar();
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            animateToolbar();
+
+        }
         addfragmentsAndTitle();
 
         drawer.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -112,6 +116,8 @@ public class MainActivity extends BaseActivity {
             }
         });
 
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+
         drawer.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
             @Override
             public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
@@ -146,6 +152,8 @@ public class MainActivity extends BaseActivity {
                 return insets.consumeSystemWindowInsets();
             }
         });
+        }
+
 
     }
 

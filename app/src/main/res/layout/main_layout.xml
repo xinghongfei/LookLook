@@ -26,15 +26,16 @@
             <!--android:clipToPadding="false"-->
             <!--android:elevation="1dp" -->
 
-        <Toolbar
+
+        <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:actionBarSize"
-            android:title="@string/app_name"
             android:outlineProvider="none"
             android:elevation="1dp"
             android:background="#bc000000"
-            style="@style/Widget.Plaid.HomeToolbar" />
+            style="@style/Widget.Plaid.HomeToolbar"
+            app:title="@string/app_name"/>
     </FrameLayout>
 
     <android.support.design.widget.NavigationView
