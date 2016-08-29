@@ -1,5 +1,9 @@
 package com.looklook.xinghongfei.looklook;
 
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -7,6 +11,8 @@ import android.support.v4.util.SimpleArrayMap;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.ActionMenuView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +20,10 @@ import android.view.WindowInsets;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
-import com.looklook.xinghongfei.looklook.Acivity.BaseActivity;
+import com.looklook.xinghongfei.looklook.Activity.AboutActivity;
+import com.looklook.xinghongfei.looklook.Activity.BaseActivity;
+import com.looklook.xinghongfei.looklook.fragment.MeiziFragment;
 import com.looklook.xinghongfei.looklook.fragment.TopNewsFragment;
 import com.looklook.xinghongfei.looklook.fragment.ZhihuFragment;
 import com.looklook.xinghongfei.looklook.util.AnimUtils;
@@ -42,7 +49,6 @@ public class MainActivity extends BaseActivity {
     DrawerLayout drawer;
     int nevigationId;
 
-    SimpleArrayMap<Integer, Fragment> mFragmentArrayMap = new SimpleArrayMap<>();
     SimpleArrayMap<Integer, String> mTitleArryMap = new SimpleArrayMap<>();
 
 
@@ -51,9 +57,12 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
         ButterKnife.inject(this);
-        setActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
-        animateToolbar();
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            animateToolbar();
+
+        }
         addfragmentsAndTitle();
 
         drawer.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -98,6 +107,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
 
+//                if(item.getItemId()==R.id.setting)return true;
 
                 if (currentMenuItem != item && currentMenuItem != null) {
                     currentMenuItem.setChecked(false);
@@ -111,6 +121,8 @@ public class MainActivity extends BaseActivity {
                 return true;
             }
         });
+
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
 
         drawer.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
             @Override
@@ -146,6 +158,21 @@ public class MainActivity extends BaseActivity {
                 return insets.consumeSystemWindowInsets();
             }
         });
+        }
+
+
+
+        int[][] state = new int[][]{
+                new int[]{-android.R.attr.state_checked}, // unchecked
+                new int[]{android.R.attr.state_checked}  // pressed
+        };
+
+        int[] color = new int[]{
+                Color.BLACK,Color.BLACK};
+        int[] iconcolor = new int[]{
+                Color.GRAY,Color.BLACK};
+        navView.setItemTextColor(new ColorStateList(state, color));
+        navView.setItemIconTintList(new ColorStateList(state, iconcolor));
 
     }
 
@@ -158,7 +185,9 @@ public class MainActivity extends BaseActivity {
             case R.id.topnewsitem:
                 fragment=new TopNewsFragment();
                 break;
-
+            case R.id.meiziitem:
+                fragment=new MeiziFragment();
+                break;
 
         }
         return fragment;
@@ -167,6 +196,7 @@ public class MainActivity extends BaseActivity {
     private void addfragmentsAndTitle() {
         mTitleArryMap.put(R.id.zhihuitem, getResources().getString(R.string.zhihu));
         mTitleArryMap.put(R.id.topnewsitem, getResources().getString(R.string.topnews));
+        mTitleArryMap.put(R.id.meiziitem, getResources().getString(R.string.meizi));
 
     }
 
@@ -244,6 +274,29 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.menu_filter:
+                drawer.openDrawer(GravityCompat.END);
+                return true;
+            case R.id.menu_about:
+                Intent intent=new Intent(this, AboutActivity.class);
+                this.startActivity(intent);
+
+        }
+
+        return super.onOptionsItemSelected(item);
+
+    }
 
     //    when recycle view scroll bottom,need loading more date and show the more view.
     public interface LoadingMore {

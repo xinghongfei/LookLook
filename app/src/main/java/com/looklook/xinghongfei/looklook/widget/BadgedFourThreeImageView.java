@@ -28,6 +28,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.text.TextPaint;
 import android.util.AttributeSet;
@@ -49,12 +50,14 @@ public class BadgedFourThreeImageView extends FourThreeImageView {
 
     public BadgedFourThreeImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        badge = new GifBadge(context);
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BadgedImageView, 0, 0);
-        badgeGravity = a.getInt(R.styleable.BadgedImageView_badgeGravity, Gravity.END | Gravity
-                .BOTTOM);
-        badgePadding = a.getDimensionPixelSize(R.styleable.BadgedImageView_badgePadding, 0);
-        a.recycle();
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            badge = new GifBadge(context);
+            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BadgedImageView, 0, 0);
+            badgeGravity = a.getInt(R.styleable.BadgedImageView_badgeGravity, Gravity.END | Gravity
+                    .BOTTOM);
+            badgePadding = a.getDimensionPixelSize(R.styleable.BadgedImageView_badgePadding, 0);
+            a.recycle();
+        }
 
     }
 
@@ -69,18 +72,23 @@ public class BadgedFourThreeImageView extends FourThreeImageView {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        if (drawBadge) {
-            if (!badgeBoundsSet) {
-                layoutBadge();
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            if (drawBadge) {
+                if (!badgeBoundsSet) {
+                    layoutBadge();
+                }
+                badge.draw(canvas);
             }
-            badge.draw(canvas);
         }
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        layoutBadge();
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            layoutBadge();
+
+        }
     }
 
     private void layoutBadge() {
@@ -134,8 +142,11 @@ public class BadgedFourThreeImageView extends FourThreeImageView {
                 final Canvas canvas = new Canvas(bitmap);
                 final Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
                 backgroundPaint.setColor(BACKGROUND_COLOR);
-                canvas.drawRoundRect(0, 0, width, height, cornerRadius, cornerRadius,
-                        backgroundPaint);
+                if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                    canvas.drawRoundRect(0, 0, width, height, cornerRadius, cornerRadius,
+                            backgroundPaint);
+                }
+
                 // punch out the word 'GIF', leaving transparency
                 textPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
                 canvas.drawText(GIF, padding, height - padding, textPaint);

@@ -22,6 +22,7 @@
         app:badgeGravity="end|bottom"
         app:badgePadding="@dimen/padding_normal"/>
 
+
     <TextView
         android:id="@+id/item_text_id"
         android:layout_width="0dp"

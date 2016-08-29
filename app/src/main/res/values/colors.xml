@@ -33,6 +33,7 @@
     <color name="light_grey">#fff5f5f5</color>
     <color name="grey_200">#ffeeeeee</color>
     <color name="grey_300">#ffe0e0e0</color>
+
     <color name="content_placeholder">#ffe0e0e0</color>
     <color name="dark_icon">#99000000</color> <!-- 60% black-->
     <color name="dark_icon_half_alpha">#4d000000</color> <!-- 30% black-->
@@ -74,5 +75,6 @@
     <color name="text_color">#f6000000</color>
     <color name="text_source">#9a000000</color>
 
+    <color name="meizibg">#faf1f1f1</color>
 
 </resources>

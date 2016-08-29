@@ -4,12 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +22,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.looklook.xinghongfei.looklook.Acivity.ZhihuDescribeActivity;
+import com.looklook.xinghongfei.looklook.Activity.ZhihuDescribeActivity;
 import com.looklook.xinghongfei.looklook.MainActivity;
 import com.looklook.xinghongfei.looklook.R;
 import com.looklook.xinghongfei.looklook.bean.zhihu.ZhihuDailyItem;
@@ -32,7 +30,6 @@ import com.looklook.xinghongfei.looklook.config.Config;
 import com.looklook.xinghongfei.looklook.util.DBUtils;
 import com.looklook.xinghongfei.looklook.util.DensityUtil;
 import com.looklook.xinghongfei.looklook.util.DribbbleTarget;
-import com.looklook.xinghongfei.looklook.util.Help;
 import com.looklook.xinghongfei.looklook.util.ObservableColorMatrix;
 import com.looklook.xinghongfei.looklook.widget.BadgedFourThreeImageView;
 
@@ -50,6 +47,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     int heighPx;
     private ArrayList<ZhihuDailyItem> zhihuDailyItems = new ArrayList<>();
     private Context mContext;
+    private String mImageUrl;
 
 
     public ZhihuAdapter(Context context) {
@@ -104,6 +102,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             holder.textView.setTextColor(Color.GRAY);
         else
             holder.textView.setTextColor(Color.BLACK);
+
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,12 +111,13 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 Intent intent = new Intent(mContext, ZhihuDescribeActivity.class);
                 intent.putExtra("id", zhihuDailyItem.getId());
                 intent.putExtra("title", zhihuDailyItem.getTitle());
-                intent.putExtra("image", zhihuDailyItems.get(position).getImages()[0]);
-                final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
-                        ((Activity) mContext, false,new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)),
-                                new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_shot_background)));
-                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
-                mContext.startActivity(intent, options.toBundle());
+                intent.putExtra("image",mImageUrl);
+//                final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
+//                        ((Activity) mContext, false,new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)),
+//                                new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_shot_background)));
+//                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
+//                mContext.startActivity(intent, options.toBundle());
+                mContext.startActivity(intent);
 
             }
         });
@@ -131,12 +131,13 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         Intent intent = new Intent(mContext, ZhihuDescribeActivity.class);
                         intent.putExtra("id", zhihuDailyItem.getId());
                         intent.putExtra("title", zhihuDailyItem.getTitle());
-//
-                        final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
-                                ((Activity) mContext, false, new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)),
-                                        new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_shot_background)));
-                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
-                        mContext.startActivity(intent, options.toBundle());
+                        intent.putExtra("image",mImageUrl);
+//                        final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
+//                                ((Activity) mContext, false, new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)),
+//                                        new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_shot_background)));
+//                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
+//                        mContext.startActivity(intent, options.toBundle());
+                        mContext.startActivity(intent);
 
                     }
                 });
@@ -255,6 +256,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         final TextView textView;
         final LinearLayout linearLayout;
         BadgedFourThreeImageView imageView;
+//        FourThreeImageView imageView;
 
         ZhihuViewHolder(View itemView) {
             super(itemView);
