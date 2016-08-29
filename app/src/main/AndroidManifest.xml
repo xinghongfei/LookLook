@@ -20,7 +20,7 @@
         >
 
         <activity android:name=".MainActivity"
-            android:theme="@style/Plaid.Home"
+            android:theme="@style/Look.Home"
                   android:screenOrientation="portrait"
             >
             <intent-filter>
@@ -30,11 +30,11 @@
         </activity>
 
         <activity
-            android:name=".Acivity.ZhihuDescribeActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".Activity.ZhihuDescribeActivity"
+            android:parentActivityName="com.looklook.xinghongfei.looklook.MainActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/Plaid.Translucent.Dribbble.Shot">
+            android:theme="@style/Look.Translucent.Dribbble.Shot">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -50,12 +50,12 @@
         </activity>
 
         <activity
-            android:name=".Acivity.TopNewsDescribeActivity"
+            android:name=".Activity.TopNewsDescribeActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
 
-            android:theme="@style/Plaid.Translucent.Dribbble.Shot">
+            android:theme="@style/Look.Translucent.Dribbble.Shot">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -70,10 +70,20 @@
                 android:value=".MainActivity" />
         </activity>
 
-        <activity android:name=".Acivity.MeiziPhotoDescribeActivity"
+        <activity android:name=".Activity.MeiziPhotoDescribeActivity"
                   android:screenOrientation="portrait"
                   android:launchMode="singleTop"
-                  android:theme="@style/Plaid.Home"/>
+                  android:theme="@style/Look.Home"/>
+
+
+        <activity
+            android:name=".Activity.AboutActivity"
+            android:theme="@style/Look.Translucent"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
 
     </application>
 

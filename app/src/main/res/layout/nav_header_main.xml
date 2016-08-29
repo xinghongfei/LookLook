@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:textColor="#000000"
+        android:textColor="#fc1d1d"
         android:text="@string/one_text"
 
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />

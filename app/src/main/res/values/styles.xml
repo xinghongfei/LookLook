@@ -39,7 +39,7 @@
 
     <style name="Widget.Plaid" parent="android:Widget" />
 
-    <style name="Plaid.Home">
+    <style name="Look.Home">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/immersive_bars</item>
         <item name="android:navigationBarColor">@color/immersive_bars</item>
@@ -50,7 +50,7 @@
         <item name="android:windowEnterTransition">@transition/home_enter</item>
 
     </style>
-    <style name="Plaid" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Look" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:colorPrimary">@color/primary</item>
         <item name="android:colorBackground">@color/background_light</item>
         <item name="android:colorAccent">@color/accent</item>
@@ -63,14 +63,14 @@
         <item name="android:windowSharedElementsUseOverlay">false</item>
     </style>
 
-    <style name="Plaid.Translucent.Dribbble.Shot">
+    <style name="Look.Translucent.Dribbble.Shot">
         <item name="android:windowSharedElementEnterTransition">@transition/dribbble_shot_shared_enter</item>
         <item name="android:windowSharedElementReturnTransition">@transition/dribbble_shot_shared_return</item>
         <item name="android:windowEnterTransition">@transition/dribbble_shot_enter</item>
         <item name="android:windowReturnTransition">@transition/dribbble_shot_return</item>
     </style>
 
-    <style name="Plaid.Translucent.Dribbble">
+    <style name="Look.Translucent.Dribbble">
         <item name="android:colorPrimary">@color/dribbble</item>
         <item name="android:colorAccent">@color/dribbble</item>
         <item name="android:statusBarColor">@color/dribbble_super_dark</item>
@@ -78,7 +78,7 @@
         <item name="android:colorControlActivated">?android:colorAccent</item>
         <item name="android:windowAllowReturnTransitionOverlap">false</item>
     </style>
-    <style name="Plaid.Translucent">
+    <style name="Look.Translucent">
         <!-- using a semi-transparent window background for the drag-back gesture -->
         <item name="android:windowBackground">@color/scrim</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
