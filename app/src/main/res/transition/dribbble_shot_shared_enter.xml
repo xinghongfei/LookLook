@@ -32,10 +32,10 @@
     </transitionSet>
 
     <transition
-        class="com.looklook.xinghongfei.looklook.widget.SharedEnter"
+        class="com.looklook.xinghongfei.looklook.widget.ShotSharedEnter"
         android:duration="300">
         <targets>
-            <target android:targetId="@id/image_view" />
+            <target android:targetId="@id/shot" />
         </targets>
     </transition>
 

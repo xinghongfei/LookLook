@@ -21,6 +21,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
@@ -59,10 +60,12 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     ProgressBar mProgress;
     @InjectView(R.id.htNewsContent)
     HtmlTextView mHtNewsContent;
-    @InjectView(R.id.image_view)
-    ParallaxScrimageView mImageView;
+    @InjectView(R.id.shot)
+    ParallaxScrimageView mShot;
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
+    @InjectView(R.id.container)
+    FrameLayout mContainer;
     @InjectView(R.id.draggable_frame)
     ElasticDragDismissFrameLayout mDraggableFrame;
     @InjectView(R.id.nest)
@@ -73,7 +76,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
         @Override
         public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
             if (oldScrollY < 168) {
-                mImageView.setOffset(-oldScrollY);
+                mShot.setOffset(-oldScrollY);
                 mTextView.setOffset(-oldScrollY);
             }
         }
@@ -96,7 +99,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                             .setDuration(100)
                             .setInterpolator(new AccelerateInterpolator());
                     if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-                        mImageView.setElevation(1f);
+                        mShot.setElevation(1f);
                         mToolbar.setElevation(0f);
                     }
                     mNest.animate()
@@ -111,20 +114,21 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                 public void onTransitionEnd(Transition transition) {
                     super.onTransitionEnd(transition);
 
+//                    解决5.0 shara element bug
                     ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 100).setDuration(100);
 
 
                     valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                         @Override
                         public void onAnimationUpdate(ValueAnimator valueAnimator) {
-//                            mImageView.setOffset((Integer) valueAnimator.getAnimatedValue() * 10);
+//                            mShot.setOffset((Integer) valueAnimator.getAnimatedValue() * 10);
                             mNest.smoothScrollTo((Integer) valueAnimator.getAnimatedValue() / 10, 0);
 
                         }
                     });
                     valueAnimator.start();
-//                    mImageView.setAlpha(0.5f);
-//                    mImageView.animate().alpha(1f).setDuration(800L).start();
+//                    mShot.setAlpha(0.5f);
+//                    mShot.animate().alpha(1f).setDuration(800L).start();
                 }
 
 
@@ -159,7 +163,12 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                                 isDark = lightness == ColorUtils.IS_DARK;
                             }
 
-//                          // color the status bar. Set a complementary dark color on L,
+//                            if (isDark) { // make back icon dark on light images
+//                                mToolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary ));
+//                                mToolbar.setTitleTextColor();
+//                            }
+
+                            // color the status bar. Set a complementary dark color on L,
                             // light or dark color on M (with matching status bar icons)
                             int statusBarColor = getWindow().getStatusBarColor();
                             final Palette.Swatch topColor =
@@ -170,14 +179,14 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                                         isDark, SCRIM_ADJUSTMENT);
                                 // set a light status bar on M+
                                 if (!isDark && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    ViewUtils.setLightStatusBar(mImageView);
+                                    ViewUtils.setLightStatusBar(mShot);
                                 }
                             }
 
                             if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
 
                                 if (statusBarColor != getWindow().getStatusBarColor()) {
-                                    mImageView.setScrimColor(statusBarColor);
+                                    mShot.setScrimColor(statusBarColor);
                                     ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
                                             getWindow().getStatusBarColor(), statusBarColor);
                                     statusBarColorAnim.addUpdateListener(new ValueAnimator
@@ -206,7 +215,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                             // slightly more opaque ripple on the pinned image to compensate
                             // for the scrim
                             if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-                                mImageView.setForeground(ViewUtils.createRipple(palette, 0.3f, 0.6f,
+                                mShot.setForeground(ViewUtils.createRipple(palette, 0.3f, 0.6f,
                                         ContextCompat.getColor(TopNewsDescribeActivity.this, R.color.mid_grey),
                                         true));
                             }
@@ -215,7 +224,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                     });
 
             // TODO should keep the background if the image contains transparency?!
-            mImageView.setBackground(null);
+            mShot.setBackground(null);
             return false;
         }
 
@@ -261,18 +270,19 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                 .listener(glideLoadListener)
                 .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(mImageView);
+                .into(mShot);
 
 
         mTopNewsDesPresenter = new TopNewsDesPresenterImpl(this);
         mNest.setOnScrollChangeListener(scrollListener);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             postponeEnterTransition();
-            mImageView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            mShot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
-                    mImageView.getViewTreeObserver().removeOnPreDrawListener(this);
-
+                    mShot.getViewTreeObserver().removeOnPreDrawListener(this);
+                    // TODO: 16/8/16 posotion
+//                enterAnimation();
                     startPostponedEnterTransition();
                     return true;
                 }
@@ -339,7 +349,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
 
     }
 
-    @OnClick(R.id.image_view)
+    @OnClick(R.id.shot)
     public void onClick() {
         mNest.smoothScrollTo(0, 0);
 
@@ -368,8 +378,8 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
 
     private void expandImageAndFinish() {
 
-        if (mImageView.getOffset() != 0f) {
-            Animator expandImage = ObjectAnimator.ofFloat(mImageView, ParallaxScrimageView.OFFSET,
+        if (mShot.getOffset() != 0f) {
+            Animator expandImage = ObjectAnimator.ofFloat(mShot, ParallaxScrimageView.OFFSET,
                     0f);
             expandImage.setDuration(80);
             expandImage.setInterpolator(new AccelerateInterpolator());

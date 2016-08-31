@@ -62,8 +62,8 @@ import butterknife.OnClick;
 public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     private static final float SCRIM_ADJUSTMENT = 0.075f;
 
-    @InjectView(R.id.image_view)
-    ParallaxScrimageView mParallaxScrimageView;
+    @InjectView(R.id.shot)
+    ParallaxScrimageView mShot;
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
     @InjectView(R.id.container)
@@ -92,7 +92,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         @Override
         public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
          if (oldScrollY<168){
-             mParallaxScrimageView.setOffset(-oldScrollY);
+             mShot.setOffset(-oldScrollY);
              mTranslateYTextView.setOffset(-oldScrollY);
          }
 
@@ -141,10 +141,10 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         mNest.setOnScrollChangeListener(scrollListener);
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
             postponeEnterTransition();
-            mParallaxScrimageView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            mShot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
-                    mParallaxScrimageView.getViewTreeObserver().removeOnPreDrawListener(this);
+                    mShot.getViewTreeObserver().removeOnPreDrawListener(this);
                     // TODO: 16/8/16 posotion
 //                enterAnimation();
                     if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
@@ -259,7 +259,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
     }
 
-    @OnClick(R.id.image_view)
+    @OnClick(R.id.shot)
     public void onClick() {
         mNest.smoothScrollTo(0, 0);
 
@@ -280,9 +280,9 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
             Glide.with(this)
                     .load(zhihuStory.getImage()).centerCrop()
-                    .listener(mRequestListener).override(width,heigh)
+                    .listener(shotLoadListener).override(width,heigh)
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .into(mParallaxScrimageView);
+                    .into(mShot);
         url = zhihuStory.getShareUrl();
         isEmpty=TextUtils.isEmpty(zhihuStory.getBody());
         mBody=zhihuStory.getBody();
@@ -300,8 +300,8 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
 
     private void expandImageAndFinish() {
-        if (mParallaxScrimageView.getOffset() != 0f) {
-            Animator expandImage = ObjectAnimator.ofFloat(mParallaxScrimageView, ParallaxScrimageView.OFFSET,
+        if (mShot.getOffset() != 0f) {
+            Animator expandImage = ObjectAnimator.ofFloat(mShot, ParallaxScrimageView.OFFSET,
                     0f);
             expandImage.setDuration(80);
             expandImage.setInterpolator(new AccelerateInterpolator());
@@ -336,7 +336,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                             .setDuration(100)
                             .setInterpolator(new AccelerateInterpolator());
                     if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
-                        mParallaxScrimageView.setElevation(1f);
+                        mShot.setElevation(1f);
                         mToolbar.setElevation(0f);
                     }
                     mNest.animate()
@@ -357,14 +357,14 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 //                    valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 //                        @Override
 //                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
-//                            mImageView.setOffset((Float) valueAnimator.getAnimatedValue() * 10);
+//                            mShot.setOffset((Float) valueAnimator.getAnimatedValue() * 10);
 //                            mNest.smoothScrollTo((Integer) valueAnimator.getAnimatedValue()/100,0);
 //                        }
 //                    });
 //                    valueAnimator.start();
 //                    enterAnimation();
-//                    mImageView.setAlpha(0.5f);
-//                    mImageView.animate().alpha(1f).setDuration(50).start();
+//                    mShot.setAlpha(0.5f);
+//                    mShot.animate().alpha(1f).setDuration(50).start();
                 }
 
 
@@ -374,7 +374,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
                 }
             };
-    private RequestListener mRequestListener = new RequestListener<String, GlideDrawable>() {
+    private RequestListener shotLoadListener = new RequestListener<String, GlideDrawable>() {
         @Override
         public boolean onResourceReady(GlideDrawable resource, String model,
                                        Target<GlideDrawable> target, boolean isFromMemoryCache,
@@ -418,12 +418,12 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                                             isDark, SCRIM_ADJUSTMENT);
                                     // set a light status bar on M+
                                     if (!isDark && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                        ViewUtils.setLightStatusBar(mParallaxScrimageView);
+                                        ViewUtils.setLightStatusBar(mShot);
                                     }
                                 }
 
                                 if (statusBarColor != getWindow().getStatusBarColor()) {
-                                    mParallaxScrimageView.setScrimColor(statusBarColor);
+                                    mShot.setScrimColor(statusBarColor);
                                     ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
                                             getWindow().getStatusBarColor(), statusBarColor);
                                     statusBarColorAnim.addUpdateListener(new ValueAnimator
@@ -455,7 +455,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                             // for the scrim
                             if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
 
-                                mParallaxScrimageView.setForeground(ViewUtils.createRipple(palette, 0.3f, 0.6f,
+                                mShot.setForeground(ViewUtils.createRipple(palette, 0.3f, 0.6f,
                                         ContextCompat.getColor(ZhihuDescribeActivity.this, R.color.mid_grey),
                                         true));
                             }
@@ -463,7 +463,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                     });
 
             // TODO should keep the background if the image contains transparency?!
-            mParallaxScrimageView.setBackground(null);
+            mShot.setBackground(null);
             return false;
         }
 
@@ -477,7 +477,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     private void enterAnimation() {
         float offSet = mToolbar.getHeight();
         LinearInterpolator interpolator=new LinearInterpolator();
-        viewEnterAnimation(mParallaxScrimageView, offSet, interpolator);
+        viewEnterAnimation(mShot, offSet, interpolator);
         viewEnterAnimationNest(mNest,0f,interpolator);
 
     }

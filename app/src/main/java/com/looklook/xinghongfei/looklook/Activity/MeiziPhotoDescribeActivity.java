@@ -45,7 +45,7 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
     String mImageUrl;
 
     PhotoViewAttacher mPhotoViewAttacher;
-    @InjectView(R.id.image_view)
+    @InjectView(R.id.shot)
     ImageView mShot;
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
@@ -133,7 +133,7 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
         Glide.with(this)
                 .load(mImageUrl)
                 .centerCrop()
-                .listener(loadListener)
+                .listener(shotLoadListener)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(mShot);
 
@@ -215,7 +215,7 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
             }
     }
 
-    private RequestListener loadListener = new RequestListener<String, GlideDrawable>() {
+    private RequestListener shotLoadListener = new RequestListener<String, GlideDrawable>() {
         @Override
         public boolean onResourceReady(GlideDrawable resource, String model,
                                        Target<GlideDrawable> target, boolean isFromMemoryCache,

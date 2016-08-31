@@ -40,7 +40,7 @@
 
 
         <com.looklook.xinghongfei.looklook.widget.ParallaxScrimageView
-            android:id="@+id/image_view"
+            android:id="@+id/shot"
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:minHeight="168dp"
