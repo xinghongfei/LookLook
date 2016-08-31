@@ -16,13 +16,11 @@
 
 
 
-
-
 **About me**
 
 An android developer in Beijing.
 
-Welcome to offer me an Interview invitation. 
+Welcome to offer me an internship. 
 
 
 
