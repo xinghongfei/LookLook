@@ -227,8 +227,7 @@ public class MainActivity extends BaseActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment)
                     .commit();
         currentFragment = fragment;
-//        ActionBar actionBar=getActionBar();
-//        actionBar.setTitle(title);
+
     }
 
     private void animateToolbar() {

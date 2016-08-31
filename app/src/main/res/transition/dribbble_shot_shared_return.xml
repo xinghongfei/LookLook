@@ -29,7 +29,7 @@
 
     <transitionSet>
         <targets>
-            <target android:targetId="@id/shot" />
+            <target android:targetId="@id/image_view" />
         </targets>
         <changeBounds/>
         <changeTransform/>

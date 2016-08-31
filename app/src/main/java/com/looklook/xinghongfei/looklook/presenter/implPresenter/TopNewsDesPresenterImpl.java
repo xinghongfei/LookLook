@@ -8,9 +8,7 @@ import com.looklook.xinghongfei.looklook.util.NewsJsonUtils;
 import com.looklook.xinghongfei.looklook.util.OkHttpUtils;
 import com.looklook.xinghongfei.looklook.util.Urls;
 
-/**
- * Created by 蔡小木 on 2016/4/26 0026.
- */
+
 public class TopNewsDesPresenterImpl extends BasePresenterImpl implements INewTopDescriblePresenter {
 
     private ITopNewsDesFragment mITopNewsFragment;

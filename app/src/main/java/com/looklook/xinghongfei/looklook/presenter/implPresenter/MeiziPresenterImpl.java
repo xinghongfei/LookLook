@@ -16,9 +16,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by 蔡小木 on 2016/4/23 0023.
- */
+
 public class MeiziPresenterImpl extends BasePresenterImpl implements IMeiziPresenter {
 
     private IMeiziFragment mMeiziFragment;

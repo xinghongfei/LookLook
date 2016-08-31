@@ -29,7 +29,7 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:transitionName="@string/meizi"
-        android:id="@+id/shot"/>
+        android:id="@+id/image_view"/>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
