@@ -20,9 +20,9 @@
 
 
 
-**About me**
+##About me
 
-An android developer in Beijing.Welcome to offer me an [Interview invitation](maat.xing@gmail.com). If you have any new idea about this project, feel free to [contact me](maat.xing@gmail.com). :smiley:
+An android developer in Beijing.Welcome to offer me an [Interview invitation](mailto:maat.xing@gmail.com). If you have any new idea about this project, feel free to [contact me](mailto:maat.xing@gmail.com). :smiley:
 
 
 
