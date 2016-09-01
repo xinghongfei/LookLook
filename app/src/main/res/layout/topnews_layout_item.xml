@@ -3,8 +3,10 @@
               android:id="@+id/zhihu_item_layout"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:orientation="horizontal"
               android:foreground="@drawable/mid_grey_ripple"
+              android:orientation="horizontal"
+              android:paddingBottom="@dimen/item_margin"
+              android:paddingTop="@dimen/item_margin"
               android:stateListAnimator="@animator/raise">
 
     <com.looklook.xinghongfei.looklook.widget.BadgedFourThreeImageView
@@ -14,17 +16,20 @@
         android:layout_width="@dimen/image_width"
         android:layout_height="@dimen/image_hight"
         android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="@dimen/image_left_margin"
         android:layout_marginTop="5dp"
+        android:padding="@dimen/item_padding"
         android:elevation="@dimen/z_card"
         android:foreground="@drawable/mid_grey_ripple"
         android:stateListAnimator="@animator/raise"
         app:badgeGravity="end|bottom"
         app:badgePadding="@dimen/padding_normal"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/item_text_id"
             android:layout_width="match_parent"
@@ -32,23 +37,23 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="5dp"
             android:layout_marginTop="10dp"
-            android:stateListAnimator="@animator/raise"
             android:layout_weight="1"
-            android:textSize="16sp"
-            android:textColor="@color/text_color"/>
+            android:stateListAnimator="@animator/raise"
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/text_size"/>
 
         <TextView
             android:id="@+id/item_text_source_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="20dp"
-            android:text="helooeddd"
             android:layout_gravity="bottom|right"
             android:layout_marginBottom="7dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="20dp"
             android:stateListAnimator="@animator/raise"
-            android:textSize="10sp"
-            android:textColor="@color/text_source"/>
+            android:text="helooeddd"
+            android:textColor="@color/text_source"
+            android:textSize="10sp"/>
     </LinearLayout>
 
 

@@ -37,8 +37,10 @@
     <string name="meizitips" translatable="false">每日推送一个漂亮妹子和经典视频,看不看随小主!(长按保存图片)</string>
     <string name="meiziaction" translatable="false">我懂</string>
 
-    <string name="save_meizi" translatable="false">金屋藏娇</string>
+    <string name="save_meizi" translatable="false">小主好眼力,快收了她</string>
 
+    <string name="about_text" translatable="false">感谢对项目的支持和关注,项目会不断的升级更新,如果小主感兴趣欢迎一起来贡献,有好的想法也可以随时发email给我.</string>
+    <string name="email" translatable="false">maat.xing@gmail.com</string>
 
 
 

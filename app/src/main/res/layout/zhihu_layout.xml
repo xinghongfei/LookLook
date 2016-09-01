@@ -27,7 +27,7 @@
             android:outlineProvider="none"
             android:elevation="1dp"
             android:background="#bc000000"
-            style="@style/Widget.Plaid.HomeToolbar" />
+            style="@style/Widget.Look.HomeToolbar" />
 
 
     </FrameLayout>
