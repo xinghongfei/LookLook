@@ -1,12 +1,9 @@
 package com.looklook.xinghongfei.looklook.Activity;
 
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,14 +46,12 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  */
 public class MeiziPhotoDescribeActivity extends BaseActivity {
     public static final String EXTRA_IMAGE_URL = "image";
-    public static final String EXTRA_IMAGE_TITLE = "image_title";
-    public static final String TRANSIT_PIC = "picture";
     private static final float SCRIM_ADJUSTMENT = 0.075f;
 
-
     String mImageUrl;
-
     PhotoViewAttacher mPhotoViewAttacher;
+    private boolean mIsHidden = false;
+
     @InjectView(R.id.shot)
     ImageView mShot;
     @InjectView(R.id.toolbar)
@@ -64,7 +59,6 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
     @InjectView(R.id.background)
     RelativeLayout mRelativeLayout;
 
-    private boolean mIsHidden = false;
 
 
     @Override
@@ -107,7 +101,6 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface anInterface, int i) {
 
-                                // TODO: 16/8/20 save image
                                 anInterface.dismiss();
                                 saveImage();
                             }
@@ -164,7 +157,7 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
         Glide.with(this)
                 .load(mImageUrl)
                 .centerCrop()
-                .listener(shotLoadListener)
+                .listener(loadListener)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(mShot);
 
@@ -246,7 +239,7 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
             }
     }
 
-    private RequestListener shotLoadListener = new RequestListener<String, GlideDrawable>() {
+    private RequestListener loadListener = new RequestListener<String, GlideDrawable>() {
         @Override
         public boolean onResourceReady(GlideDrawable resource, String model,
                                        Target<GlideDrawable> target, boolean isFromMemoryCache,
@@ -270,8 +263,6 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
                             } else {
                                 isDark = lightness == ColorUtils.IS_DARK;
                             }
-
-
 
                             // color the status bar. Set a complementary dark color on L,
                             // light or dark color on M (with matching status bar icons)

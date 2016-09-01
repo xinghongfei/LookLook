@@ -10,6 +10,6 @@ public class AboutActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        // TODO: 16/9/1 add some information about the project 
     }
 }

@@ -38,7 +38,6 @@ import java.util.ArrayList;
 
 public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements MainActivity.LoadingMore {
 
-    public static final int REQUEST_CODE_VIEW_SHOT = 5407;
     private static final int TYPE_LOADING_MORE = -1;
     private static final int NOMAL_ITEM = 1;
     boolean showLoadingMore;
@@ -106,18 +105,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, zhihuDailyItem.getId(), 1);
-                holder.textView.setTextColor(Color.GRAY);
-                Intent intent = new Intent(mContext, ZhihuDescribeActivity.class);
-                intent.putExtra("id", zhihuDailyItem.getId());
-                intent.putExtra("title", zhihuDailyItem.getTitle());
-                intent.putExtra("image",mImageUrl);
-//                final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
-//                        ((Activity) mContext, false,new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)),
-//                                new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_shot_background)));
-//                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
-//                mContext.startActivity(intent, options.toBundle());
-                mContext.startActivity(intent);
+               goDescribeActivity(holder,zhihuDailyItem);
 
             }
         });
@@ -126,19 +114,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, zhihuDailyItem.getId(), 1);
-                        holder.textView.setTextColor(Color.GRAY);
-                        Intent intent = new Intent(mContext, ZhihuDescribeActivity.class);
-                        intent.putExtra("id", zhihuDailyItem.getId());
-                        intent.putExtra("title", zhihuDailyItem.getTitle());
-                        intent.putExtra("image",mImageUrl);
-//                        final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
-//                                ((Activity) mContext, false, new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)),
-//                                        new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_shot_background)));
-//                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
-//                        mContext.startActivity(intent, options.toBundle());
-                        mContext.startActivity(intent);
-
+                        goDescribeActivity(holder,zhihuDailyItem);
                     }
                 });
 
@@ -184,6 +160,23 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 .centerCrop().override(widthPx, heighPx)
                 .into(new DribbbleTarget(holder.imageView, false));
 
+
+    }
+
+    private void goDescribeActivity(ZhihuViewHolder holder,ZhihuDailyItem zhihuDailyItem){
+
+        DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, zhihuDailyItem.getId(), 1);
+        holder.textView.setTextColor(Color.GRAY);
+        Intent intent = new Intent(mContext, ZhihuDescribeActivity.class);
+        intent.putExtra("id", zhihuDailyItem.getId());
+        intent.putExtra("title", zhihuDailyItem.getTitle());
+        intent.putExtra("image",mImageUrl);
+//                final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
+//                        ((Activity) mContext, false,new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)),
+//                                new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_shot_background)));
+//                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
+//                mContext.startActivity(intent, options.toBundle());
+        mContext.startActivity(intent);
 
     }
 
@@ -256,7 +249,6 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         final TextView textView;
         final LinearLayout linearLayout;
         BadgedFourThreeImageView imageView;
-//        FourThreeImageView imageView;
 
         ZhihuViewHolder(View itemView) {
             super(itemView);

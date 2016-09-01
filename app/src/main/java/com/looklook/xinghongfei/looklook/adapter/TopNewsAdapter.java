@@ -231,7 +231,6 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return showLoadingMore ? getItemCount() - 1 : RecyclerView.NO_POSITION;
     }
 
-    // TODO: 16/8/13  don't forget call fellow method
     @Override
     public void loadingStart() {
         if (showLoadingMore) return;

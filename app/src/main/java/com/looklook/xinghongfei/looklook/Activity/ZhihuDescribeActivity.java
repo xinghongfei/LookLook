@@ -27,7 +27,6 @@ import android.view.animation.LinearInterpolator;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -66,8 +65,6 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     ParallaxScrimageView mShot;
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
-    @InjectView(R.id.container)
-    FrameLayout mContainer;
     @InjectView(R.id.wv_zhihu)
     WebView wvZhihu;
     @InjectView(R.id.nest)
@@ -86,18 +83,9 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     int[] mDeviceInfo;
     int width;
     int heigh;
+    private Transition.TransitionListener zhihuReturnHomeListener;
+    private NestedScrollView.OnScrollChangeListener scrollListener;
 
-
-    NestedScrollView.OnScrollChangeListener scrollListener = new NestedScrollView.OnScrollChangeListener() {
-        @Override
-        public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-         if (oldScrollY<168){
-             mShot.setOffset(-oldScrollY);
-             mTranslateYTextView.setOffset(-oldScrollY);
-         }
-
-        }
-    };
     private String id;
     private String title;
     private String url;
@@ -114,7 +102,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         width = mDeviceInfo[0];
         heigh = width * 3 / 4;
         setSupportActionBar(mToolbar);
-
+        initlistenr();
         initData();
         initView();
         getData();
@@ -123,14 +111,44 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
 
             getWindow().getSharedElementReturnTransition().addListener(zhihuReturnHomeListener);
-            getWindow().getSharedElementEnterTransition().addListener(zhihuEnterListener);
             getWindow().setSharedElementEnterTransition(new ChangeBounds());
         }
 
-
-//        trydownloadImage();
         enterAnimation();
 
+    }
+
+    private void initlistenr() {
+        zhihuReturnHomeListener =
+                new AnimUtils.TransitionListenerAdapter() {
+                    @Override
+                    public void onTransitionStart(Transition transition) {
+                        super.onTransitionStart(transition);
+                        // hide the fab as for some reason it jumps position??  TODO work out why
+                        mToolbar.animate()
+                                .alpha(0f)
+                                .setDuration(100)
+                                .setInterpolator(new AccelerateInterpolator());
+                        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+                            mShot.setElevation(1f);
+                            mToolbar.setElevation(0f);
+                        }
+                        mNest.animate()
+                                .alpha(0f)
+                                .setDuration(50)
+                                .setInterpolator(new AccelerateInterpolator());
+                    }
+                };
+        scrollListener = new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (oldScrollY<168){
+                    mShot.setOffset(-oldScrollY);
+                    mTranslateYTextView.setOffset(-oldScrollY);
+                }
+
+            }
+        };
     }
 
     private void initData() {
@@ -145,8 +163,6 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                 @Override
                 public boolean onPreDraw() {
                     mShot.getViewTreeObserver().removeOnPreDrawListener(this);
-                    // TODO: 16/8/16 posotion
-//                enterAnimation();
                     if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
                         startPostponedEnterTransition();
                     }
@@ -191,17 +207,10 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     }
 
 
-    Runnable runnable=new Runnable() {
-        @Override
-        public void run() {
-        mNest.smoothScrollTo(0,0);
-        }
-    };
     @Override
     protected void onResume() {
         super.onResume();
-//      解决图片加载不完整bug
-        mHandler.postDelayed(runnable,1000L);
+
         mDraggableFrame.addListener(chromeFader);
         try {
             wvZhihu.getClass().getMethod("onResume").invoke(wvZhihu, (Object[]) null);
@@ -234,7 +243,6 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
 
             getWindow().getSharedElementReturnTransition().removeListener(zhihuReturnHomeListener);
-            getWindow().getSharedElementEnterTransition().removeListener(zhihuEnterListener);
         }
         //webview内存泄露
         if (wvZhihu != null) {
@@ -280,7 +288,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
             Glide.with(this)
                     .load(zhihuStory.getImage()).centerCrop()
-                    .listener(shotLoadListener).override(width,heigh)
+                    .listener(loadListener).override(width,heigh)
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .into(mShot);
         url = zhihuStory.getShareUrl();
@@ -325,56 +333,8 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
             }
         }
     }
-    private Transition.TransitionListener zhihuReturnHomeListener =
-            new AnimUtils.TransitionListenerAdapter() {
-                @Override
-                public void onTransitionStart(Transition transition) {
-                    super.onTransitionStart(transition);
-                    // hide the fab as for some reason it jumps position??  TODO work out why
-                    mToolbar.animate()
-                            .alpha(0f)
-                            .setDuration(100)
-                            .setInterpolator(new AccelerateInterpolator());
-                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
-                        mShot.setElevation(1f);
-                        mToolbar.setElevation(0f);
-                    }
-                    mNest.animate()
-                            .alpha(0f)
-                            .setDuration(50)
-                            .setInterpolator(new AccelerateInterpolator());
-                }
-            };
 
-    private Transition.TransitionListener zhihuEnterListener =
-            new AnimUtils.TransitionListenerAdapter() {
-                @Override
-                public void onTransitionEnd(Transition transition) {
-                    super.onTransitionEnd(transition);
-//                    解决5.0 shara element bug
-//                 ValueAnimator valueAnimator = ValueAnimator.ofInt(0,100).setDuration(1000L);
-//
-//                    valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//                        @Override
-//                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
-//                            mShot.setOffset((Float) valueAnimator.getAnimatedValue() * 10);
-//                            mNest.smoothScrollTo((Integer) valueAnimator.getAnimatedValue()/100,0);
-//                        }
-//                    });
-//                    valueAnimator.start();
-//                    enterAnimation();
-//                    mShot.setAlpha(0.5f);
-//                    mShot.animate().alpha(1f).setDuration(50).start();
-                }
-
-
-                @Override
-                public void onTransitionResume(Transition transition) {
-                    super.onTransitionResume(transition);
-
-                }
-            };
-    private RequestListener shotLoadListener = new RequestListener<String, GlideDrawable>() {
+    private RequestListener loadListener = new RequestListener<String, GlideDrawable>() {
         @Override
         public boolean onResourceReady(GlideDrawable resource, String model,
                                        Target<GlideDrawable> target, boolean isFromMemoryCache,
@@ -398,11 +358,6 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                             } else {
                                 isDark = lightness == ColorUtils.IS_DARK;
                             }
-
-//                            if (isDark) { // make back icon dark on light images
-//                                mToolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary ));
-//                                mToolbar.setTitleTextColor();
-//                            }
 
                             // color the status bar. Set a complementary dark color on L,
                             // light or dark color on M (with matching status bar icons)

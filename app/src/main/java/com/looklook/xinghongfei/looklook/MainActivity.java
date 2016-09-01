@@ -107,8 +107,6 @@ public class MainActivity extends BaseActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
 
-//                if(item.getItemId()==R.id.setting)return true;
-
                 if (currentMenuItem != item && currentMenuItem != null) {
                     currentMenuItem.setChecked(false);
                     int id = item.getItemId();
@@ -227,8 +225,7 @@ public class MainActivity extends BaseActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment)
                     .commit();
         currentFragment = fragment;
-//        ActionBar actionBar=getActionBar();
-//        actionBar.setTitle(title);
+
     }
 
     private void animateToolbar() {
