@@ -1,46 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.looklook.xinghongfei.looklook">
+          package="com.looklook.xinghongfei.looklook">
 
 
-
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
     <uses-sdk
         android:minSdkVersion="21"
-        android:targetSdkVersion="23" />
+        android:targetSdkVersion="23"/>
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
-        android:label="@string/app_name"
         android:icon="@drawable/look"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         >
 
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Look.Home"
-                  android:screenOrientation="portrait"
             >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
         <activity
             android:name=".Activity.ZhihuDescribeActivity"
-            android:parentActivityName="com.looklook.xinghongfei.looklook.MainActivity"
             android:launchMode="singleTop"
+            android:parentActivityName="com.looklook.xinghongfei.looklook.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Look.Translucent.Dribbble.Shot">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".MainActivity"/>
         </activity>
 
         <activity
@@ -53,22 +54,23 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".MainActivity"/>
         </activity>
 
-        <activity android:name=".Activity.MeiziPhotoDescribeActivity"
-                  android:screenOrientation="portrait"
-                  android:launchMode="singleTop"
-                  android:theme="@style/Look.Home"/>
+        <activity
+            android:name=".Activity.MeiziPhotoDescribeActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/Look.Home"/>
 
 
         <activity
             android:name=".Activity.AboutActivity"
-            android:theme="@style/Look.Translucent"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Look.Translucent">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".MainActivity"/>
         </activity>
 
     </application>
