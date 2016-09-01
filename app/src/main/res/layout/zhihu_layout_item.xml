@@ -3,8 +3,10 @@
               android:id="@+id/zhihu_item_layout"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:orientation="horizontal"
+              android:paddingBottom="@dimen/item_margin"
+              android:paddingTop="@dimen/item_margin"
               android:foreground="@drawable/mid_grey_ripple"
+              android:orientation="horizontal"
               android:stateListAnimator="@animator/raise">
 
     <com.looklook.xinghongfei.looklook.widget.BadgedFourThreeImageView
@@ -14,7 +16,7 @@
         android:layout_width="@dimen/image_width"
         android:layout_height="@dimen/image_hight"
         android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="@dimen/image_left_margin"
         android:layout_marginTop="5dp"
         android:elevation="@dimen/z_card"
         android:foreground="@drawable/mid_grey_ripple"
@@ -30,8 +32,8 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="10dp"
-        android:stateListAnimator="@animator/raise"
         android:layout_weight="1"
-        android:textSize="16sp"
-        android:textColor="@color/text_color"/>
+        android:stateListAnimator="@animator/raise"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/text_size"/>
 </LinearLayout>

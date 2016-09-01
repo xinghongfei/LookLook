@@ -58,10 +58,9 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.main_layout);
         ButterKnife.inject(this);
         setSupportActionBar(toolbar);
-
+        toolbar.setOnMenuItemClickListener(onMenuItemClick);
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
             animateToolbar();
-
         }
         addfragmentsAndTitle();
 
@@ -278,22 +277,25 @@ public class MainActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+    private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case R.id.menu_open:
+                    drawer.openDrawer(GravityCompat.END);
+                    break;
+                case R.id.menu_about:
+                    goAboutActivity();
+                    break;
+            }
+            return true;
+        }};
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
-            case R.id.menu_filter:
-                drawer.openDrawer(GravityCompat.END);
-                return true;
-            case R.id.menu_about:
-                Intent intent=new Intent(this, AboutActivity.class);
+    private  void goAboutActivity(){
+        Intent intent=new Intent(this, AboutActivity.class);
                 this.startActivity(intent);
-
-        }
-
-        return super.onOptionsItemSelected(item);
-
     }
+
 
     //    when recycle view scroll bottom,need loading more date and show the more view.
     public interface LoadingMore {

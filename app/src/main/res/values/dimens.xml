@@ -89,9 +89,17 @@
 
 
     <!--image width,-->
-    <dimen name="image_width">90dp</dimen>
+    <dimen name="image_width">93dp</dimen>
     <dimen name="image_hight">24dp</dimen>
     <dimen name="item_hight">30dp</dimen>
+    <dimen name="image_left_margin">11dp</dimen>
 
+
+
+    <dimen name="item_margin">1dp</dimen>
+    <dimen name="item_padding">0.2dp</dimen>
+
+
+    <dimen name="text_size">18sp</dimen>
 
 </resources>

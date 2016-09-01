@@ -37,7 +37,7 @@
             android:launchMode="singleTop"
             android:parentActivityName="com.looklook.xinghongfei.looklook.MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Look.Translucent.Dribbble.Shot">
+            android:theme="@style/Look.Translucent.Look.Image">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -50,7 +50,7 @@
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
 
-            android:theme="@style/Look.Translucent.Dribbble.Shot">
+            android:theme="@style/Look.Translucent.Look.Image">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

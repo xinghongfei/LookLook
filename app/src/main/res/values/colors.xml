@@ -73,8 +73,9 @@
     <color name="gif_badge_dark_image">#b3ffffff</color>
 
     <color name="text_color">#f6000000</color>
-    <color name="text_source">#9a000000</color>
+    <color name="text_source">#732b2828</color>
 
     <color name="meizibg">#faf1f1f1</color>
+    <color name="email">#ef6269</color> <!-- pink 300 -->
 
 </resources>

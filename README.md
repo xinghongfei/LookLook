@@ -9,6 +9,7 @@
 
 <img src="screenshots/zhihu.png" width="25%" />
 <img src="screenshots/meizi.png" width="25%" />
+<img src="screenshots/about.png" width="25%" />
 <img src="screenshots/navigation.png" width="25%" />
 
 

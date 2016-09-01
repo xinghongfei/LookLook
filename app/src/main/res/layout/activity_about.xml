@@ -15,16 +15,47 @@
   limitations under the License.
   -->
 
-<io.plaidapp.ui.widget.ElasticDragDismissFrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/draggable_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:dragDismissDistance="@dimen/drag_dismiss_distance"
-    app:dragDismissScale="0.95"
+    android:orientation="vertical"
     tools:context=".Activity.AboutActivity">
 
 
-</io.plaidapp.ui.widget.ElasticDragDismissFrameLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/app_name"
+        android:textStyle="bold"
+        android:layout_marginTop="200dp"
+        android:textSize="40sp"
+        android:textColor="@color/text_primary_light"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/about_text"
+        android:id="@+id/textView2"
+        android:textColor="@color/text_primary_light"
+        android:layout_margin="25dp"
+        android:layout_gravity="center_horizontal"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/email"
+
+        android:id="@+id/textView3"
+        android:textColor="@color/email"
+        android:layout_margin="5dp"
+        android:layout_gravity="center_horizontal"/>
+
+
+</LinearLayout>

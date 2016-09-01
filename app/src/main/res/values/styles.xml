@@ -7,11 +7,11 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-    <style name="Widget.Plaid.Toolbar.SmallCapsTitle">
+    <style name="Widget.Look.Toolbar.SmallCapsTitle">
         <item name="android:titleTextAppearance">@style/TextAppearance.ToolbarTitleSmallCaps</item>
     </style>
 
-    <style name="Widget.Plaid.HomeToolbar" parent="Widget.Plaid.Toolbar.SmallCapsTitle">
+    <style name="Widget.Look.HomeToolbar" parent="Widget.Look.Toolbar.SmallCapsTitle">
         <item name="android:background">@null</item>
         <item name="android:elevation">0dp</item>
         <item name="android:theme">@android:style/ThemeOverlay.Material.Dark</item>
@@ -23,7 +23,7 @@
         <item name="android:fontFeatureSettings">smcp</item>
         <item name="android:letterSpacing">0.2</item>
     </style>
-    <style name="Widget.Plaid.Toolbar">
+    <style name="Widget.Look.Toolbar">
         <item name="android:titleTextAppearance">@android:style/TextAppearance.Material.Widget.ActionBar.Title</item>
         <item name="android:background">?android:colorPrimary</item>
         <item name="android:elevation">@dimen/z_app_bar</item>
@@ -37,7 +37,7 @@
     </style>
 
 
-    <style name="Widget.Plaid" parent="android:Widget" />
+    <style name="Widget.Look" parent="android:Widget" />
 
     <style name="Look.Home">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
@@ -63,14 +63,14 @@
         <item name="android:windowSharedElementsUseOverlay">false</item>
     </style>
 
-    <style name="Look.Translucent.Dribbble.Shot">
+    <style name="Look.Translucent.Look.Image">
         <item name="android:windowSharedElementEnterTransition">@transition/dribbble_shot_shared_enter</item>
         <item name="android:windowSharedElementReturnTransition">@transition/dribbble_shot_shared_return</item>
         <item name="android:windowEnterTransition">@transition/dribbble_shot_enter</item>
         <item name="android:windowReturnTransition">@transition/dribbble_shot_return</item>
     </style>
 
-    <style name="Look.Translucent.Dribbble">
+    <style name="Look.Translucent.Look">
         <item name="android:colorPrimary">@color/dribbble</item>
         <item name="android:colorAccent">@color/dribbble</item>
         <item name="android:statusBarColor">@color/dribbble_super_dark</item>

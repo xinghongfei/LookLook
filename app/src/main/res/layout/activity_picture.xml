@@ -40,6 +40,6 @@
         android:scrollbarDefaultDelayBeforeFade="1"
         android:background="#3b000000"
         android:title="@string/app_name"
-        style="@style/Widget.Plaid.HomeToolbar" />
+        style="@style/Widget.Look.HomeToolbar" />
 
 </RelativeLayout>
