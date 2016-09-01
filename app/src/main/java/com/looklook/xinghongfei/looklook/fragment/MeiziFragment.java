@@ -61,8 +61,6 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
 
         initialView();
 
-
-
         super.onViewCreated(view, savedInstanceState);
     }
 

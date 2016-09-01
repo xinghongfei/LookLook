@@ -2,10 +2,14 @@ package com.looklook.xinghongfei.looklook.Activity;
 
 import android.animation.ValueAnimator;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -28,6 +32,11 @@ import com.looklook.xinghongfei.looklook.R;
 import com.looklook.xinghongfei.looklook.util.ColorUtils;
 import com.looklook.xinghongfei.looklook.util.GlideUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.Date;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -37,14 +46,12 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  */
 public class MeiziPhotoDescribeActivity extends BaseActivity {
     public static final String EXTRA_IMAGE_URL = "image";
-    public static final String EXTRA_IMAGE_TITLE = "image_title";
-    public static final String TRANSIT_PIC = "picture";
     private static final float SCRIM_ADJUSTMENT = 0.075f;
 
-
     String mImageUrl;
-
     PhotoViewAttacher mPhotoViewAttacher;
+    private boolean mIsHidden = false;
+
     @InjectView(R.id.shot)
     ImageView mShot;
     @InjectView(R.id.toolbar)
@@ -52,7 +59,6 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
     @InjectView(R.id.background)
     RelativeLayout mRelativeLayout;
 
-    private boolean mIsHidden = false;
 
 
     @Override
@@ -95,16 +101,34 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface anInterface, int i) {
 
-                                // TODO: 16/8/20 save image
-
                                 anInterface.dismiss();
-
+                                saveImage();
                             }
                         }).show();
                 return true;
             }
         });
 
+    }
+
+    private void saveImage() {
+        File externalStorageDirectory = Environment.getExternalStorageDirectory();
+        File directory = new File(externalStorageDirectory,"LookLook");
+        if (!directory.exists())
+            directory.mkdir();
+        Bitmap drawingCache = mPhotoViewAttacher.getImageView().getDrawingCache();
+        try {
+            File file = new File(directory, new Date().getTime() + ".jpg");
+            FileOutputStream fos = new FileOutputStream(file);
+            drawingCache.compress(Bitmap.CompressFormat.JPEG,100,fos);
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri uri = Uri.fromFile(file);
+            intent.setData(uri);
+            getApplicationContext().sendBroadcast(intent);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Snackbar.make(getCurrentFocus(),"阿偶出错了呢",Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     private void parseIntent() {
@@ -133,7 +157,7 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
         Glide.with(this)
                 .load(mImageUrl)
                 .centerCrop()
-                .listener(shotLoadListener)
+                .listener(loadListener)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(mShot);
 
@@ -215,7 +239,7 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
             }
     }
 
-    private RequestListener shotLoadListener = new RequestListener<String, GlideDrawable>() {
+    private RequestListener loadListener = new RequestListener<String, GlideDrawable>() {
         @Override
         public boolean onResourceReady(GlideDrawable resource, String model,
                                        Target<GlideDrawable> target, boolean isFromMemoryCache,
@@ -239,8 +263,6 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
                             } else {
                                 isDark = lightness == ColorUtils.IS_DARK;
                             }
-
-
 
                             // color the status bar. Set a complementary dark color on L,
                             // light or dark color on M (with matching status bar icons)

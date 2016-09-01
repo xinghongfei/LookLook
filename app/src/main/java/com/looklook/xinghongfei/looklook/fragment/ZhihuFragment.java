@@ -121,7 +121,6 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
         recycle.setAdapter(zhihuAdapter);
         recycle.addOnScrollListener(loadingMoreListener);
 //      recycle.addOnScrollListener(tooldimissListener);
-
         if (connected) {
             loadDate();
         }

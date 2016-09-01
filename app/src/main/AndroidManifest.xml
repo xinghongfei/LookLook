@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-sdk
         android:minSdkVersion="21"
         android:targetSdkVersion="23" />
@@ -14,7 +16,7 @@
         android:name=".MyApplication"
         android:allowBackup="true"
         android:label="@string/app_name"
-        android:icon="@mipmap/look"
+        android:icon="@drawable/look"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         >
@@ -35,15 +37,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Look.Translucent.Dribbble.Shot">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:scheme="https"
-                    android:host="dribbble.com"
-                    android:pathPrefix="/shots/"/>
-            </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -56,15 +50,7 @@
             android:screenOrientation="portrait"
 
             android:theme="@style/Look.Translucent.Dribbble.Shot">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:scheme="https"
-                    android:host="dribbble.com"
-                    android:pathPrefix="/shots/"/>
-            </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />

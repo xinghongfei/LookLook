@@ -1,9 +1,14 @@
 # LookLook 
 
+<<<<<<< HEAD
 目前包括三个模块：知乎日报、网易头条、每日看看，其中每日看看数据来自干活集中营。项目旨在打造一款极简的阅读app，优化用户体验。未来会加入更多有意思的模块。（项目还存在很多问题，持续更新中，欢迎star）
+=======
+目前包括三个模块：知乎日报、网易头条、每日看看，其中每日看看数据来自干活集中营。项目旨在打造一款极简的阅读app，优化用户体验。未来会加入更多有意思的模块。(项目持续更新中....欢迎star)
+>>>>>>> developer
 
 <img src="screenshots/LookLook.gif" width="400" align="right" hspace="20">
 
+<img src="screenshots/LookLook.gif" width="400" align="right" hspace="20">
 ### Screenshots
 
 <img src="screenshots/zhihu.png" width="25%" />
@@ -16,10 +21,21 @@
 
 
 
+
+
+
 **About me**
 
 An android developer in Beijing.
+<<<<<<< HEAD
 Welcome to offer me an interview invitation. 
+=======
+Welcome to offer me an Interview invitation. 
+
+
+
+
+>>>>>>> developer
 
 
 
