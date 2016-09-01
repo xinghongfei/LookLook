@@ -17,16 +17,17 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    >
-
+      xmlns:tools="http://schemas.android.com/tools"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      tools:context=".MainActivity">
 
     <item
-        android:id="@+id/menu_filter"
+        android:id="@+id/menu_open"
         android:title="@string/filter"
-        android:icon="@drawable/ic_filter"
-        android:showAsAction="always" />
+        android:icon="@drawable/open"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_about"
         android:title="@string/about"
-        android:showAsAction="never" />
+        app:showAsAction="never" />
 </menu>
