@@ -23,15 +23,9 @@
 **About me**
 
 An android developer in Beijing.
-<<<<<<< HEAD
-Welcome to offer me an interview invitation. 
-=======
 Welcome to offer me an Interview invitation. 
 
 
-
-
->>>>>>> developer
 
 
 
