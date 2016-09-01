@@ -24,7 +24,7 @@
     <item
         android:id="@+id/menu_open"
         android:title="@string/filter"
-        android:icon="@drawable/open1"
+        android:icon="@drawable/open"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_about"
