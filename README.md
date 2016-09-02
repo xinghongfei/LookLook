@@ -22,6 +22,11 @@ This is a reading news app. you can read Zhihu Daily， news and some pictures.U
 
 
 
+##备注
+如果您很喜欢本项目，欢迎踊跃打赏，我会更加努力升级新的功能。
+<img src="screenshots/pay.png" width="800" height="700" //>
+
+
 
 ##About me
 
