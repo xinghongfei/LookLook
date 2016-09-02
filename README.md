@@ -24,7 +24,7 @@ This is a reading news app. you can read Zhihu Daily， news and some pictures.U
 
 ##备注
 #####<center>如果您很喜欢本项目，欢迎踊跃打赏，我会更加努力升级新的功能。</center>
-<img src="screenshots/pay1.png" width="330" height="330" alt="微信扫码、金额随意"/>
+<img src="screenshots/pay1.png" width="330" height="290" alt="微信扫码、金额随意"/>
 
 
 
