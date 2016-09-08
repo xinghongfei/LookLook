@@ -45,7 +45,7 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView.OnScrollListener loadingMoreListener;
 
-
+    View view = null;
     ZhihuPresenterImpl zhihuPresenter;
     @InjectView(R.id.recycle_zhihu)
     RecyclerView recycle;
@@ -59,7 +59,7 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         setRetainInstance(true);
-        View view = inflater.inflate(R.layout.zhihu_fragment_layout, container, false);
+        view = inflater.inflate(R.layout.zhihu_fragment_layout, container, false);
         checkConnectivity(view);
         ButterKnife.inject(this, view);
         return view;
@@ -254,9 +254,8 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         connected = activeNetworkInfo != null && activeNetworkInfo.isConnected();
-        if (!connected) {
+        if (!connected && progress!=null) {//不判断容易抛出空指针异常
             progress.setVisibility(View.INVISIBLE);
-
             if (noConnectionText == null) {
 
                 ViewStub stub_text = (ViewStub) view.findViewById(R.id.stub_no_connection_text);
