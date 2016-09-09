@@ -4,6 +4,9 @@ import android.animation.ValueAnimator;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -74,6 +77,7 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
             getWindow().getSharedElementEnterTransition().addListener(mListener);
             getWindow().setSharedElementEnterTransition(new ChangeBounds());
+//            setStatusColor();
         }
 
     }
@@ -178,6 +182,14 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
 
     }
 
+    private void setStatusColor(){
+        Bitmap b = convertViewToBitmap(mRelativeLayout);
+        Palette palette = Palette.generate(b);
+        if (palette.getLightVibrantSwatch() != null) {
+            getWindow().setStatusBarColor(palette.getLightVibrantSwatch().getRgb());
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -268,32 +280,31 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
                             // light or dark color on M (with matching status bar icons)
                             if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
 
-                            int statusBarColor = getWindow().getStatusBarColor();
-                            final Palette.Swatch topColor =
-                                    ColorUtils.getMostPopulousSwatch(palette);
-                            if (topColor != null &&
-                                    (isDark || Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
-                                statusBarColor = ColorUtils.scrimify(topColor.getRgb(),
-                                        isDark, SCRIM_ADJUSTMENT);
-                            }
+                                int statusBarColor = getWindow().getStatusBarColor();
+                                final Palette.Swatch topColor =
+                                        ColorUtils.getMostPopulousSwatch(palette);
+                                if (topColor != null &&
+                                        (isDark || Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
+                                    statusBarColor = ColorUtils.scrimify(topColor.getRgb(),
+                                            isDark, SCRIM_ADJUSTMENT);
+                                }
 
-                            if (statusBarColor != getWindow().getStatusBarColor()) {
-                                ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
-                                        getWindow().getStatusBarColor(), statusBarColor);
-                                statusBarColorAnim.addUpdateListener(new ValueAnimator
-                                        .AnimatorUpdateListener() {
-                                    @Override
-                                    public void onAnimationUpdate(ValueAnimator animation) {
-                                        getWindow().setStatusBarColor(
-                                                (int) animation.getAnimatedValue());
-                                    }
-                                });
-                                statusBarColorAnim.setDuration(1000L);
-                                statusBarColorAnim.setInterpolator(
-                                        new AccelerateInterpolator());
-                                statusBarColorAnim.start();
-                            }
-
+                                if (statusBarColor != getWindow().getStatusBarColor()) {
+                                    ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
+                                            getWindow().getStatusBarColor(), statusBarColor);
+                                    statusBarColorAnim.addUpdateListener(new ValueAnimator
+                                            .AnimatorUpdateListener() {
+                                        @Override
+                                        public void onAnimationUpdate(ValueAnimator animation) {
+                                            getWindow().setStatusBarColor(
+                                                    (int) animation.getAnimatedValue());
+                                        }
+                                    });
+                                    statusBarColorAnim.setDuration(1000L);
+                                    statusBarColorAnim.setInterpolator(
+                                            new AccelerateInterpolator());
+                                    statusBarColorAnim.start();
+                                }
                             }
                         }
                     });
@@ -307,6 +318,15 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
             return false;
         }
     };
+    public static Bitmap convertViewToBitmap(View view){
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+        view.buildDrawingCache();
+        Bitmap bitmap = view.getDrawingCache();
+
+         return bitmap;
+    }
 
 }
 

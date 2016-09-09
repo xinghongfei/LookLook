@@ -2,6 +2,8 @@ package com.looklook.xinghongfei.looklook;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.util.SimpleArrayMap;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -20,6 +23,7 @@ import android.view.WindowInsets;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.looklook.xinghongfei.looklook.Activity.AboutActivity;
 import com.looklook.xinghongfei.looklook.Activity.BaseActivity;
@@ -51,6 +55,9 @@ public class MainActivity extends BaseActivity {
 
     SimpleArrayMap<Integer, String> mTitleArryMap = new SimpleArrayMap<>();
 
+    int mainColor;
+    long exitTime = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +70,8 @@ public class MainActivity extends BaseActivity {
             animateToolbar();
         }
         addfragmentsAndTitle();
+
+        setStatusColor();
 
         drawer.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -172,6 +181,16 @@ public class MainActivity extends BaseActivity {
         navView.setItemIconTintList(new ColorStateList(state, iconcolor));
 
     }
+    private void setStatusColor(){
+        Bitmap bm = BitmapFactory.decodeResource(getResources(),
+                R.drawable.nav_icon);
+        Palette palette = Palette.generate(bm);
+        if (palette.getLightVibrantSwatch() != null) {
+            mainColor = palette.getLightVibrantSwatch().getRgb();
+            getWindow().setStatusBarColor(palette.getLightVibrantSwatch().getRgb());
+            toolbar.setBackgroundColor(palette.getLightVibrantSwatch().getRgb());
+        }
+    }
 
     private Fragment getFragmentById(int id) {
         Fragment fragment = null;
@@ -214,7 +233,12 @@ public class MainActivity extends BaseActivity {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
         } else {
-            super.onBackPressed();
+            if((System.currentTimeMillis()- exitTime)>2000){
+                Toast.makeText(MainActivity.this, "再点一次，退出", Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            }else{
+                super.onBackPressed();
+            }
         }
     }
 

@@ -30,7 +30,6 @@
             android:layout_height="?android:actionBarSize"
             android:outlineProvider="none"
             android:elevation="1dp"
-            android:background="#bc000000"
             style="@style/Widget.Look.HomeToolbar"
             app:title="@string/app_name"/>
     </FrameLayout>
