@@ -71,7 +71,7 @@ public class MainActivity extends BaseActivity {
         }
         addfragmentsAndTitle();
 
-        setStatusColor();
+//        setStatusColor();
 
         drawer.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
