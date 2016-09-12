@@ -28,6 +28,11 @@ public class FourThreeImageView extends ForegroundImageView {
         super(context, attrs);
     }
 
+    public FourThreeImageView(Context context,AttributeSet attrs,int defStyle){
+        super(context, attrs,defStyle);
+
+    }
+
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         int fourThreeHeight = MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthSpec) * 3 / 4,
