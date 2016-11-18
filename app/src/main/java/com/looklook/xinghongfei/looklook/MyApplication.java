@@ -7,7 +7,7 @@ import android.app.Application;
  */
 public class MyApplication extends Application {
 
-    public static MyApplication myApplication;
+    private static MyApplication myApplication;
 
     public static Application getContext() {
 
