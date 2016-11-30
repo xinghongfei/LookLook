@@ -19,8 +19,8 @@ import com.looklook.xinghongfei.looklook.presenter.implView.ITopNewsFragment;
 import com.looklook.xinghongfei.looklook.view.GridItemDividerDecoration;
 import com.looklook.xinghongfei.looklook.widget.WrapContentLinearLayoutManager;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 /**
  * Created by xinghongfei on 16/8/17.
@@ -39,9 +39,9 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
 
     TopNewsPrensenterImpl mTopNewsPrensenter;
 
-    @InjectView(R.id.recycle_topnews)
+    @BindView(R.id.recycle_topnews)
     RecyclerView recycle;
-    @InjectView(R.id.prograss)
+    @BindView(R.id.prograss)
     ProgressBar progress;
 
 
@@ -50,7 +50,7 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.topnews_fragment_layout, container, false);
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
         return view;
 
     }
@@ -171,6 +171,6 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
     public void onDestroyView() {
         super.onDestroyView();
         mTopNewsPrensenter.unsubcrible();
-        ButterKnife.reset(this);
+//        ButterKnife.reset(this);
     }
 }

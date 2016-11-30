@@ -1,4 +1,4 @@
-package com.looklook.xinghongfei.looklook.Activity;
+package com.looklook.xinghongfei.looklook.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -52,7 +52,7 @@ import com.looklook.xinghongfei.looklook.widget.TranslateYTextView;
 import java.lang.reflect.InvocationTargetException;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -61,15 +61,16 @@ import butterknife.OnClick;
 public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     private static final float SCRIM_ADJUSTMENT = 0.075f;
 
-    @InjectView(R.id.shot)
+    @BindView(R.id.shot)
     ParallaxScrimageView mShot;
-    @InjectView(R.id.toolbar)
+    @Nullable
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @InjectView(R.id.wv_zhihu)
+    @BindView(R.id.wv_zhihu)
     WebView wvZhihu;
-    @InjectView(R.id.nest)
+    @BindView(R.id.nest)
     NestedScrollView mNest;
-    @InjectView(R.id.title)
+    @BindView(R.id.title)
     TranslateYTextView mTranslateYTextView;
 
     boolean isEmpty;
@@ -77,7 +78,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     String[] scc;
     String mImageUrl;
 
-    @InjectView(R.id.draggable_frame)
+    @BindView(R.id.draggable_frame)
     ElasticDragDismissFrameLayout mDraggableFrame;
 
     int[] mDeviceInfo;
@@ -97,7 +98,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.zhihudescribe);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         mDeviceInfo = DensityUtil.getDeviceInfo(this);
         width = mDeviceInfo[0];
         heigh = width * 3 / 4;

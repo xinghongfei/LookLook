@@ -1,12 +1,9 @@
-package com.looklook.xinghongfei.looklook.Activity;
+package com.looklook.xinghongfei.looklook.activity;
 
 import android.animation.ValueAnimator;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,8 +37,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Date;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
@@ -55,11 +52,10 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
     PhotoViewAttacher mPhotoViewAttacher;
     private boolean mIsHidden = false;
 
-    @InjectView(R.id.shot)
+    @BindView(R.id.shot)
     ImageView mShot;
-    @InjectView(R.id.toolbar)
-    Toolbar mToolbar;
-    @InjectView(R.id.background)
+    @BindView(R.id.toolbar)Toolbar mToolbar;
+    @BindView(R.id.background)
     RelativeLayout mRelativeLayout;
 
 
@@ -68,7 +64,7 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picture);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         parseIntent();
         getData();
         setupPhotoAttacher();

@@ -29,7 +29,7 @@ import com.looklook.xinghongfei.looklook.view.GridItemDividerDecoration;
 import com.looklook.xinghongfei.looklook.widget.WrapContentLinearLayoutManager;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by xinghongfei on 16/8/17.
@@ -47,9 +47,9 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
 
     View view = null;
     ZhihuPresenterImpl zhihuPresenter;
-    @InjectView(R.id.recycle_zhihu)
+    @BindView(R.id.recycle_zhihu)
     RecyclerView recycle;
-    @InjectView(R.id.prograss)
+    @BindView(R.id.prograss)
     ProgressBar progress;
 
     private String currentLoadDate;
@@ -61,7 +61,7 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
         setRetainInstance(true);
         view = inflater.inflate(R.layout.zhihu_fragment_layout, container, false);
         checkConnectivity(view);
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
         return view;
 
     }
@@ -245,7 +245,7 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.reset(this);
+//        ButterKnife.reset(this);
     }
 
 

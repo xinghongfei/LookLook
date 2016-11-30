@@ -25,8 +25,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.looklook.xinghongfei.looklook.Activity.AboutActivity;
-import com.looklook.xinghongfei.looklook.Activity.BaseActivity;
+import com.looklook.xinghongfei.looklook.activity.AboutActivity;
+import com.looklook.xinghongfei.looklook.activity.BaseActivity;
 import com.looklook.xinghongfei.looklook.fragment.MeiziFragment;
 import com.looklook.xinghongfei.looklook.fragment.TopNewsFragment;
 import com.looklook.xinghongfei.looklook.fragment.ZhihuFragment;
@@ -34,8 +34,8 @@ import com.looklook.xinghongfei.looklook.util.AnimUtils;
 import com.looklook.xinghongfei.looklook.util.SharePreferenceUtil;
 import com.looklook.xinghongfei.looklook.util.ViewUtils;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class MainActivity extends BaseActivity {
 
@@ -43,13 +43,13 @@ public class MainActivity extends BaseActivity {
     MenuItem currentMenuItem;
     Fragment currentFragment;
 
-    @InjectView(R.id.fragment_container)
+    @BindView(R.id.fragment_container)
     FrameLayout mFragmentContainer;
-    @InjectView(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @InjectView(R.id.nav_view)
+    @BindView(R.id.nav_view)
     NavigationView navView;
-    @InjectView(R.id.drawer)
+    @BindView(R.id.drawer)
     DrawerLayout drawer;
     int nevigationId;
 
@@ -63,7 +63,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(onMenuItemClick);
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){

@@ -1,4 +1,4 @@
-package com.looklook.xinghongfei.looklook.Activity;
+package com.looklook.xinghongfei.looklook.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -42,8 +42,8 @@ import com.looklook.xinghongfei.looklook.widget.TranslateYTextView;
 
 import org.sufficientlysecure.htmltextview.HtmlTextView;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 
 /**
@@ -54,19 +54,19 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     int[] mDeviceInfo;
     int width;
     int heigh;
-    @InjectView(R.id.progress)
+    @BindView(R.id.progress)
     ProgressBar mProgress;
-    @InjectView(R.id.htNewsContent)
+    @BindView(R.id.htNewsContent)
     HtmlTextView mHtNewsContent;
-    @InjectView(R.id.shot)
+    @BindView(R.id.shot)
     ParallaxScrimageView mShot;
-    @InjectView(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @InjectView(R.id.draggable_frame)
+    @BindView(R.id.draggable_frame)
     ElasticDragDismissFrameLayout mDraggableFrame;
-    @InjectView(R.id.nest)
+    @BindView(R.id.nest)
     NestedScrollView mNest;
-    @InjectView(R.id.title)
+    @BindView(R.id.title)
     TranslateYTextView mTextView;
 
     private String id;
@@ -83,7 +83,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.topnews_describe);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         mDeviceInfo = DensityUtil.getDeviceInfo(this);
         width = mDeviceInfo[0];
