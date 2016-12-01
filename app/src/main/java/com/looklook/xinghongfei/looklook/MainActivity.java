@@ -5,6 +5,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -25,6 +26,7 @@ import android.view.WindowInsets;
 import android.view.animation.AnimationUtils;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,18 +35,23 @@ import com.looklook.xinghongfei.looklook.activity.BaseActivity;
 import com.looklook.xinghongfei.looklook.fragment.MeiziFragment;
 import com.looklook.xinghongfei.looklook.fragment.TopNewsFragment;
 import com.looklook.xinghongfei.looklook.fragment.ZhihuFragment;
+import com.looklook.xinghongfei.looklook.presenter.implPresenter.MainPresenterImpl;
+import com.looklook.xinghongfei.looklook.presenter.implView.IMain;
 import com.looklook.xinghongfei.looklook.util.AnimUtils;
 import com.looklook.xinghongfei.looklook.util.SharePreferenceUtil;
 import com.looklook.xinghongfei.looklook.util.ViewUtils;
 
+import java.io.File;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements IMain {
 
     private SwitchCompat mThemeSwitch;
     MenuItem currentMenuItem;
     Fragment currentFragment;
+    private MainPresenterImpl IMainPresenter;
 
     @BindView(R.id.fragment_container)
     FrameLayout mFragmentContainer;
@@ -68,6 +75,8 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.main_layout);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        IMainPresenter = new MainPresenterImpl(this,this);
+        IMainPresenter.getBackground();
         toolbar.setOnMenuItemClickListener(onMenuItemClick);
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
             animateToolbar();
@@ -332,6 +341,16 @@ public class MainActivity extends BaseActivity {
     private  void goAboutActivity(){
         Intent intent=new Intent(this, AboutActivity.class);
                 this.startActivity(intent);
+    }
+
+    @Override
+    public void getPic() {
+        View headerLayout = navView.getHeaderView(0);
+        LinearLayout llImage =  (LinearLayout) headerLayout.findViewById(R.id.side_image);
+        if (new File(getFilesDir().getPath() + "/bg.jpg").exists()) {
+            BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), getFilesDir().getPath() + "/bg.jpg");
+            llImage.setBackground(bitmapDrawable);
+        }
     }
 
     //    when recycle view scroll bottom,need loading more date and show the more view.
