@@ -15,4 +15,6 @@ public class Config {
     public static boolean isNight = false;
     public static boolean isDebug=true;
 
+    public static final String THEME_MODEL = "theme_model";
+
 }

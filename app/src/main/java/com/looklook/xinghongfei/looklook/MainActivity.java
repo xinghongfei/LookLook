@@ -11,9 +11,11 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.SimpleArrayMap;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.ActionMenuView;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.view.animation.AnimationUtils;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,7 +42,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity {
 
-
+    private SwitchCompat mThemeSwitch;
     MenuItem currentMenuItem;
     Fragment currentFragment;
 
@@ -72,7 +75,6 @@ public class MainActivity extends BaseActivity {
         addfragmentsAndTitle();
 
 //        setStatusColor();
-
         drawer.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
@@ -106,15 +108,11 @@ public class MainActivity extends BaseActivity {
                 currentMenuItem=navView.getMenu().findItem(R.id.zhihuitem);
 
             }
-
-
         }
-
 
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-
                 if (currentMenuItem != item && currentMenuItem != null) {
                     currentMenuItem.setChecked(false);
                     int id = item.getItemId();
@@ -160,13 +158,10 @@ public class MainActivity extends BaseActivity {
 
                 // clear this listener so insets aren't re-applied
                 drawer.setOnApplyWindowInsetsListener(null);
-
                 return insets.consumeSystemWindowInsets();
             }
         });
         }
-
-
 
         int[][] state = new int[][]{
                 new int[]{-android.R.attr.state_checked}, // unchecked
@@ -180,7 +175,27 @@ public class MainActivity extends BaseActivity {
         navView.setItemTextColor(new ColorStateList(state, color));
         navView.setItemIconTintList(new ColorStateList(state, iconcolor));
 
+        //主题变色
+        MenuItem item = navView.getMenu().findItem(R.id.nav_theme);
+        mThemeSwitch = (SwitchCompat) MenuItemCompat.getActionView(item).findViewById(R.id.view_switch);
+        mThemeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mThemeSwitch.setChecked(isChecked);
+                if (isChecked) {
+                    setThemeColor(Color.GREEN);
+                } else {
+                    setThemeColor(getResources().getColor(R.color.colorPrimaryDark));
+                }
+            }
+        });
     }
+
+    private void setThemeColor(int color){
+        getWindow().setStatusBarColor(color);
+        toolbar.setBackgroundColor(color);
+    }
+
     private void setStatusColor(){
         Bitmap bm = BitmapFactory.decodeResource(getResources(),
                 R.drawable.nav_icon);
@@ -216,12 +231,10 @@ public class MainActivity extends BaseActivity {
 
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
     }
-
 
     @Override
     protected void onDestroy() {
@@ -244,7 +257,8 @@ public class MainActivity extends BaseActivity {
 
     private void switchFragment(Fragment fragment, String title) {
 
-        if (currentFragment == null || !currentFragment.getClass().getName().equals(fragment.getClass().getName()))
+        if (currentFragment == null || !currentFragment
+                .getClass().getName().equals(fragment.getClass().getName()))
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment)
                     .commit();
         currentFragment = fragment;
@@ -319,7 +333,6 @@ public class MainActivity extends BaseActivity {
         Intent intent=new Intent(this, AboutActivity.class);
                 this.startActivity(intent);
     }
-
 
     //    when recycle view scroll bottom,need loading more date and show the more view.
     public interface LoadingMore {

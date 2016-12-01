@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimaryDark">#ff676767</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimaryDarkNight">#5acc95</color>
 
     <!-- app palette -->
     <color name="primary">#69F0AE</color>
@@ -19,7 +20,7 @@
     <color name="text_primary_light">#ffffffff</color>
     <color name="text_secondary_light">#b3ffffff</color> <!-- 70% -->
     <color name="text_disabled_light">#4dffffff</color> <!-- 30% -->
-    <color name="ripple_light">#99ffffff</color>
+    <color name="ripple_light">#99ffffff</color>primary
     <color name="ripple_dark">@color/mid_grey</color>
     <color name="background_light">#fafafa</color> <!-- grey 50 -->
     <color name="background_lightish">#e0e0e0</color> <!-- grey 300 -->

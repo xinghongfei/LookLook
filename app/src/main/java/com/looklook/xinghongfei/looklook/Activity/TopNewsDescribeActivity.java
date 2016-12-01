@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
@@ -49,7 +50,7 @@ import butterknife.OnClick;
 /**
  * Created by xinghongfei on 16/8/13.
  */
-public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDesFragment {
+public class TopNewsDescribeActivity extends AppCompatActivity implements ITopNewsDesFragment {
     private static final float SCRIM_ADJUSTMENT = 0.075f;
     int[] mDeviceInfo;
     int width;
@@ -102,7 +103,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     }
 
 
-    private void initData() {
+    protected void initData() {
         id = getIntent().getStringExtra("docid");
         title = getIntent().getStringExtra("title");
         mTextView.setText(title);
