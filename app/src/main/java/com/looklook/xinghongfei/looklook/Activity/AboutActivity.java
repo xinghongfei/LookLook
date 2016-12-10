@@ -1,4 +1,4 @@
-package com.looklook.xinghongfei.looklook.Activity;
+package com.looklook.xinghongfei.looklook.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

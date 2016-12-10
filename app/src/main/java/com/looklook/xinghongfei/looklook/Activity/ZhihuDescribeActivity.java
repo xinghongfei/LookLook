@@ -1,4 +1,4 @@
-package com.looklook.xinghongfei.looklook.Activity;
+package com.looklook.xinghongfei.looklook.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -52,24 +53,25 @@ import com.looklook.xinghongfei.looklook.widget.TranslateYTextView;
 import java.lang.reflect.InvocationTargetException;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
  * Created by xinghongfei on 16/8/13.
  */
-public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
+public class ZhihuDescribeActivity extends AppCompatActivity implements IZhihuStory {
     private static final float SCRIM_ADJUSTMENT = 0.075f;
 
-    @InjectView(R.id.shot)
+    @BindView(R.id.shot)
     ParallaxScrimageView mShot;
-    @InjectView(R.id.toolbar)
+    @Nullable
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @InjectView(R.id.wv_zhihu)
+    @BindView(R.id.wv_zhihu)
     WebView wvZhihu;
-    @InjectView(R.id.nest)
+    @BindView(R.id.nest)
     NestedScrollView mNest;
-    @InjectView(R.id.title)
+    @BindView(R.id.title)
     TranslateYTextView mTranslateYTextView;
 
     boolean isEmpty;
@@ -77,7 +79,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     String[] scc;
     String mImageUrl;
 
-    @InjectView(R.id.draggable_frame)
+    @BindView(R.id.draggable_frame)
     ElasticDragDismissFrameLayout mDraggableFrame;
 
     int[] mDeviceInfo;
@@ -97,7 +99,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.zhihudescribe);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         mDeviceInfo = DensityUtil.getDeviceInfo(this);
         width = mDeviceInfo[0];
         heigh = width * 3 / 4;
@@ -151,7 +153,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         };
     }
 
-    private void initData() {
+    protected void initData() {
         id = getIntent().getStringExtra("id");
         title = getIntent().getStringExtra("title");
         mImageUrl = getIntent().getStringExtra("image");

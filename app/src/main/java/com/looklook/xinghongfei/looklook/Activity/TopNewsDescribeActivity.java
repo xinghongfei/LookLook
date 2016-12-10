@@ -1,4 +1,4 @@
-package com.looklook.xinghongfei.looklook.Activity;
+package com.looklook.xinghongfei.looklook.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
@@ -42,31 +43,31 @@ import com.looklook.xinghongfei.looklook.widget.TranslateYTextView;
 
 import org.sufficientlysecure.htmltextview.HtmlTextView;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 
 /**
  * Created by xinghongfei on 16/8/13.
  */
-public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDesFragment {
+public class TopNewsDescribeActivity extends AppCompatActivity implements ITopNewsDesFragment {
     private static final float SCRIM_ADJUSTMENT = 0.075f;
     int[] mDeviceInfo;
     int width;
     int heigh;
-    @InjectView(R.id.progress)
+    @BindView(R.id.progress)
     ProgressBar mProgress;
-    @InjectView(R.id.htNewsContent)
+    @BindView(R.id.htNewsContent)
     HtmlTextView mHtNewsContent;
-    @InjectView(R.id.shot)
+    @BindView(R.id.shot)
     ParallaxScrimageView mShot;
-    @InjectView(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @InjectView(R.id.draggable_frame)
+    @BindView(R.id.draggable_frame)
     ElasticDragDismissFrameLayout mDraggableFrame;
-    @InjectView(R.id.nest)
+    @BindView(R.id.nest)
     NestedScrollView mNest;
-    @InjectView(R.id.title)
+    @BindView(R.id.title)
     TranslateYTextView mTextView;
 
     private String id;
@@ -83,7 +84,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.topnews_describe);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         mDeviceInfo = DensityUtil.getDeviceInfo(this);
         width = mDeviceInfo[0];
@@ -102,7 +103,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     }
 
 
-    private void initData() {
+    protected void initData() {
         id = getIntent().getStringExtra("docid");
         title = getIntent().getStringExtra("title");
         mTextView.setText(title);

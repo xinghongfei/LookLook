@@ -33,7 +33,7 @@
         </activity>
 
         <activity
-            android:name=".Activity.ZhihuDescribeActivity"
+            android:name=".activity.ZhihuDescribeActivity"
             android:launchMode="singleTop"
             android:parentActivityName="com.looklook.xinghongfei.looklook.MainActivity"
             android:screenOrientation="portrait"
@@ -45,7 +45,7 @@
         </activity>
 
         <activity
-            android:name=".Activity.TopNewsDescribeActivity"
+            android:name=".activity.TopNewsDescribeActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
@@ -58,14 +58,14 @@
         </activity>
 
         <activity
-            android:name=".Activity.MeiziPhotoDescribeActivity"
+            android:name=".activity.MeiziPhotoDescribeActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Look.Home"/>
 
 
         <activity
-            android:name=".Activity.AboutActivity"
+            android:name=".activity.AboutActivity"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Look.Translucent">
             <meta-data

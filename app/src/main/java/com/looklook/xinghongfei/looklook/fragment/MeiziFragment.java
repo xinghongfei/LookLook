@@ -21,8 +21,8 @@ import com.looklook.xinghongfei.looklook.widget.WrapContentLinearLayoutManager;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 /**
  * Created by xinghongfei on 16/8/20.
@@ -30,9 +30,9 @@ import butterknife.InjectView;
 public class MeiziFragment extends BaseFragment implements IMeiziFragment {
 
 
-    @InjectView(R.id.recycle_meizi)
+    @BindView(R.id.recycle_meizi)
     RecyclerView mRecycleMeizi;
-    @InjectView(R.id.prograss)
+    @BindView(R.id.prograss)
     ProgressBar mPrograss;
 
     WrapContentLinearLayoutManager linearLayoutManager;
@@ -50,7 +50,7 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.meizi_fragment_layout, container, false);
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
         return view;
     }
 
@@ -143,7 +143,7 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
     public void onDestroyView() {
         super.onDestroyView();
         mMeiziPresenter.unsubcrible();
-        ButterKnife.reset(this);
+//        ButterKnife.reset(this);
     }
 
 

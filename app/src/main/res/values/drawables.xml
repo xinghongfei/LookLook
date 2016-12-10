@@ -1,0 +1,5 @@
+<resources>
+
+    <item name="ic_menu_theme" type="drawable">@drawable/ic_color_lens_white_24dp</item>
+
+</resources>

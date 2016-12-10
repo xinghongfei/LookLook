@@ -24,7 +24,7 @@
     android:layout_height="match_parent"
     app:dragDismissDistance="@dimen/drag_dismiss_distance"
     app:dragDismissScale="0.95"
-    tools:context=".Activity.ZhihuDescribeActivity">
+    tools:context=".activity.ZhihuDescribeActivity">
 
 
     <FrameLayout

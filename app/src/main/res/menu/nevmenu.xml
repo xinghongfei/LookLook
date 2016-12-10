@@ -33,5 +33,18 @@
             <!--android:icon="@drawable/settin"-->
             <!--android:title="设置" />-->
     <!--</group>-->
+    <item android:title="设置">
+        <menu>
+            <item
+                android:id="@+id/nav_theme"
+                android:icon="@drawable/ic_menu_theme"
+                android:title="Theme"
+                app:actionLayout="@layout/action_view_switch" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/settin"
+                android:title="设置" />
+        </menu>
+    </item>
 
 </menu>
