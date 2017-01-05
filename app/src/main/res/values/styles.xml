@@ -73,6 +73,11 @@
         <item name="android:windowSharedElementReturnTransition">@transition/dribbble_shot_shared_return</item>
         <item name="android:windowEnterTransition">@transition/dribbble_shot_enter</item>
         <item name="android:windowReturnTransition">@transition/dribbble_shot_return</item>
+
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="Look.Translucent.Look">
@@ -92,5 +97,8 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
-
+    <style name="translucent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground" >@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
 </resources>

@@ -43,7 +43,7 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
 
     private boolean loading;
 
-    private int index=1;
+    private int index = 1;
 
 
     @Nullable
@@ -65,7 +65,7 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
     }
 
     private void intialDate() {
-        mMeiziPresenter=new MeiziPresenterImpl(getContext(), this);
+        mMeiziPresenter = new MeiziPresenterImpl(getContext(), this);
 
     }
 
@@ -93,6 +93,7 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
         loadDate();
 
     }
+
     private void loadDate() {
         if (meiziAdapter.getItemCount() > 0) {
             meiziAdapter.clearData();
@@ -125,7 +126,7 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
 
                     if (!loading && (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                         loading = true;
-                        index+=1;
+                        index += 1;
                         loadMoreDate();
                     }
                 }
@@ -150,7 +151,7 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
     @Override
     public void updateMeiziData(ArrayList<Meizi> list) {
         meiziAdapter.loadingfinish();
-        loading=false;
+        loading = false;
         meiziAdapter.addItems(list);
         mMeiziPresenter.getVedioData(index);
     }
@@ -185,3 +186,4 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
         }
     }
 }
+

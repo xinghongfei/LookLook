@@ -55,5 +55,9 @@ dependencies {
 
     //  富文本
     compile 'com.github.iwgang:simplifyspan:1.1'
-    compile 'com.github.chrisbanes:PhotoView:1.3.0'
+//    compile 'com.github.chrisbanes:PhotoView:1.3.0'
+    compile 'com.github.githubwing:DragPhotoView:1.0.1'
+
+//    swipeback activity
+    compile 'com.github.liuguangqiang.swipeback:library:1.0.2@aar'
 }

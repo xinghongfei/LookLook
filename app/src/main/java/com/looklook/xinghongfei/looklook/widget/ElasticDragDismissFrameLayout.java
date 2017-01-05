@@ -128,12 +128,12 @@ public class ElasticDragDismissFrameLayout extends FrameLayout {
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         // if we're in a drag gesture and the user reverses up the we should take those events
 
-     if ( Math.abs(dx)-Math.abs(dy)>1){
-        isHorizontal=true;
-         isRecervory=true;
-         horizontal(dx);
+        if ( Math.abs(dx)>2*Math.abs(dy)){
+            isHorizontal=true;
+            isRecervory=true;
+            horizontal(dx);
 
-     }
+        }
 
 
         if (Math.abs(dx)-Math.abs(dy)<3){
@@ -215,7 +215,7 @@ public class ElasticDragDismissFrameLayout extends FrameLayout {
 
 //        Log.d("maat","dyUnconsume:"+dyUnconsumed+"dyConsumed"+dyConsumed+"+"+"dUncomsumed:"+dxConsumed+"dxConsumed"+dxConsumed);
 
-        dragScale(dyUnconsumed);
+//        dragScale(dyUnconsumed);
     }
 
     @Override

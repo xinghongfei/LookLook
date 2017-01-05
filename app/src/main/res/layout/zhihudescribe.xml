@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 
-<com.looklook.xinghongfei.looklook.widget.ElasticDragDismissFrameLayout
+<com.liuguangqiang.swipeback.SwipeBackLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -27,15 +27,23 @@
     tools:context=".activity.ZhihuDescribeActivity">
 
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/nev_item"
         android:transitionGroup="false"
         android:transitionName="@string/transition_shot_background">
+    <FrameLayout
+        android:id="@+id/containe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/nev_item"
+        android:transitionGroup="false"
+        android:transitionName="@string/transition_shot_background">
 
-        <FrameLayout
+
+    <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -101,13 +109,14 @@
                     android:layout_height="match_parent"
                     android:background="@color/nev_item"/>
 
-                <!--解决nestView无法滑倒低端-->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:background="@color/background_light"/>
+                <!--&lt;!&ndash;解决nestView无法滑倒低端&ndash;&gt;-->
+                <!--<View-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="250dp"-->
+                    <!--android:background="@color/background_light"/>-->
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
     </FrameLayout>
+    </LinearLayout>
 
-</com.looklook.xinghongfei.looklook.widget.ElasticDragDismissFrameLayout>
+</com.liuguangqiang.swipeback.SwipeBackLayout>

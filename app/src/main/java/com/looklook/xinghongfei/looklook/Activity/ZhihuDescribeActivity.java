@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -34,6 +33,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.liuguangqiang.swipeback.SwipeBackActivity;
+import com.liuguangqiang.swipeback.SwipeBackLayout;
 import com.looklook.xinghongfei.looklook.R;
 import com.looklook.xinghongfei.looklook.bean.zhihu.ZhihuStory;
 import com.looklook.xinghongfei.looklook.config.Config;
@@ -52,14 +53,14 @@ import com.looklook.xinghongfei.looklook.widget.TranslateYTextView;
 
 import java.lang.reflect.InvocationTargetException;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
  * Created by xinghongfei on 16/8/13.
  */
-public class ZhihuDescribeActivity extends AppCompatActivity implements IZhihuStory {
+public class ZhihuDescribeActivity extends SwipeBackActivity implements IZhihuStory {
     private static final float SCRIM_ADJUSTMENT = 0.075f;
 
     @BindView(R.id.shot)
@@ -79,8 +80,8 @@ public class ZhihuDescribeActivity extends AppCompatActivity implements IZhihuSt
     String[] scc;
     String mImageUrl;
 
-    @BindView(R.id.draggable_frame)
-    ElasticDragDismissFrameLayout mDraggableFrame;
+//    @BindView(R.id.draggable_frame)
+//    ElasticDragDismissFrameLayout mDraggableFrame;
 
     int[] mDeviceInfo;
     int width;
@@ -99,6 +100,7 @@ public class ZhihuDescribeActivity extends AppCompatActivity implements IZhihuSt
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.zhihudescribe);
+        setDragEdge(SwipeBackLayout.DragEdge.LEFT);
         ButterKnife.bind(this);
         mDeviceInfo = DensityUtil.getDeviceInfo(this);
         width = mDeviceInfo[0];
@@ -213,7 +215,7 @@ public class ZhihuDescribeActivity extends AppCompatActivity implements IZhihuSt
     protected void onResume() {
         super.onResume();
 
-        mDraggableFrame.addListener(chromeFader);
+//        mDraggableFrame.addListener(chromeFader);
         try {
             wvZhihu.getClass().getMethod("onResume").invoke(wvZhihu, (Object[]) null);
         } catch (IllegalAccessException e) {
@@ -228,7 +230,7 @@ public class ZhihuDescribeActivity extends AppCompatActivity implements IZhihuSt
     @Override
     protected void onPause() {
         super.onPause();
-        mDraggableFrame.removeListener(chromeFader);
+//        mDraggableFrame.removeListener(chromeFader);
         try {
             wvZhihu.getClass().getMethod("onPause").invoke(wvZhihu, (Object[]) null);
         } catch (IllegalAccessException e) {

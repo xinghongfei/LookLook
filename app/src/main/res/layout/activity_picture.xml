@@ -22,14 +22,15 @@
                 android:layout_height="match_parent"
                 android:id="@+id/background"
     >
-
-
-    <ImageView
+    <com.wingsofts.dragphotoview.DragPhotoView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:transitionName="@string/meizi"
-        android:id="@+id/shot"/>
+        android:id="@+id/shot">
+    </com.wingsofts.dragphotoview.DragPhotoView>
+
+
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"

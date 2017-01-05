@@ -6,7 +6,6 @@ import android.net.Uri;
 
 import com.looklook.xinghongfei.looklook.MyApplication;
 import com.looklook.xinghongfei.looklook.R;
-import com.looklook.xinghongfei.looklook.activity.BaseActivity;
 
 /**
  * Author   :hymanme
@@ -26,11 +25,11 @@ public class UIUtils {
      */
     public static void startActivity(Intent intent) {
         // 如果不在activity里去打开activity  需要指定任务栈  需要设置标签
-        if (BaseActivity.activity == null) {
+        if (com.looklook.xinghongfei.looklook.activity.BaseActivity.activity == null) {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
         } else {
-            BaseActivity.activity.startActivity(intent);
+            com.looklook.xinghongfei.looklook.activity.BaseActivity.activity.startActivity(intent);
         }
     }
 

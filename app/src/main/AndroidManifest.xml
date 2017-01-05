@@ -49,7 +49,6 @@
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
-
             android:theme="@style/Look.Translucent.Look.Image">
 
             <meta-data
@@ -61,7 +60,7 @@
             android:name=".activity.MeiziPhotoDescribeActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/Look.Home"/>
+            android:theme="@style/translucent"/>
 
 
         <activity

@@ -100,14 +100,7 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 startDescribeActivity(meizi,holder);
             }
         });
-//        holder.textView.setText("视频");
 
-//        holder.textView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startDescribeActivity(meizi,holder);
-//            }
-//        });
         Glide.with(mContext)
                 .load(meizi.getUrl())
                 .listener(new RequestListener<String, GlideDrawable>() {
@@ -154,7 +147,17 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private void startDescribeActivity(Meizi meizi,RecyclerView.ViewHolder holder){
 
+
         Intent intent = new Intent(mContext, MeiziPhotoDescribeActivity.class);
+        int location[] = new int[2];
+
+        BadgedFourThreeImageView imageView=((MeiziViewHolder)holder).getBitmap();
+        imageView.getLocationOnScreen(location);
+        intent.putExtra("left", location[0]);
+        intent.putExtra("top", location[1]);
+        intent.putExtra("height", imageView.getHeight());
+        intent.putExtra("width", imageView.getWidth());
+
         intent.putExtra("image",meizi.getUrl());
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
 
@@ -244,6 +247,10 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 //            textView = (TextView) itemView.findViewById(R.id.item_text_id);
 
         }
+        public BadgedFourThreeImageView getBitmap(){
+            return imageView;
+        }
+
     }
 
 
