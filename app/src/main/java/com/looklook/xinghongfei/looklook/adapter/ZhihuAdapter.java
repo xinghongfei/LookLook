@@ -23,7 +23,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.looklook.xinghongfei.looklook.activity.ZhihuDescribeActivity;
-import com.looklook.xinghongfei.looklook.MainActivity;
+import com.looklook.xinghongfei.looklook.activity.MainActivity;
 import com.looklook.xinghongfei.looklook.R;
 import com.looklook.xinghongfei.looklook.bean.zhihu.ZhihuDailyItem;
 import com.looklook.xinghongfei.looklook.config.Config;

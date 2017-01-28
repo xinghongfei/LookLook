@@ -22,7 +22,7 @@
         >
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Look.Home"
             >
@@ -35,26 +35,26 @@
         <activity
             android:name=".activity.ZhihuDescribeActivity"
             android:launchMode="singleTop"
-            android:parentActivityName="com.looklook.xinghongfei.looklook.MainActivity"
+            android:parentActivityName="com.looklook.xinghongfei.looklook.activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Look.Translucent.Look.Image">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+                android:value=".activity.MainActivity"/>
         </activity>
 
         <activity
             android:name=".activity.TopNewsDescribeActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait"
 
             android:theme="@style/Look.Translucent.Look.Image">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+                android:value=".activity.MainActivity"/>
         </activity>
 
         <activity
@@ -66,11 +66,11 @@
 
         <activity
             android:name=".activity.AboutActivity"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:theme="@style/Look.Translucent">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+                android:value=".activity.MainActivity"/>
         </activity>
 
     </application>
