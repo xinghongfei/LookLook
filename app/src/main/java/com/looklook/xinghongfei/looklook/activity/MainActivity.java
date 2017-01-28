@@ -1,4 +1,4 @@
-package com.looklook.xinghongfei.looklook;
+package com.looklook.xinghongfei.looklook.activity;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -30,8 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.looklook.xinghongfei.looklook.activity.AboutActivity;
-import com.looklook.xinghongfei.looklook.activity.BaseActivity;
+import com.looklook.xinghongfei.looklook.R;
 import com.looklook.xinghongfei.looklook.fragment.MeiziFragment;
 import com.looklook.xinghongfei.looklook.fragment.TopNewsFragment;
 import com.looklook.xinghongfei.looklook.fragment.ZhihuFragment;
@@ -78,9 +77,14 @@ public class MainActivity extends BaseActivity implements IMain {
         IMainPresenter = new MainPresenterImpl(this,this);
         IMainPresenter.getBackground();
         toolbar.setOnMenuItemClickListener(onMenuItemClick);
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-            animateToolbar();
-        }
+
+        // When the Activity is invisible to user, we can't get the ActionMenuView's handle by toolbar.getChildAt(1)
+        // and in consequence the animate of the ActionMenuView is invalid.
+        // Then I Move following code to onWindowFocusChanged and reduced startDelay time.
+//        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+//            animateToolbar();
+//        }
+
         addfragmentsAndTitle();
 
 //        setStatusColor();
@@ -248,6 +252,14 @@ public class MainActivity extends BaseActivity implements IMain {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            animateToolbar();
+        }
     }
 
     @Override
