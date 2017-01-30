@@ -91,9 +91,6 @@ public class MyApplication extends Application {
         }
     }
 
-    /**
-     * 退出应运程序
-     */
     public static void quiteApplication() {
         clearActivities();
         System.exit(0);

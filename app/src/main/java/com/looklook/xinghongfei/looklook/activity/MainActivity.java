@@ -1,4 +1,4 @@
-package com.looklook.xinghongfei.looklook;
+package com.looklook.xinghongfei.looklook.activity;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -30,8 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.looklook.xinghongfei.looklook.activity.AboutActivity;
-import com.looklook.xinghongfei.looklook.activity.BaseActivity;
+import com.looklook.xinghongfei.looklook.R;
 import com.looklook.xinghongfei.looklook.fragment.MeiziFragment;
 import com.looklook.xinghongfei.looklook.fragment.TopNewsFragment;
 import com.looklook.xinghongfei.looklook.fragment.ZhihuFragment;
@@ -67,10 +66,12 @@ public class MainActivity extends BaseActivity implements IMain {
 
     int mainColor;
     long exitTime = 0;
+    boolean isCreated;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        isCreated = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
         ButterKnife.bind(this);
@@ -78,9 +79,14 @@ public class MainActivity extends BaseActivity implements IMain {
         IMainPresenter = new MainPresenterImpl(this,this);
         IMainPresenter.getBackground();
         toolbar.setOnMenuItemClickListener(onMenuItemClick);
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-            animateToolbar();
-        }
+
+        // When the Activity is invisible to user, we can't get the ActionMenuView's handle by toolbar.getChildAt(1)
+        // and in consequence the animate of the ActionMenuView is invalid.
+        // Then I Move following code to onWindowFocusChanged and reduced startDelay time.
+//        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+//            animateToolbar();
+//        }
+
         addfragmentsAndTitle();
 
 //        setStatusColor();
@@ -251,6 +257,15 @@ public class MainActivity extends BaseActivity implements IMain {
     }
 
     @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (!isCreated && Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            isCreated = true;
+            animateToolbar();
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
@@ -293,7 +308,7 @@ public class MainActivity extends BaseActivity implements IMain {
                     .setInterpolator(AnimUtils.getFastOutSlowInInterpolator(this)).start();
         }
         View amv = toolbar.getChildAt(1);
-        if (amv != null & amv instanceof ActionMenuView) {
+        if (amv != null && amv instanceof ActionMenuView) { //&& is batter than &
             ActionMenuView actions = (ActionMenuView) amv;
             popAnim(actions.getChildAt(0), 500, 200); // filter
             popAnim(actions.getChildAt(1), 700, 200); // overflow
