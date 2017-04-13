@@ -27,14 +27,14 @@ public class TopNewsDesPresenterImpl extends BasePresenterImpl implements INewTo
     }
 
     @Override
-    public void getDescrible(final String docid) {
+    public void getDescribleMessage(final String docid) {
         mITopNewsFragment.showProgressDialog();
         String url = getDetailUrl(docid);
         OkHttpUtils.ResultCallback<String> loadNewsCallback = new OkHttpUtils.ResultCallback<String>() {
             @Override
             public void onSuccess(String response) {
                 NewsDetailBean newsDetailBean = NewsJsonUtils.readJsonNewsDetailBeans(response, docid);
-               mITopNewsFragment.upListItem(newsDetailBean);
+               mITopNewsFragment.updateListItem(newsDetailBean);
             }
 
             @Override

@@ -9,5 +9,4 @@ public interface IZhihuStory {
     void showError(String error);
 
     void showZhihuStory(ZhihuStory zhihuStory);
-
 }

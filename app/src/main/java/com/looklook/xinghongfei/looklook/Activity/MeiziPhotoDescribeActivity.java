@@ -41,7 +41,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-
 /**
  * Created by xinghongfei on 16/8/13.
  */
@@ -49,22 +48,21 @@ public class MeiziPhotoDescribeActivity extends AppCompatActivity {
     public static final String EXTRA_IMAGE_URL = "image";
     private static final float SCRIM_ADJUSTMENT = 0.075f;
 
-    String mImageUrl;
-
-    private boolean mIsHidden = false;
-
+    private String mImageUrl;
     @BindView(R.id.shot)
-    DragPhotoView mDragPhotoView;
-    @BindView(R.id.toolbar)Toolbar mToolbar;
+    private DragPhotoView mDragPhotoView;
+    @BindView(R.id.toolbar)
+    private Toolbar mToolbar;
     @BindView(R.id.background)
-    RelativeLayout mRelativeLayout;
+    private RelativeLayout mRelativeLayout;
 
-    int mOriginLeft;
-    int mOriginTop;
-    int mOriginHeight;
-    int mOriginWidth;
-    int mOriginCenterX;
-    int mOriginCenterY;
+    private int mOriginLeft;
+    private int mOriginTop;
+    private int mOriginHeight;
+    private int mOriginWidth;
+    private int mOriginCenterX;
+    private int mOriginCenterY;
+    private boolean mIsHidden = false;
     private float mTargetHeight;
     private float mTargetWidth;
     private float mScaleX;
@@ -72,16 +70,134 @@ public class MeiziPhotoDescribeActivity extends AppCompatActivity {
     private float mTranslationX;
     private float mTranslationY;
 
+    private Transition.TransitionListener mListener = new Transition.TransitionListener() {
+        @Override
+        public void onTransitionStart(Transition transition) {
+//                 mRelativeLayout.animate()
+//                .alpha(1f)
+//                .setDuration(1000L)
+//                .setInterpolator(new AccelerateInterpolator())
+//                .start();
+        }
+
+        @Override
+        public void onTransitionEnd(Transition transition) {
+
+        }
+
+        @Override
+        public void onTransitionCancel(Transition transition) {
+
+        }
+
+        @Override
+        public void onTransitionPause(Transition transition) {
+
+        }
+
+        @Override
+        public void onTransitionResume(Transition transition) {
+
+        }
+    };
+    private RequestListener loadListener = new RequestListener<String, GlideDrawable>() {
+        @Override
+        public boolean onResourceReady(GlideDrawable resource, String model,
+                                       Target<GlideDrawable> target, boolean isFromMemoryCache,
+                                       boolean isFirstResource) {
+            final Bitmap bitmap = GlideUtils.getBitmap(resource);
+            final int twentyFourDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    24, MeiziPhotoDescribeActivity.this.getResources().getDisplayMetrics());
+            Palette.from(bitmap)
+                    .maximumColorCount(3)
+                    .clearFilters() /* by default palette ignore certain hues
+                        (e.g. pure black/white) but we don't want this. */
+                    .setRegion(0, 0, bitmap.getWidth() - 1, twentyFourDip) /* - 1 to work around
+                        https://code.google.com/p/android/issues/detail?id=191013 */
+                    .generate(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(Palette palette) {
+                            boolean isDark;
+                            @ColorUtils.Lightness int lightness = ColorUtils.isDark(palette);
+                            if (lightness == ColorUtils.LIGHTNESS_UNKNOWN) {
+                                isDark = ColorUtils.isDark(bitmap, bitmap.getWidth() / 2, 0);
+                            } else {
+                                isDark = lightness == ColorUtils.IS_DARK;
+                            }
+
+                            // color the status bar. Set a complementary dark color on L,
+                            // light or dark color on M (with matching status bar icons)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                                int statusBarColor = getWindow().getStatusBarColor();
+                                final Palette.Swatch topColor =
+                                        ColorUtils.getMostPopulousSwatch(palette);
+                                if (topColor != null &&
+                                        (isDark || Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
+                                    statusBarColor = ColorUtils.scrimify(topColor.getRgb(),
+                                            isDark, SCRIM_ADJUSTMENT);
+                                }
+
+                                if (statusBarColor != getWindow().getStatusBarColor()) {
+                                    ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
+                                            getWindow().getStatusBarColor(), statusBarColor);
+                                    statusBarColorAnim.addUpdateListener(new ValueAnimator
+                                            .AnimatorUpdateListener() {
+                                        @Override
+                                        public void onAnimationUpdate(ValueAnimator animation) {
+                                            getWindow().setStatusBarColor(
+                                                    (int) animation.getAnimatedValue());
+                                        }
+                                    });
+                                    statusBarColorAnim.setDuration(1000L);
+                                    statusBarColorAnim.setInterpolator(
+                                            new AccelerateInterpolator());
+                                    statusBarColorAnim.start();
+                                    performEnterAnimation();
+
+                                }
+                            }
+                        }
+                    });
+
+            return false;
+        }
+
+        @Override
+        public boolean onException(Exception e, String model, Target<GlideDrawable> target,
+                                   boolean isFirstResource) {
+            return false;
+        }
+    };
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picture);
         ButterKnife.bind(this);
-        parseIntent();
-        getData();
-        setupPhotoAttacher();
+
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                expandImageAndFinish();
+            }
+        });
         mToolbar.setAlpha(0.3f);
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+
+        mImageUrl = getIntent().getStringExtra(EXTRA_IMAGE_URL);
+        Glide.with(this)
+                .load(mImageUrl)
+                .centerCrop()
+                .listener(loadListener)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(mDragPhotoView);
+
+        initialPhotoAttacher();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getSharedElementEnterTransition().addListener(mListener);
             getWindow().setSharedElementEnterTransition(new ChangeBounds());
 //            setStatusColor();
@@ -89,11 +205,11 @@ public class MeiziPhotoDescribeActivity extends AppCompatActivity {
 
     }
 
-    void setupPhotoAttacher() {
+    void initialPhotoAttacher() {
         mDragPhotoView.setOnTapListener(new DragPhotoView.OnTapListener() {
             @Override
             public void onTap(DragPhotoView view) {
-            finishWithAnimation();
+                finishWithAnimation();
             }
         });
         mDragPhotoView.setOnExitListener(new DragPhotoView.OnExitListener() {
@@ -137,14 +253,14 @@ public class MeiziPhotoDescribeActivity extends AppCompatActivity {
                         photoView.setScaleX(mScaleX);
                         photoView.setScaleY(mScaleY);
 
+                        mDragPhotoView.setMinScale(mScaleX);
+                        mToolbar.animate()
+                                .alpha(1f)
+                                .setDuration(1000L)
+                                .setInterpolator(new AccelerateInterpolator())
+                                .start();
                         performEnterAnimation();
 
-                            mDragPhotoView.setMinScale(mScaleX);
-                        mToolbar.animate()
-                .alpha(1f)
-                .setDuration(1000L)
-                .setInterpolator(new AccelerateInterpolator())
-                .start();
 
                     }
                 });
@@ -183,7 +299,7 @@ public class MeiziPhotoDescribeActivity extends AppCompatActivity {
 
     private void saveImage() {
         File externalStorageDirectory = Environment.getExternalStorageDirectory();
-        File directory = new File(externalStorageDirectory,"LookLook");
+        File directory = new File(externalStorageDirectory, "LookLook");
         if (!directory.exists())
             directory.mkdir();
 
@@ -191,24 +307,20 @@ public class MeiziPhotoDescribeActivity extends AppCompatActivity {
         try {
             File file = new File(directory, new Date().getTime() + ".jpg");
             FileOutputStream fos = new FileOutputStream(file);
-            drawingCache.compress(Bitmap.CompressFormat.JPEG,100,fos);
+            drawingCache.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             Uri uri = Uri.fromFile(file);
             intent.setData(uri);
             getApplicationContext().sendBroadcast(intent);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            Snackbar.make(getCurrentFocus(),"阿偶出错了呢",Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(getCurrentFocus(), "阿偶出错了呢", Snackbar.LENGTH_SHORT).show();
         }
-    }
-
-    private void parseIntent() {
-        mImageUrl = getIntent().getStringExtra(EXTRA_IMAGE_URL);
     }
 
     @Override
     protected void onDestroy() {
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getSharedElementEnterTransition().removeListener(mListener);
         }
         super.onDestroy();
@@ -217,43 +329,10 @@ public class MeiziPhotoDescribeActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             finishAfterTransition();
-        }else {
+        } else {
             finish();
-        }
-    }
-
-    private void getData() {
-        Glide.with(this)
-                .load(mImageUrl)
-                .centerCrop()
-                .listener(loadListener)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(mDragPhotoView);
-
-
-
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-        mToolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                expandImageAndFinish();
-            }
-        });
-
-    }
-
-    private void setStatusColor(){
-        Bitmap b = convertViewToBitmap(mRelativeLayout);
-        Palette palette = Palette.generate(b);
-        if (palette.getLightVibrantSwatch() != null) {
-            getWindow().setStatusBarColor(palette.getLightVibrantSwatch().getRgb());
         }
     }
 
@@ -273,129 +352,17 @@ public class MeiziPhotoDescribeActivity extends AppCompatActivity {
                 .setInterpolator(new DecelerateInterpolator(2))
                 .start();
         mIsHidden = !mIsHidden;
-    };
-    private Transition.TransitionListener mListener = new Transition.TransitionListener() {
-        @Override
-        public void onTransitionStart(Transition transition) {
-//            Log.d("maat","xingfeifei");
-//        mRelativeLayout.animate()
-//                .alpha(1f)
-//                .setDuration(1000L)
-//                .setInterpolator(new AccelerateInterpolator())
-//                .start();
-
-
-        }
-
-        @Override
-        public void onTransitionEnd(Transition transition) {
-
-        }
-
-        @Override
-        public void onTransitionCancel(Transition transition) {
-
-        }
-
-        @Override
-        public void onTransitionPause(Transition transition) {
-
-        }
-
-        @Override
-        public void onTransitionResume(Transition transition) {
-
-        }
-    };
-
-
+    }
 
     private void expandImageAndFinish() {
-            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-                finishAfterTransition();
-            }else {
-                finish();
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            finishAfterTransition();
+        } else {
+            finish();
+        }
     }
 
-    private RequestListener loadListener = new RequestListener<String, GlideDrawable>() {
-        @Override
-        public boolean onResourceReady(GlideDrawable resource, String model,
-                                       Target<GlideDrawable> target, boolean isFromMemoryCache,
-                                       boolean isFirstResource) {
-            final Bitmap bitmap = GlideUtils.getBitmap(resource);
-            final int twentyFourDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    24, MeiziPhotoDescribeActivity.this.getResources().getDisplayMetrics());
-            Palette.from(bitmap)
-                    .maximumColorCount(3)
-                    .clearFilters() /* by default palette ignore certain hues
-                        (e.g. pure black/white) but we don't want this. */
-                    .setRegion(0, 0, bitmap.getWidth() - 1, twentyFourDip) /* - 1 to work around
-                        https://code.google.com/p/android/issues/detail?id=191013 */
-                    .generate(new Palette.PaletteAsyncListener() {
-                        @Override
-                        public void onGenerated(Palette palette) {
-                            boolean isDark;
-                            @ColorUtils.Lightness int lightness = ColorUtils.isDark(palette);
-                            if (lightness == ColorUtils.LIGHTNESS_UNKNOWN) {
-                                isDark = ColorUtils.isDark(bitmap, bitmap.getWidth() / 2, 0);
-                            } else {
-                                isDark = lightness == ColorUtils.IS_DARK;
-                            }
-
-                            // color the status bar. Set a complementary dark color on L,
-                            // light or dark color on M (with matching status bar icons)
-                            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-
-                                int statusBarColor = getWindow().getStatusBarColor();
-                                final Palette.Swatch topColor =
-                                        ColorUtils.getMostPopulousSwatch(palette);
-                                if (topColor != null &&
-                                        (isDark || Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
-                                    statusBarColor = ColorUtils.scrimify(topColor.getRgb(),
-                                            isDark, SCRIM_ADJUSTMENT);
-                                }
-
-                                if (statusBarColor != getWindow().getStatusBarColor()) {
-                                    ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
-                                            getWindow().getStatusBarColor(), statusBarColor);
-                                    statusBarColorAnim.addUpdateListener(new ValueAnimator
-                                            .AnimatorUpdateListener() {
-                                        @Override
-                                        public void onAnimationUpdate(ValueAnimator animation) {
-                                            getWindow().setStatusBarColor(
-                                                    (int) animation.getAnimatedValue());
-                                        }
-                                    });
-                                    statusBarColorAnim.setDuration(1000L);
-                                    statusBarColorAnim.setInterpolator(
-                                            new AccelerateInterpolator());
-                                    statusBarColorAnim.start();
-                                }
-                            }
-                        }
-                    });
-
-            return false;
-        }
-
-        @Override
-        public boolean onException(Exception e, String model, Target<GlideDrawable> target,
-                                   boolean isFirstResource) {
-            return false;
-        }
-    };
-    public static Bitmap convertViewToBitmap(View view){
-        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-        view.buildDrawingCache();
-        Bitmap bitmap = view.getDrawingCache();
-
-         return bitmap;
-    }
     private void finishWithAnimation() {
-
         final DragPhotoView photoView = mDragPhotoView;
         ValueAnimator translateXAnimator = ValueAnimator.ofFloat(0, mTranslationX);
         translateXAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -461,6 +428,7 @@ public class MeiziPhotoDescribeActivity extends AppCompatActivity {
         scaleXAnimator.setDuration(300);
         scaleXAnimator.start();
     }
+
     private void performExitAnimation(final DragPhotoView view, float x, float y, float w, float h) {
         view.finishAnimationCallBack();
         float viewX = mTargetWidth / 2 + x - mTargetWidth * mScaleX / 2;
@@ -474,7 +442,6 @@ public class MeiziPhotoDescribeActivity extends AppCompatActivity {
         float translateX = mOriginCenterX - centerX;
         float translateY = mOriginCenterY - centerY;
 
-
         ValueAnimator translateXAnimator = ValueAnimator.ofFloat(view.getX(), view.getX() + translateX);
         translateXAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -484,6 +451,7 @@ public class MeiziPhotoDescribeActivity extends AppCompatActivity {
         });
         translateXAnimator.setDuration(300);
         translateXAnimator.start();
+
         ValueAnimator translateYAnimator = ValueAnimator.ofFloat(view.getY(), view.getY() + translateY);
         translateYAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -517,6 +485,7 @@ public class MeiziPhotoDescribeActivity extends AppCompatActivity {
         translateYAnimator.setDuration(300);
         translateYAnimator.start();
     }
+
     private void performEnterAnimation() {
         final DragPhotoView photoView = mDragPhotoView;
         ValueAnimator translateXAnimator = ValueAnimator.ofFloat(photoView.getX(), 0);
@@ -558,6 +527,23 @@ public class MeiziPhotoDescribeActivity extends AppCompatActivity {
         });
         scaleXAnimator.setDuration(300);
         scaleXAnimator.start();
+    }
+
+    private void setStatusColor() {
+        Bitmap b = convertViewToBitmap(mRelativeLayout);
+        Palette palette = Palette.generate(b);
+        if (palette.getLightVibrantSwatch() != null) {
+            getWindow().setStatusBarColor(palette.getLightVibrantSwatch().getRgb());
+        }
+    }
+
+    private Bitmap convertViewToBitmap(View view) {
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+        view.buildDrawingCache();
+        Bitmap bitmap = view.getDrawingCache();
+        return bitmap;
     }
 
 }

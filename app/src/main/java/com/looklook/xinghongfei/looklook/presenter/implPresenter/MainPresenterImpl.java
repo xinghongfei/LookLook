@@ -1,11 +1,10 @@
 package com.looklook.xinghongfei.looklook.presenter.implPresenter;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.looklook.xinghongfei.looklook.api.ApiManage;
+import com.looklook.xinghongfei.looklook.api.ApiManager;
 import com.looklook.xinghongfei.looklook.bean.image.ImageResponse;
 import com.looklook.xinghongfei.looklook.presenter.IMainPresenter;
 import com.looklook.xinghongfei.looklook.presenter.implView.IMain;
@@ -27,7 +26,6 @@ public class MainPresenterImpl extends BasePresenterImpl implements IMainPresent
 
     private IMain mIMain;
     private Context mContext;
-    private SharedPreferences sharedPreferences;
 
     public MainPresenterImpl(IMain main, Context context) {
         if (main == null)
@@ -38,7 +36,7 @@ public class MainPresenterImpl extends BasePresenterImpl implements IMainPresent
 
     @Override
     public void getBackground() {
-        ApiManage.getInstence().getZhihuApiService().getImage().subscribeOn(Schedulers.io())
+        ApiManager.getInstence().getZhihuApiService().getImage().subscribeOn(Schedulers.io())
                 .map(new Func1<ImageResponse, Boolean>() {
                     @Override
                     public Boolean call(ImageResponse imageResponse) {

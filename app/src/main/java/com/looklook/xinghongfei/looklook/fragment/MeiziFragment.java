@@ -29,22 +29,19 @@ import butterknife.ButterKnife;
  */
 public class MeiziFragment extends BaseFragment implements IMeiziFragment {
 
-
     @BindView(R.id.recycle_meizi)
-    RecyclerView mRecycleMeizi;
+    private RecyclerView mRecycleMeizi;
     @BindView(R.id.prograss)
-    ProgressBar mPrograss;
+    private ProgressBar mPrograss;
 
-    WrapContentLinearLayoutManager linearLayoutManager;
-    MeiziAdapter meiziAdapter;
-    RecyclerView.OnScrollListener loadmoreListener;
+    private WrapContentLinearLayoutManager linearLayoutManager;
+    private MeiziAdapter meiziAdapter;
+    private RecyclerView.OnScrollListener loadmoreListener;
+    private MeiziPresenterImpl mMeiziPresenter;
 
-    MeiziPresenterImpl mMeiziPresenter;
-
-    private boolean loading;
+    private boolean isLoading;
 
     private int index = 1;
-
 
     @Nullable
     @Override
@@ -57,22 +54,35 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        intialDate();
-
-        initialView();
-
-        super.onViewCreated(view, savedInstanceState);
-    }
-
-    private void intialDate() {
         mMeiziPresenter = new MeiziPresenterImpl(getContext(), this);
 
-    }
-
-    private void initialView() {
         meiziAdapter = new MeiziAdapter(getContext());
         linearLayoutManager = new WrapContentLinearLayoutManager(getContext());
-        intialListener();
+
+        loadmoreListener = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) //向下滚动
+                {
+                    int visibleItemCount = linearLayoutManager.getChildCount();
+                    int totalItemCount = linearLayoutManager.getItemCount();
+                    int pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
+
+                    if (!isLoading && (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                        isLoading = true;
+                        index += 1;
+                        loadMoreDate();
+                    }
+                }
+            }
+        };
+
         mRecycleMeizi.setLayoutManager(linearLayoutManager);
         mRecycleMeizi.setAdapter(meiziAdapter);
         mRecycleMeizi.addOnScrollListener(loadmoreListener);
@@ -92,6 +102,7 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
 
         loadDate();
 
+        super.onViewCreated(view, savedInstanceState);
     }
 
     private void loadDate() {
@@ -102,56 +113,21 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    private void intialListener() {
-
-        loadmoreListener = new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (dy > 0) //向下滚动
-                {
-                    int visibleItemCount = linearLayoutManager.getChildCount();
-                    int totalItemCount = linearLayoutManager.getItemCount();
-                    int pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
-
-                    if (!loading && (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                        loading = true;
-                        index += 1;
-                        loadMoreDate();
-                    }
-                }
-            }
-        };
-    }
-
     private void loadMoreDate() {
         meiziAdapter.loadingStart();
         mMeiziPresenter.getMeiziData(index);
-
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mMeiziPresenter.unsubcrible();
-//        ButterKnife.reset(this);
+        mMeiziPresenter.unsubscrible();
     }
-
 
     @Override
     public void updateMeiziData(ArrayList<Meizi> list) {
         meiziAdapter.loadingfinish();
-        loading = false;
+        isLoading = false;
         meiziAdapter.addItems(list);
         mMeiziPresenter.getVedioData(index);
     }
@@ -161,15 +137,14 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
         meiziAdapter.addVedioDes(list);
     }
 
-
     @Override
     public void showProgressDialog() {
-                mPrograss.setVisibility(View.VISIBLE);
+        mPrograss.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hidProgressDialog() {
-            mPrograss.setVisibility(View.INVISIBLE);
+        mPrograss.setVisibility(View.INVISIBLE);
     }
 
     @Override

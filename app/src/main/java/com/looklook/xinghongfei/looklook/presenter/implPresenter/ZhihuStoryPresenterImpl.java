@@ -1,7 +1,7 @@
 package com.looklook.xinghongfei.looklook.presenter.implPresenter;
 
 
-import com.looklook.xinghongfei.looklook.api.ApiManage;
+import com.looklook.xinghongfei.looklook.api.ApiManager;
 import com.looklook.xinghongfei.looklook.bean.zhihu.ZhihuStory;
 import com.looklook.xinghongfei.looklook.presenter.IZhihuStoryPresenter;
 import com.looklook.xinghongfei.looklook.presenter.implView.IZhihuStory;
@@ -26,7 +26,7 @@ public class ZhihuStoryPresenterImpl extends BasePresenterImpl implements IZhihu
 
     @Override
     public void getZhihuStory(String id) {
-        Subscription s = ApiManage.getInstence().getZhihuApiService().getZhihuStory(id)
+        Subscription s = ApiManager.getInstence().getZhihuApiService().getZhihuStory(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ZhihuStory>() {
@@ -55,7 +55,7 @@ public class ZhihuStoryPresenterImpl extends BasePresenterImpl implements IZhihu
 
 //    @Override
 //    public void getGuokrArticle(String id) {
-//        Subscription s = ApiManage.getInstence().getZhihuApiService().getGuokrArticle(id)
+//        Subscription s = ApiManager.getInstence().getZhihuApiService().getGuokrArticle(id)
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
 //                .subscribe(new Observer<GuokrArticle>() {

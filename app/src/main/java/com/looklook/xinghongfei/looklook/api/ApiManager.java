@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by xinghongfei on 16/8/12.
  */
-public class ApiManage {
+public class ApiManager {
 
     private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
         @Override
@@ -40,7 +40,7 @@ public class ApiManage {
             }
         }
     };
-    public static ApiManage apiManage;
+    private static ApiManager apiManager;
     private static File httpCacheDirectory = new File(MyApplication.getContext().getCacheDir(), "zhihuCache");
     private static int cacheSize = 10 * 1024 * 1024; // 10 MiB
     private static Cache cache = new Cache(httpCacheDirectory, cacheSize);
@@ -49,19 +49,19 @@ public class ApiManage {
             .addInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)
             .cache(cache)
             .build();
-    public ZhihuApi zhihuApi;
-    public TopNews topNews;
+    private ZhihuApi zhihuApi;
+    private TopNews topNews;
     private Object zhihuMonitor = new Object();
 
-    public static ApiManage getInstence() {
-        if (apiManage == null) {
-            synchronized (ApiManage.class) {
-                if (apiManage == null) {
-                    apiManage = new ApiManage();
+    public static ApiManager getInstence() {
+        if (apiManager == null) {
+            synchronized (ApiManager.class) {
+                if (apiManager == null) {
+                    apiManager = new ApiManager();
                 }
             }
         }
-        return apiManage;
+        return apiManager;
     }
 
     public ZhihuApi getZhihuApiService() {
@@ -99,7 +99,7 @@ public class ApiManage {
         return topNews;
     }
 
-    public GankApi ganK;
+    private GankApi ganK;
     public GankApi getGankService(){
         if (ganK==null){
             synchronized (zhihuMonitor){
@@ -111,15 +111,9 @@ public class ApiManage {
                             .addConverterFactory(GsonConverterFactory.create())
                             .build().create(GankApi.class);
 
-
                 }
-
-
             }
-
-
         }
         return ganK;
     }
-
 }

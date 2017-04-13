@@ -48,42 +48,57 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity implements IMain {
 
+    @BindView(R.id.fragment_container)
+    private FrameLayout mFragmentContainer;
+    @BindView(R.id.toolbar)
+    private Toolbar toolbar;
+    @BindView(R.id.nav_view)
+    private NavigationView navView;
+    @BindView(R.id.drawer)
+    private DrawerLayout drawer;
+
+    private int nevigationId;
+    private int mainColor;
+
+    private SimpleArrayMap<Integer, String> mTitleArryMap = new SimpleArrayMap<>();
+
+    private long exitTime = 0;
     private SwitchCompat mThemeSwitch;
-    MenuItem currentMenuItem;
-    Fragment currentFragment;
+    private MenuItem currentMenuItem;
+    private Fragment currentFragment;
     private MainPresenterImpl IMainPresenter;
 
-    @BindView(R.id.fragment_container)
-    FrameLayout mFragmentContainer;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.nav_view)
-    NavigationView navView;
-    @BindView(R.id.drawer)
-    DrawerLayout drawer;
-    int nevigationId;
-
-    SimpleArrayMap<Integer, String> mTitleArryMap = new SimpleArrayMap<>();
-
-    int mainColor;
-    long exitTime = 0;
-
+    private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case R.id.menu_open:
+                    drawer.openDrawer(GravityCompat.END);
+                    break;
+                case R.id.menu_about:
+                    startAboutActivity();
+                    break;
+            }
+            return true;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
         ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
-        IMainPresenter = new MainPresenterImpl(this,this);
+        IMainPresenter = new MainPresenterImpl(this, this);
         IMainPresenter.getBackground();
+
         toolbar.setOnMenuItemClickListener(onMenuItemClick);
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             animateToolbar();
         }
         addfragmentsAndTitle();
 
-//        setStatusColor();
         drawer.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
@@ -93,7 +108,7 @@ public class MainActivity extends BaseActivity implements IMain {
             if (nevigationId != -1) {
                 currentMenuItem = navView.getMenu().findItem(nevigationId);
             }
-            if (currentMenuItem==null){
+            if (currentMenuItem == null) {
                 currentMenuItem = navView.getMenu().findItem(R.id.zhihuitem);
             }
             if (currentMenuItem != null) {
@@ -106,15 +121,15 @@ public class MainActivity extends BaseActivity implements IMain {
                 }
             }
         } else {
-            if (currentMenuItem!=null){
+            if (currentMenuItem != null) {
                 Fragment fragment = getFragmentById(currentMenuItem.getItemId());
                 String title = mTitleArryMap.get((Integer) currentMenuItem.getItemId());
                 if (fragment != null) {
                     switchFragment(fragment, title);
                 }
-            }else {
+            } else {
                 switchFragment(new ZhihuFragment(), " ");
-                currentMenuItem=navView.getMenu().findItem(R.id.zhihuitem);
+                currentMenuItem = navView.getMenu().findItem(R.id.zhihuitem);
 
             }
         }
@@ -128,48 +143,48 @@ public class MainActivity extends BaseActivity implements IMain {
                     SharePreferenceUtil.putNevigationItem(MainActivity.this, id);
                     currentMenuItem = item;
                     currentMenuItem.setChecked(true);
-                    switchFragment(getFragmentById(currentMenuItem.getItemId()),mTitleArryMap.get(currentMenuItem.getItemId()));
+                    switchFragment(getFragmentById(currentMenuItem.getItemId()), mTitleArryMap.get(currentMenuItem.getItemId()));
                 }
                 drawer.closeDrawer(GravityCompat.END, true);
                 return true;
             }
         });
 
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-        drawer.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
-            @Override
-            public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
-                // inset the toolbar down by the status bar height
-                ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) toolbar
-                        .getLayoutParams();
-                lpToolbar.topMargin += insets.getSystemWindowInsetTop();
-                lpToolbar.rightMargin += insets.getSystemWindowInsetRight();
-                toolbar.setLayoutParams(lpToolbar);
+            drawer.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+                @Override
+                public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                    // inset the toolbar down by the status bar height
+                    ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) toolbar
+                            .getLayoutParams();
+                    lpToolbar.topMargin += insets.getSystemWindowInsetTop();
+                    lpToolbar.rightMargin += insets.getSystemWindowInsetRight();
+                    toolbar.setLayoutParams(lpToolbar);
 
-                // inset the grid top by statusbar+toolbar & the bottom by the navbar (don't clip)
-                mFragmentContainer.setPadding(mFragmentContainer.getPaddingLeft(),
-                        insets.getSystemWindowInsetTop() + ViewUtils.getActionBarSize
-                                (MainActivity.this),
-                        mFragmentContainer.getPaddingRight() + insets.getSystemWindowInsetRight(), // landscape
-                        mFragmentContainer.getPaddingBottom() + insets.getSystemWindowInsetBottom());
+                    // inset the grid top by statusbar+toolbar & the bottom by the navbar (don't clip)
+                    mFragmentContainer.setPadding(mFragmentContainer.getPaddingLeft(),
+                            insets.getSystemWindowInsetTop() + ViewUtils.getActionBarSize
+                                    (MainActivity.this),
+                            mFragmentContainer.getPaddingRight() + insets.getSystemWindowInsetRight(), // landscape
+                            mFragmentContainer.getPaddingBottom() + insets.getSystemWindowInsetBottom());
 
-                // we place a background behind the status bar to combine with it's semi-transparent
-                // color to get the desired appearance.  Set it's height to the status bar height
-                View statusBarBackground = findViewById(R.id.status_bar_background);
-                FrameLayout.LayoutParams lpStatus = (FrameLayout.LayoutParams)
-                        statusBarBackground.getLayoutParams();
-                lpStatus.height = insets.getSystemWindowInsetTop();
-                statusBarBackground.setLayoutParams(lpStatus);
+                    // we place a background behind the status bar to combine with it's semi-transparent
+                    // color to get the desired appearance.  Set it's height to the status bar height
+                    View statusBarBackground = findViewById(R.id.status_bar_background);
+                    FrameLayout.LayoutParams lpStatus = (FrameLayout.LayoutParams)
+                            statusBarBackground.getLayoutParams();
+                    lpStatus.height = insets.getSystemWindowInsetTop();
+                    statusBarBackground.setLayoutParams(lpStatus);
 
-                // inset the filters list for the status bar / navbar
-                // need to set the padding end for landscape case
+                    // inset the filters list for the status bar / navbar
+                    // need to set the padding end for landscape case
 
-                // clear this listener so insets aren't re-applied
-                drawer.setOnApplyWindowInsetsListener(null);
-                return insets.consumeSystemWindowInsets();
-            }
-        });
+                    // clear this listener so insets aren't re-applied
+                    drawer.setOnApplyWindowInsetsListener(null);
+                    return insets.consumeSystemWindowInsets();
+                }
+            });
         }
 
         int[][] state = new int[][]{
@@ -178,9 +193,9 @@ public class MainActivity extends BaseActivity implements IMain {
         };
 
         int[] color = new int[]{
-                Color.BLACK,Color.BLACK};
+                Color.BLACK, Color.BLACK};
         int[] iconcolor = new int[]{
-                Color.GRAY,Color.BLACK};
+                Color.GRAY, Color.BLACK};
         navView.setItemTextColor(new ColorStateList(state, color));
         navView.setItemIconTintList(new ColorStateList(state, iconcolor));
 
@@ -192,7 +207,7 @@ public class MainActivity extends BaseActivity implements IMain {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mThemeSwitch.setChecked(isChecked);
                 if (isChecked) {
-                    setThemeColor(Color.GREEN);
+                    setThemeColor(Color.DKGRAY);
                 } else {
                     setThemeColor(getResources().getColor(R.color.colorPrimaryDark));
                 }
@@ -200,12 +215,12 @@ public class MainActivity extends BaseActivity implements IMain {
         });
     }
 
-    private void setThemeColor(int color){
+    private void setThemeColor(int color) {
         getWindow().setStatusBarColor(color);
         toolbar.setBackgroundColor(color);
     }
 
-    private void setStatusColor(){
+    private void setStatusColor() {
         Bitmap bm = BitmapFactory.decodeResource(getResources(),
                 R.drawable.nav_icon);
         Palette palette = Palette.generate(bm);
@@ -223,10 +238,10 @@ public class MainActivity extends BaseActivity implements IMain {
                 fragment = new ZhihuFragment();
                 break;
             case R.id.topnewsitem:
-                fragment=new TopNewsFragment();
+                fragment = new TopNewsFragment();
                 break;
             case R.id.meiziitem:
-                fragment=new MeiziFragment();
+                fragment = new MeiziFragment();
                 break;
 
         }
@@ -237,7 +252,6 @@ public class MainActivity extends BaseActivity implements IMain {
         mTitleArryMap.put(R.id.zhihuitem, getResources().getString(R.string.zhihu));
         mTitleArryMap.put(R.id.topnewsitem, getResources().getString(R.string.topnews));
         mTitleArryMap.put(R.id.meiziitem, getResources().getString(R.string.meizi));
-
     }
 
     @Override
@@ -255,10 +269,10 @@ public class MainActivity extends BaseActivity implements IMain {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
         } else {
-            if((System.currentTimeMillis()- exitTime)>2000){
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
                 Toast.makeText(MainActivity.this, "再点一次，退出", Toast.LENGTH_SHORT).show();
                 exitTime = System.currentTimeMillis();
-            }else{
+            } else {
                 super.onBackPressed();
             }
         }
@@ -266,12 +280,13 @@ public class MainActivity extends BaseActivity implements IMain {
 
     private void switchFragment(Fragment fragment, String title) {
 
-        if (currentFragment == null || !currentFragment
-                .getClass().getName().equals(fragment.getClass().getName()))
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment)
-                    .commit();
-        currentFragment = fragment;
-
+        if (fragment != null) {
+            if (currentFragment == null || !currentFragment
+                    .getClass().getName().equals(fragment.getClass().getName()))
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment)
+                        .commit();
+            currentFragment = fragment;
+        }
     }
 
     private void animateToolbar() {
@@ -317,36 +332,21 @@ public class MainActivity extends BaseActivity implements IMain {
         }
     }
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-    private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
-        @Override
-        public boolean onMenuItemClick(MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case R.id.menu_open:
-                    drawer.openDrawer(GravityCompat.END);
-                    break;
-                case R.id.menu_about:
-                    goAboutActivity();
-                    break;
-            }
-            return true;
-        }};
 
-    private  void goAboutActivity(){
-        Intent intent=new Intent(this, AboutActivity.class);
-                this.startActivity(intent);
+    private void startAboutActivity() {
+        Intent intent = new Intent(this, AboutActivity.class);
+        this.startActivity(intent);
     }
 
     @Override
     public void getPic() {
         View headerLayout = navView.getHeaderView(0);
-        LinearLayout llImage =  (LinearLayout) headerLayout.findViewById(R.id.side_image);
+        LinearLayout llImage = (LinearLayout) headerLayout.findViewById(R.id.side_image);
         if (new File(getFilesDir().getPath() + "/bg.jpg").exists()) {
             BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), getFilesDir().getPath() + "/bg.jpg");
             llImage.setBackground(bitmapDrawable);

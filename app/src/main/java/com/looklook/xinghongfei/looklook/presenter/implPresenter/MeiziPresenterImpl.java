@@ -3,7 +3,7 @@ package com.looklook.xinghongfei.looklook.presenter.implPresenter;
 import android.content.Context;
 
 import com.google.gson.Gson;
-import com.looklook.xinghongfei.looklook.api.ApiManage;
+import com.looklook.xinghongfei.looklook.api.ApiManager;
 import com.looklook.xinghongfei.looklook.bean.meizi.MeiziData;
 import com.looklook.xinghongfei.looklook.bean.meizi.VedioData;
 import com.looklook.xinghongfei.looklook.config.Config;
@@ -34,7 +34,7 @@ public class MeiziPresenterImpl extends BasePresenterImpl implements IMeiziPrese
     @Override
     public void getMeiziData(int t) {
         mMeiziFragment.showProgressDialog();
-        Subscription subscription = ApiManage.getInstence().getGankService().getMeizhiData(t)
+        Subscription subscription = ApiManager.getInstence().getGankService().getMeizhiData(t)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<MeiziData>() {
@@ -63,7 +63,7 @@ public class MeiziPresenterImpl extends BasePresenterImpl implements IMeiziPrese
 
     @Override
     public void getVedioData(int t) {
-        Subscription subscription = ApiManage.getInstence().getGankService().getVedioData(t)
+        Subscription subscription = com.looklook.xinghongfei.looklook.api.ApiManager.getInstence().getGankService().getVedioData(t)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<VedioData>() {

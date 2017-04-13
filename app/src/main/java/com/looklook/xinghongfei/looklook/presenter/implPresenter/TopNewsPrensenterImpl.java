@@ -1,6 +1,6 @@
 package com.looklook.xinghongfei.looklook.presenter.implPresenter;
 
-import com.looklook.xinghongfei.looklook.api.ApiManage;
+import com.looklook.xinghongfei.looklook.api.ApiManager;
 import com.looklook.xinghongfei.looklook.bean.news.NewsList;
 import com.looklook.xinghongfei.looklook.presenter.INewTopPresenter;
 import com.looklook.xinghongfei.looklook.presenter.implView.ITopNewsFragment;
@@ -22,7 +22,7 @@ public class TopNewsPrensenterImpl extends BasePresenterImpl implements INewTopP
     @Override
     public void getNewsList(int t) {
         mITopNewsFragment.showProgressDialog();
-        Subscription subscription= ApiManage.getInstence().getTopNewsService().getNews(t)
+        Subscription subscription= ApiManager.getInstence().getTopNewsService().getNews(t)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<NewsList>() {
@@ -41,7 +41,7 @@ public class TopNewsPrensenterImpl extends BasePresenterImpl implements INewTopP
                     @Override
                     public void onNext(NewsList newsList) {
                         mITopNewsFragment.hidProgressDialog();
-                        mITopNewsFragment.upListItem(newsList);
+                        mITopNewsFragment.updateListItem(newsList);
 
                     }
                 });

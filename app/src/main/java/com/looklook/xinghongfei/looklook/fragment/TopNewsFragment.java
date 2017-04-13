@@ -27,24 +27,18 @@ import butterknife.ButterKnife;
  */
 public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
 
-
-    boolean loading;
-    boolean connected = true;
-    TopNewsAdapter mTopNewsAdapter;
-
-    LinearLayoutManager mLinearLayoutManager;
-    RecyclerView.OnScrollListener loadingMoreListener;
-
-    int currentIndex;
-
-    TopNewsPrensenterImpl mTopNewsPrensenter;
-
+    private int currentIndex;
+    private TopNewsPrensenterImpl mTopNewsPrensenter;
     @BindView(R.id.recycle_topnews)
-    RecyclerView recycle;
+    private RecyclerView recycle;
     @BindView(R.id.prograss)
-    ProgressBar progress;
+    private ProgressBar progress;
 
+    private boolean isLoading;
 
+    private TopNewsAdapter mTopNewsAdapter;
+    private LinearLayoutManager mLinearLayoutManager;
+    private RecyclerView.OnScrollListener loadingMoreListener;
 
     @Nullable
     @Override
@@ -59,52 +53,8 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        initialDate();
-        initialView();
-
-    }
-
-    private void initialDate() {
-
-        mTopNewsPrensenter=new TopNewsPrensenterImpl(this);
-        mTopNewsAdapter =new TopNewsAdapter(getContext());
-    }
-
-    private void initialView() {
-
-        initialListener();
-        mLinearLayoutManager = new WrapContentLinearLayoutManager(getContext());
-        recycle.setLayoutManager(mLinearLayoutManager);
-        recycle.setHasFixedSize(true);
-        recycle.addItemDecoration(new GridItemDividerDecoration(getContext(), R.dimen.divider_height, R.color.divider));
-        // TODO: 16/8/13 add  animation
-        recycle.setItemAnimator(new DefaultItemAnimator());
-        recycle.setAdapter(mTopNewsAdapter);
-        recycle.addOnScrollListener(loadingMoreListener);
-        if (connected) {
-            loadDate();
-        }
-
-
-    }
-
-    private void loadDate() {
-        if (mTopNewsAdapter.getItemCount() > 0) {
-            mTopNewsAdapter.clearData();
-        }
-        currentIndex = 0;
-        mTopNewsPrensenter.getNewsList(currentIndex);
-
-    }
-
-    private void loadMoreDate() {
-        mTopNewsAdapter.loadingStart();
-        currentIndex+=20;
-        mTopNewsPrensenter.getNewsList(currentIndex);
-    }
-
-
-    private void initialListener() {
+        mTopNewsPrensenter = new TopNewsPrensenterImpl(this);
+        mTopNewsAdapter = new TopNewsAdapter(getContext());
 
         loadingMoreListener = new RecyclerView.OnScrollListener() {
             @Override
@@ -122,36 +72,58 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
                     int totalItemCount = mLinearLayoutManager.getItemCount();
                     int pastVisiblesItems = mLinearLayoutManager.findFirstVisibleItemPosition();
 
-                    if (!loading && (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                        loading = true;
+                    if (!isLoading && (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                        isLoading = true;
                         loadMoreDate();
                     }
                 }
             }
         };
 
+        mLinearLayoutManager = new WrapContentLinearLayoutManager(getContext());
+        recycle.setLayoutManager(mLinearLayoutManager);
+        recycle.setHasFixedSize(true);
+        recycle.addItemDecoration(new GridItemDividerDecoration(getContext(), R.dimen.divider_height, R.color.divider));
+        // TODO: 16/8/13 add  animation
+        recycle.setItemAnimator(new DefaultItemAnimator());
+        recycle.setAdapter(mTopNewsAdapter);
+        recycle.addOnScrollListener(loadingMoreListener);
+
+        loadDate();
+    }
+
+    private void loadDate() {
+        if (mTopNewsAdapter.getItemCount() > 0) {
+            mTopNewsAdapter.clearData();
+        }
+        currentIndex = 0;
+        mTopNewsPrensenter.getNewsList(currentIndex);
+
+    }
+
+    private void loadMoreDate() {
+        mTopNewsAdapter.loadingStart();
+        currentIndex += 20;
+        mTopNewsPrensenter.getNewsList(currentIndex);
     }
 
     @Override
-    public void upListItem(NewsList newsList) {
-        loading=false;
+    public void updateListItem(NewsList newsList) {
+        isLoading = false;
         progress.setVisibility(View.INVISIBLE);
         mTopNewsAdapter.addItems(newsList.getNewsList());
     }
 
     @Override
     public void showProgressDialog() {
-        if (currentIndex ==0){
+        if (currentIndex == 0) {
             progress.setVisibility(View.VISIBLE);
         }
-
     }
 
     @Override
     public void hidProgressDialog() {
-
         progress.setVisibility(View.INVISIBLE);
-
     }
 
     @Override
@@ -170,7 +142,6 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mTopNewsPrensenter.unsubcrible();
-//        ButterKnife.reset(this);
+        mTopNewsPrensenter.unsubscrible();
     }
 }
