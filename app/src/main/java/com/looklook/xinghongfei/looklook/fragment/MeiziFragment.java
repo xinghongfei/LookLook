@@ -30,9 +30,9 @@ import butterknife.ButterKnife;
 public class MeiziFragment extends BaseFragment implements IMeiziFragment {
 
     @BindView(R.id.recycle_meizi)
-    private RecyclerView mRecycleMeizi;
+     RecyclerView mRecycleMeizi;
     @BindView(R.id.prograss)
-    private ProgressBar mPrograss;
+     ProgressBar mPrograss;
 
     private WrapContentLinearLayoutManager linearLayoutManager;
     private MeiziAdapter meiziAdapter;

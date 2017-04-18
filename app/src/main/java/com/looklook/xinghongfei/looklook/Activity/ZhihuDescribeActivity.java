@@ -254,7 +254,7 @@ public class ZhihuDescribeActivity extends SwipeBackActivity implements IZhihuSt
             wvZhihu.destroy();
             wvZhihu = null;
         }
-        mIZhihuStoryPresenter.unsubcrible();
+        mIZhihuStoryPresenter.unsubscrible();
         super.onDestroy();
 
     }

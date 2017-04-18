@@ -49,13 +49,13 @@ import butterknife.ButterKnife;
 public class MainActivity extends BaseActivity implements IMain {
 
     @BindView(R.id.fragment_container)
-    private FrameLayout mFragmentContainer;
+     FrameLayout mFragmentContainer;
     @BindView(R.id.toolbar)
-    private Toolbar toolbar;
+     Toolbar toolbar;
     @BindView(R.id.nav_view)
-    private NavigationView navView;
+     NavigationView navView;
     @BindView(R.id.drawer)
-    private DrawerLayout drawer;
+     DrawerLayout drawer;
 
     private int nevigationId;
     private int mainColor;

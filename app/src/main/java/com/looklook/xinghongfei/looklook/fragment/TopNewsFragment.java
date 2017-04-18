@@ -30,9 +30,9 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
     private int currentIndex;
     private TopNewsPrensenterImpl mTopNewsPrensenter;
     @BindView(R.id.recycle_topnews)
-    private RecyclerView recycle;
+     RecyclerView recycle;
     @BindView(R.id.prograss)
-    private ProgressBar progress;
+     ProgressBar progress;
 
     private boolean isLoading;
 

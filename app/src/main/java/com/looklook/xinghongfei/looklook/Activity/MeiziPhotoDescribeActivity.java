@@ -50,11 +50,11 @@ public class MeiziPhotoDescribeActivity extends AppCompatActivity {
 
     private String mImageUrl;
     @BindView(R.id.shot)
-    private DragPhotoView mDragPhotoView;
+     DragPhotoView mDragPhotoView;
     @BindView(R.id.toolbar)
-    private Toolbar mToolbar;
+     Toolbar mToolbar;
     @BindView(R.id.background)
-    private RelativeLayout mRelativeLayout;
+     RelativeLayout mRelativeLayout;
 
     private int mOriginLeft;
     private int mOriginTop;
