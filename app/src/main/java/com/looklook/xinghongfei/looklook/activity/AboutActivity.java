@@ -2,7 +2,6 @@ package com.looklook.xinghongfei.looklook.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
 import com.looklook.xinghongfei.looklook.R;
 
 /**

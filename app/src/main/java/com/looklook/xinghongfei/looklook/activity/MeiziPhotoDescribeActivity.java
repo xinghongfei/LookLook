@@ -21,7 +21,8 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.RelativeLayout;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -31,15 +32,12 @@ import com.looklook.xinghongfei.looklook.R;
 import com.looklook.xinghongfei.looklook.util.ColorUtils;
 import com.looklook.xinghongfei.looklook.util.GlideUtils;
 import com.wingsofts.dragphotoview.DragPhotoView;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Date;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by xinghongfei on 16/8/13.

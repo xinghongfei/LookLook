@@ -3,7 +3,6 @@ package com.looklook.xinghongfei.looklook.activity;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
-
 import com.looklook.xinghongfei.looklook.MyApplication;
 import com.looklook.xinghongfei.looklook.util.common.UIUtils;
 

@@ -27,7 +27,9 @@ import android.view.animation.LinearInterpolator;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -41,21 +43,12 @@ import com.looklook.xinghongfei.looklook.config.Config;
 import com.looklook.xinghongfei.looklook.presenter.IZhihuStoryPresenter;
 import com.looklook.xinghongfei.looklook.presenter.implPresenter.ZhihuStoryPresenterImpl;
 import com.looklook.xinghongfei.looklook.presenter.implView.IZhihuStory;
-import com.looklook.xinghongfei.looklook.util.AnimUtils;
-import com.looklook.xinghongfei.looklook.util.ColorUtils;
-import com.looklook.xinghongfei.looklook.util.DensityUtil;
-import com.looklook.xinghongfei.looklook.util.GlideUtils;
-import com.looklook.xinghongfei.looklook.util.ViewUtils;
-import com.looklook.xinghongfei.looklook.util.WebUtil;
+import com.looklook.xinghongfei.looklook.util.*;
 import com.looklook.xinghongfei.looklook.widget.ElasticDragDismissFrameLayout;
 import com.looklook.xinghongfei.looklook.widget.ParallaxScrimageView;
 import com.looklook.xinghongfei.looklook.widget.TranslateYTextView;
 
 import java.lang.reflect.InvocationTargetException;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by xinghongfei on 16/8/13.
