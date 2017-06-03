@@ -49,13 +49,13 @@ import butterknife.ButterKnife;
 public class MainActivity extends BaseActivity implements IMain {
 
     @BindView(R.id.fragment_container)
-     FrameLayout mFragmentContainer;
+    FrameLayout mFragmentContainer;
     @BindView(R.id.toolbar)
-     Toolbar toolbar;
+    Toolbar toolbar;
     @BindView(R.id.nav_view)
-     NavigationView navView;
+    NavigationView navView;
     @BindView(R.id.drawer)
-     DrawerLayout drawer;
+    DrawerLayout drawer;
 
     private int nevigationId;
     private int mainColor;
@@ -71,14 +71,8 @@ public class MainActivity extends BaseActivity implements IMain {
     private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case R.id.menu_open:
-                    drawer.openDrawer(GravityCompat.END);
-                    break;
-                case R.id.menu_about:
-                    startAboutActivity();
-                    break;
-            }
+
+            drawer.openDrawer(GravityCompat.END);
             return true;
         }
     };
@@ -137,6 +131,14 @@ public class MainActivity extends BaseActivity implements IMain {
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
+                if(currentMenuItem!=null&&item.getItemId()==R.id.menu_about)
+                {
+                    Intent intent = new Intent(getApplication(), AboutActivity.class);
+                    getApplication().startActivity(intent);
+                    return true;
+                }
+
+
                 if (currentMenuItem != item && currentMenuItem != null) {
                     currentMenuItem.setChecked(false);
                     int id = item.getItemId();
@@ -338,10 +340,6 @@ public class MainActivity extends BaseActivity implements IMain {
         return true;
     }
 
-    private void startAboutActivity() {
-        Intent intent = new Intent(this, AboutActivity.class);
-        this.startActivity(intent);
-    }
 
     @Override
     public void getPic() {

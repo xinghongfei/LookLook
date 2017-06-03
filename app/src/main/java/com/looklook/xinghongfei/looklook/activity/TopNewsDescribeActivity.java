@@ -22,7 +22,9 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -32,20 +34,11 @@ import com.looklook.xinghongfei.looklook.R;
 import com.looklook.xinghongfei.looklook.bean.news.NewsDetailBean;
 import com.looklook.xinghongfei.looklook.presenter.implPresenter.TopNewsDesPresenterImpl;
 import com.looklook.xinghongfei.looklook.presenter.implView.ITopNewsDesFragment;
-import com.looklook.xinghongfei.looklook.util.AnimUtils;
-import com.looklook.xinghongfei.looklook.util.ColorUtils;
-import com.looklook.xinghongfei.looklook.util.DensityUtil;
-import com.looklook.xinghongfei.looklook.util.GlideUtils;
-import com.looklook.xinghongfei.looklook.util.ViewUtils;
+import com.looklook.xinghongfei.looklook.util.*;
 import com.looklook.xinghongfei.looklook.widget.ElasticDragDismissFrameLayout;
 import com.looklook.xinghongfei.looklook.widget.ParallaxScrimageView;
 import com.looklook.xinghongfei.looklook.widget.TranslateYTextView;
-
 import org.sufficientlysecure.htmltextview.HtmlTextView;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by xinghongfei on 16/8/13.
