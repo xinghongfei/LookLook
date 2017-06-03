@@ -46,5 +46,10 @@
                 android:title="设置" />
         </menu>
     </item>
+    <item
+        android:id="@+id/menu_about"
+        android:title="关于"
+        android.support.design:itemTextColor="@color/nev_item"
+        />
 
 </menu>

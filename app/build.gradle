@@ -3,7 +3,7 @@ apply plugin: 'android-apt'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "23.0.1"
+    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.looklook.xinghongfei.looklook"
         minSdkVersion 21
