@@ -31,7 +31,7 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
 
     @BindView(R.id.recycle_meizi)
      RecyclerView mRecycleMeizi;
-    @BindView(R.id.prograss)
+    @BindView(R.id.progress)
      ProgressBar mPrograss;
 
     private WrapContentLinearLayoutManager linearLayoutManager;
