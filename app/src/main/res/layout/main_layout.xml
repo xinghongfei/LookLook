@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer"
@@ -12,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!--位于屏幕最顶端，显示手机信号强度、电池电量等的状态栏的背景色-->
         <View
             android:id="@+id/status_bar_background"
             android:layout_width="match_parent"
@@ -29,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="?android:actionBarSize"
             android:outlineProvider="none"
-            android:background="#bc000000"
+            android:background="#bcff0000"
             android:elevation="1dp"
             style="@style/Widget.Look.HomeToolbar"
             app:title="@string/app_name"/>

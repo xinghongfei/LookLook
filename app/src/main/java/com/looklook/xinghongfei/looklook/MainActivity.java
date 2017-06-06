@@ -60,7 +60,7 @@ public class MainActivity extends BaseActivity implements IMain {
     private int nevigationId;
     private int mainColor;
 
-    private SimpleArrayMap<Integer, String> mTitleArryMap = new SimpleArrayMap<>();
+    private SimpleArrayMap<Integer, String> mTitleArrayMap = new SimpleArrayMap<>();
 
     private long exitTime = 0;
     private SwitchCompat mThemeSwitch;
@@ -71,7 +71,7 @@ public class MainActivity extends BaseActivity implements IMain {
     private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-
+            //设置侧边菜单的打开方向。
             drawer.openDrawer(GravityCompat.END);
             return true;
         }
@@ -87,8 +87,10 @@ public class MainActivity extends BaseActivity implements IMain {
         IMainPresenter = new MainPresenterImpl(this, this);
         IMainPresenter.getBackground();
 
+        //设置使用菜单项打开侧边菜单的监听器
         toolbar.setOnMenuItemClickListener(onMenuItemClick);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //TODO ？
             animateToolbar();
         }
         addfragmentsAndTitle();
@@ -102,6 +104,7 @@ public class MainActivity extends BaseActivity implements IMain {
             if (nevigationId != -1) {
                 currentMenuItem = navView.getMenu().findItem(nevigationId);
             }
+
             if (currentMenuItem == null) {
                 currentMenuItem = navView.getMenu().findItem(R.id.zhihuitem);
             }
@@ -109,15 +112,27 @@ public class MainActivity extends BaseActivity implements IMain {
                 currentMenuItem.setChecked(true);
                 // TODO: 16/8/17 add a fragment and set toolbar title
                 Fragment fragment = getFragmentById(currentMenuItem.getItemId());
-                String title = mTitleArryMap.get((Integer) currentMenuItem.getItemId());
+                //TODO title在哪里显示出来？
+                String title = mTitleArrayMap.get((Integer) currentMenuItem.getItemId());
                 if (fragment != null) {
                     switchFragment(fragment, title);
                 }
             }
         } else {
+            //TODO 此处currentMenuItem不是必定为空的吗？
+            //发邮件问作者currentMenuItem不空的情况何时出现
+            /**question1： 为什么旋转屏幕后重建Activity时 onCreate不执行
+             * q2:旋转屏幕后，activity类对象是原来的，还是新的
+             */
+
+            /**
+             * 可能不空的情境：
+             * 屏幕旋转，MainActivity被销毁后重建，而MainActivity类实例没有被销毁。
+             * 此时currentMenuItem仍然存在
+             */
             if (currentMenuItem != null) {
                 Fragment fragment = getFragmentById(currentMenuItem.getItemId());
-                String title = mTitleArryMap.get((Integer) currentMenuItem.getItemId());
+                String title = mTitleArrayMap.get((Integer) currentMenuItem.getItemId());
                 if (fragment != null) {
                     switchFragment(fragment, title);
                 }
@@ -131,21 +146,24 @@ public class MainActivity extends BaseActivity implements IMain {
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                if(currentMenuItem!=null&&item.getItemId()==R.id.menu_about)
+                if(currentMenuItem != null && item.getItemId() == R.id.menu_about)
                 {
+                    //TODO getApplication()作为参数的作用
                     Intent intent = new Intent(getApplication(), AboutActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     getApplication().startActivity(intent);
                     return true;
                 }
 
 
-                if (currentMenuItem != item && currentMenuItem != null) {
+                if (currentMenuItem != null && currentMenuItem != item) {
                     currentMenuItem.setChecked(false);
                     int id = item.getItemId();
                     SharePreferenceUtil.putNevigationItem(MainActivity.this, id);
                     currentMenuItem = item;
                     currentMenuItem.setChecked(true);
-                    switchFragment(getFragmentById(currentMenuItem.getItemId()), mTitleArryMap.get(currentMenuItem.getItemId()));
+                    switchFragment(getFragmentById(currentMenuItem.getItemId()),
+                            mTitleArrayMap.get(currentMenuItem.getItemId()));
                 }
                 drawer.closeDrawer(GravityCompat.END, true);
                 return true;
@@ -251,9 +269,9 @@ public class MainActivity extends BaseActivity implements IMain {
     }
 
     private void addfragmentsAndTitle() {
-        mTitleArryMap.put(R.id.zhihuitem, getResources().getString(R.string.zhihu));
-        mTitleArryMap.put(R.id.topnewsitem, getResources().getString(R.string.topnews));
-        mTitleArryMap.put(R.id.meiziitem, getResources().getString(R.string.meizi));
+        mTitleArrayMap.put(R.id.zhihuitem, getResources().getString(R.string.zhihu));
+        mTitleArrayMap.put(R.id.topnewsitem, getResources().getString(R.string.topnews));
+        mTitleArrayMap.put(R.id.meiziitem, getResources().getString(R.string.meizi));
     }
 
     @Override
@@ -271,6 +289,7 @@ public class MainActivity extends BaseActivity implements IMain {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
         } else {
+            //TODO 这句话的目的是什么？
             if ((System.currentTimeMillis() - exitTime) > 2000) {
                 Toast.makeText(MainActivity.this, "再点一次，退出", Toast.LENGTH_SHORT).show();
                 exitTime = System.currentTimeMillis();
@@ -291,6 +310,7 @@ public class MainActivity extends BaseActivity implements IMain {
         }
     }
 
+    //TODO 看关于动画部分的知识
     private void animateToolbar() {
         // this is gross but toolbar doesn't expose it's children to animate them :(
         View t = toolbar.getChildAt(0);

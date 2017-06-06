@@ -26,7 +26,7 @@ public class ZhihuPresenterImpl extends BasePresenterImpl implements IZhihuPrese
     private CacheUtil mCacheUtil;
     private Gson gson = new Gson();
 
-    public ZhihuPresenterImpl(Context context,IZhihuFragment zhihuFragment) {
+    public ZhihuPresenterImpl(Context context, IZhihuFragment zhihuFragment) {
 
         mZhihuFragment = zhihuFragment;
         mCacheUtil = CacheUtil.get(context);

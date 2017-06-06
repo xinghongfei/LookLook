@@ -22,7 +22,6 @@
 
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/Look.Home"
             >
             <intent-filter>

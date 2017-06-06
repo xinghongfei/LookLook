@@ -93,13 +93,14 @@ public class ZhihuDescribeActivity extends SwipeBackActivity implements IZhihuSt
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.zhihudescribe);
+
         setDragEdge(SwipeBackLayout.DragEdge.LEFT);
         ButterKnife.bind(this);
         mDeviceInfo = DensityUtil.getDeviceInfo(this);
         width = mDeviceInfo[0];
         heigh = width * 3 / 4;
         setSupportActionBar(mToolbar);
-        initlistenr();
+        initListener();
         initData();
         initView();
         getData();
@@ -115,7 +116,7 @@ public class ZhihuDescribeActivity extends SwipeBackActivity implements IZhihuSt
 
     }
 
-    private void initlistenr() {
+    private void initListener() {
         zhihuReturnHomeListener =
                 new AnimUtils.TransitionListenerAdapter() {
                     @Override
