@@ -131,9 +131,9 @@ public class MainActivity extends BaseActivity implements IMain {
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                if(currentMenuItem!=null&&item.getItemId()==R.id.menu_about)
-                {
+                if (currentMenuItem != null && item.getItemId() == R.id.menu_about) {
                     Intent intent = new Intent(getApplication(), AboutActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     getApplication().startActivity(intent);
                     return true;
                 }
