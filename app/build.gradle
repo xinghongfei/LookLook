@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'android-apt'
 
 android {
     compileSdkVersion 24
@@ -45,7 +44,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
     //butterknife
     compile 'com.jakewharton:butterknife:8.0.1'
-    apt 'com.jakewharton:butterknife-compiler:8.0.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.0.1'
 
     compile 'com.jakewharton:butterknife:5.1.1'
 
