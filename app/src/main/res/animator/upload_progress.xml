@@ -21,7 +21,7 @@
 
     <objectAnimator
         android:duration="1333"
-        android:interpolator="@interpolator/trim_start_interpolator"
+        android:interpolator="@anim/trim_start_interpolator"
         android:propertyName="trimPathStart"
         android:repeatCount="-1"
         android:valueFrom="0"

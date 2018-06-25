@@ -47,6 +47,20 @@ public class ForegroundImageView extends ImageView {
         setOutlineProvider(ViewOutlineProvider.BOUNDS);
     }
 
+
+    public ForegroundImageView(Context context,AttributeSet attrs,int defStyle){
+        super(context,attrs,defStyle);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ForegroundView);
+
+        final Drawable d = a.getDrawable(R.styleable.ForegroundView_android_foreground);
+        if (d != null) {
+            setForeground(d);
+        }
+        a.recycle();
+        setOutlineProvider(ViewOutlineProvider.BOUNDS);
+
+    }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);

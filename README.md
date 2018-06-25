@@ -1,17 +1,16 @@
 # LookLook 
 
-This is a reading news app. you can read Zhihu Daily， News and some pictures.User experience is amasing.The project is updating, welcome Star and Fork.
-
+This is a news reading app. You can use it to read Zhihu Daily, News and view some pictures. I hope the user experience is amazing to you. The project will be updating, you are welcome to **Star** or **Fork**.
 
 
 
 
 ## Screenshots
-<img src="screenshots/LookLook.gif" width="300" align="right" hspace="20">
-<img src="screenshots/zhihu.png" width="25%" />
-<img src="screenshots/meizi.png" width="25%" />
-<img src="screenshots/about.png" width="25%" />
-<img src="screenshots/navigation.png" width="25%" />
+<img src="screenshots/LookLook.gif" width="330" align="right" hspace="20">
+<img src="screenshots/zhihu.png" width="30%" />
+<img src="screenshots/meizi.png" width="30%" />
+<img src="screenshots/navigation.png" width="30%" />
+<img src="screenshots/about.png" width="30%" />
 
 
 
@@ -22,10 +21,9 @@ This is a reading news app. you can read Zhihu Daily， News and some pictures.U
 
 
 
+## About me
 
-##About me
-
-An android developer in Beijing.Welcome to offer me an [Interview invitation](mailto:maat.xing@gmail.com). If you have any new idea about this project, feel free to [contact me](mailto:maat.xing@gmail.com). :smiley:
+An Android developer in Beijing. Please feel free to offer me an [Interview Invitation](mailto:maat.xing@gmail.com). If you have any new idea about this project, feel free to [contact me](mailto:maat.xing@gmail.com). :smiley:
 
 
 

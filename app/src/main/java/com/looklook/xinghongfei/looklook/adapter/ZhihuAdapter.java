@@ -22,9 +22,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.looklook.xinghongfei.looklook.Activity.ZhihuDescribeActivity;
 import com.looklook.xinghongfei.looklook.MainActivity;
 import com.looklook.xinghongfei.looklook.R;
+import com.looklook.xinghongfei.looklook.activity.ZhihuDescribeActivity;
 import com.looklook.xinghongfei.looklook.bean.zhihu.ZhihuDailyItem;
 import com.looklook.xinghongfei.looklook.config.Config;
 import com.looklook.xinghongfei.looklook.util.DBUtils;
@@ -39,29 +39,27 @@ import java.util.ArrayList;
 public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements MainActivity.LoadingMore {
 
     private static final int TYPE_LOADING_MORE = -1;
-    private static final int NOMAL_ITEM = 1;
-    boolean showLoadingMore;
-    float width;
-    int widthPx;
-    int heighPx;
+    private static final int TYPE_NORMAL = 1;
+
+    private boolean loadingMore;
+    private int mImageWidth;
+    private int mImageHeigh;
     private ArrayList<ZhihuDailyItem> zhihuDailyItems = new ArrayList<>();
     private Context mContext;
-    private String mImageUrl;
-
 
     public ZhihuAdapter(Context context) {
 
         this.mContext = context;
-        width = mContext.getResources().getDimension(R.dimen.image_width);
-        widthPx = DensityUtil.dip2px(mContext, width);
-        heighPx = widthPx * 3 / 4;
+        float width = mContext.getResources().getDimension(R.dimen.image_width);
+        mImageWidth = DensityUtil.dip2px(mContext, width);
+        mImageHeigh = mImageWidth * 3 / 4;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         switch (viewType) {
-            case NOMAL_ITEM:
+            case TYPE_NORMAL:
                 return new ZhihuViewHolder(LayoutInflater.from(mContext).inflate(R.layout.zhihu_layout_item, parent, false));
 
             case TYPE_LOADING_MORE:
@@ -78,7 +76,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         int type = getItemViewType(position);
         switch (type) {
-            case NOMAL_ITEM:
+            case TYPE_NORMAL:
                 bindViewHolderNormal((ZhihuViewHolder) holder, position);
                 break;
             case TYPE_LOADING_MORE:
@@ -90,7 +88,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private void bindLoadingViewHold(LoadingMoreHolder holder, int position) {
-        holder.progressBar.setVisibility(showLoadingMore == true ? View.VISIBLE : View.INVISIBLE);
+        holder.progressBar.setVisibility(loadingMore == true ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void bindViewHolderNormal(final ZhihuViewHolder holder, final int position) {
@@ -105,7 +103,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               goDescribeActivity(holder,zhihuDailyItem);
+                startDescribeActivity(holder, zhihuDailyItem);
 
             }
         });
@@ -114,7 +112,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        goDescribeActivity(holder,zhihuDailyItem);
+                        startDescribeActivity(holder, zhihuDailyItem);
                     }
                 });
 
@@ -157,20 +155,20 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         return false;
                     }
                 }).diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .centerCrop().override(widthPx, heighPx)
+                .centerCrop().override(mImageWidth, mImageHeigh)
                 .into(new DribbbleTarget(holder.imageView, false));
 
 
     }
 
-    private void goDescribeActivity(ZhihuViewHolder holder,ZhihuDailyItem zhihuDailyItem){
+    private void startDescribeActivity(ZhihuViewHolder holder, ZhihuDailyItem zhihuDailyItem) {
 
         DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, zhihuDailyItem.getId(), 1);
         holder.textView.setTextColor(Color.GRAY);
         Intent intent = new Intent(mContext, ZhihuDescribeActivity.class);
         intent.putExtra("id", zhihuDailyItem.getId());
         intent.putExtra("title", zhihuDailyItem.getTitle());
-        intent.putExtra("image",mImageUrl);
+
 //                final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
 //                        ((Activity) mContext, false,new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)),
 //                                new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_shot_background)));
@@ -189,7 +187,6 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public void addItems(ArrayList<ZhihuDailyItem> list) {
 
-        int n = list.size();
         zhihuDailyItems.addAll(list);
         notifyDataSetChanged();
     }
@@ -200,7 +197,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (position < getDataItemCount()
                 && getDataItemCount() > 0) {
 
-            return NOMAL_ITEM;
+            return TYPE_NORMAL;
         }
         return TYPE_LOADING_MORE;
     }
@@ -211,22 +208,22 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private int getLoadingMoreItemPosition() {
-        return showLoadingMore ? getItemCount() - 1 : RecyclerView.NO_POSITION;
+        return loadingMore ? getItemCount() - 1 : RecyclerView.NO_POSITION;
     }
 
     // TODO: 16/8/13  don't forget call fellow method
     @Override
     public void loadingStart() {
-        if (showLoadingMore) return;
-        showLoadingMore = true;
+        if (loadingMore) return;
+        loadingMore = true;
         notifyItemInserted(getLoadingMoreItemPosition());
     }
 
     @Override
     public void loadingfinish() {
-        if (!showLoadingMore) return;
+        if (!loadingMore) return;
         final int loadingPos = getLoadingMoreItemPosition();
-        showLoadingMore = false;
+        loadingMore = false;
         notifyItemRemoved(loadingPos);
     }
 
@@ -236,7 +233,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    public static class LoadingMoreHolder extends RecyclerView.ViewHolder {
+    private static class LoadingMoreHolder extends RecyclerView.ViewHolder {
         ProgressBar progressBar;
 
         public LoadingMoreHolder(View itemView) {
@@ -245,9 +242,9 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    class ZhihuViewHolder extends RecyclerView.ViewHolder {
-        final TextView textView;
-        final LinearLayout linearLayout;
+    private static class ZhihuViewHolder extends RecyclerView.ViewHolder {
+        TextView textView;
+        LinearLayout linearLayout;
         BadgedFourThreeImageView imageView;
 
         ZhihuViewHolder(View itemView) {

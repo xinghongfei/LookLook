@@ -28,8 +28,8 @@ import com.looklook.xinghongfei.looklook.presenter.implView.IZhihuFragment;
 import com.looklook.xinghongfei.looklook.view.GridItemDividerDecoration;
 import com.looklook.xinghongfei.looklook.widget.WrapContentLinearLayoutManager;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 /**
  * Created by xinghongfei on 16/8/17.
@@ -45,28 +45,27 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView.OnScrollListener loadingMoreListener;
 
-
+    View view = null;
     ZhihuPresenterImpl zhihuPresenter;
-    @InjectView(R.id.recycle_zhihu)
+    @BindView(R.id.recycle_zhihu)
     RecyclerView recycle;
-    @InjectView(R.id.prograss)
+    @BindView(R.id.prograss)
     ProgressBar progress;
 
     private String currentLoadDate;
+    private ConnectivityManager.NetworkCallback connectivityCallback;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         setRetainInstance(true);
-        View view = inflater.inflate(R.layout.zhihu_fragment_layout, container, false);
+        view = inflater.inflate(R.layout.zhihu_fragment_layout, container, false);
         checkConnectivity(view);
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
         return view;
 
     }
-
-
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -83,7 +82,7 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
         if (monitoringConnectivity) {
             final ConnectivityManager connectivityManager
                     = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 connectivityManager.unregisterNetworkCallback(connectivityCallback);
             }
             monitoringConnectivity = false;
@@ -93,13 +92,12 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        zhihuPresenter.unsubcrible();
+        zhihuPresenter.unsubscrible();
 
     }
 
-
     private void initialDate() {
-        zhihuPresenter = new ZhihuPresenterImpl(getContext(),this);
+        zhihuPresenter = new ZhihuPresenterImpl(getContext(), this);
         zhihuAdapter = new ZhihuAdapter(getContext());
     }
 
@@ -107,11 +105,11 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
 
         initialListener();
 
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mLinearLayoutManager = new WrapContentLinearLayoutManager(getContext());
 
-        }else {
-            mLinearLayoutManager=new LinearLayoutManager(getContext());
+        } else {
+            mLinearLayoutManager = new LinearLayoutManager(getContext());
         }
         recycle.setLayoutManager(mLinearLayoutManager);
         recycle.setHasFixedSize(true);
@@ -142,7 +140,6 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
         zhihuPresenter.getTheDaily(currentLoadDate);
     }
 
-
     private void initialListener() {
 
         loadingMoreListener = new RecyclerView.OnScrollListener() {
@@ -170,7 +167,7 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
         };
 
 
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             connectivityCallback = new ConnectivityManager.NetworkCallback() {
                 @Override
                 public void onAvailable(Network network) {
@@ -194,7 +191,6 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
 
 
     }
-
 
     @Override
     public void updateList(ZhihuDaily zhihuDaily) {
@@ -245,29 +241,22 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.reset(this);
+//        ButterKnife.reset(this);
     }
-
 
     private void checkConnectivity(View view) {
         final ConnectivityManager connectivityManager
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         connected = activeNetworkInfo != null && activeNetworkInfo.isConnected();
-        if (!connected) {
+        if (!connected && progress != null) {//不判断容易抛出空指针异常
             progress.setVisibility(View.INVISIBLE);
-
             if (noConnectionText == null) {
 
                 ViewStub stub_text = (ViewStub) view.findViewById(R.id.stub_no_connection_text);
                 noConnectionText = (TextView) stub_text.inflate();
             }
-
-//            final AnimatedVectorDrawable avd =
-//                    (AnimatedVectorDrawable) getContext().getDrawable(R.drawable.avd_no_connection);
-//            noConnection.setImageDrawable(avd);
-//            avd.start();
-            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 connectivityManager.registerNetworkCallback(
                         new NetworkRequest.Builder()
                                 .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build(),
@@ -279,11 +268,6 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
         }
 
     }
-
-
-
-
-        private ConnectivityManager.NetworkCallback connectivityCallback;
 
 
 }

@@ -25,9 +25,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.looklook.xinghongfei.looklook.Activity.TopNewsDescribeActivity;
 import com.looklook.xinghongfei.looklook.MainActivity;
 import com.looklook.xinghongfei.looklook.R;
+import com.looklook.xinghongfei.looklook.activity.TopNewsDescribeActivity;
 import com.looklook.xinghongfei.looklook.bean.news.NewsBean;
 import com.looklook.xinghongfei.looklook.config.Config;
 import com.looklook.xinghongfei.looklook.util.DBUtils;
@@ -43,28 +43,28 @@ import java.util.ArrayList;
 public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements MainActivity.LoadingMore {
 
     private static final int TYPE_LOADING_MORE = -1;
-    private static final int NOMAL_ITEM = 1;
-    boolean showLoadingMore;
-    float width;
-    int widthPx;
-    int heighPx;
-    private ArrayList<NewsBean> topNewitems = new ArrayList<>();
+    private static final int TYPE_NORMAL = 1;
+
+    private boolean loadingMore;
+    private int mImageViewWidth;
+    private int mImageViewHeight;
+
+    private ArrayList<NewsBean> topNewsItems = new ArrayList<>();
     private Context mContext;
 
-
     public TopNewsAdapter(Context context) {
-
         this.mContext = context;
-        width = mContext.getResources().getDimension(R.dimen.image_width);
-        widthPx = DensityUtil.dip2px(mContext, width);
-        heighPx = widthPx * 3 / 4;
+        float width = mContext.getResources().getDimension(R.dimen.image_width);
+
+        mImageViewWidth = DensityUtil.dip2px(mContext, width);
+        mImageViewHeight = mImageViewWidth * 3 / 4;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         switch (viewType) {
-            case NOMAL_ITEM:
+            case TYPE_NORMAL:
                 return new TopNewsViewHolder(LayoutInflater.from(mContext).inflate(R.layout.topnews_layout_item, parent, false));
 
             case TYPE_LOADING_MORE:
@@ -81,7 +81,7 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         int type = getItemViewType(position);
         switch (type) {
-            case NOMAL_ITEM:
+            case TYPE_NORMAL:
                 bindViewHolderNormal((TopNewsViewHolder) holder, position);
                 break;
             case TYPE_LOADING_MORE:
@@ -93,20 +93,18 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private void bindLoadingViewHold(LoadingMoreHolder holder, int position) {
-        holder.progressBar.setVisibility(showLoadingMore? View.VISIBLE : View.INVISIBLE);
+        holder.progressBar.setVisibility(loadingMore ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void bindViewHolderNormal(final TopNewsViewHolder holder, final int position) {
 
-        final NewsBean newsBeanItem = topNewitems.get(holder.getAdapterPosition());
+        final NewsBean newsBeanItem = topNewsItems.get(holder.getAdapterPosition());
 
-        if (DBUtils.getDB(mContext).isRead(Config.TOPNEWS, newsBeanItem.getTitle(), 1)){
+        if (DBUtils.getDB(mContext).isRead(Config.TOPNEWS, newsBeanItem.getTitle(), 1)) {
 
             holder.textView.setTextColor(Color.GRAY);
             holder.sourceTextview.setTextColor(Color.GRAY);
-        }
-
-        else {
+        } else {
             holder.textView.setTextColor(Color.BLACK);
             holder.sourceTextview.setTextColor(Color.BLACK);
         }
@@ -118,7 +116,7 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, newsBeanItem.getTitle(), 1);
                 holder.textView.setTextColor(Color.GRAY);
                 holder.sourceTextview.setTextColor(Color.GRAY);
-                startTopnewsActivity( newsBeanItem, holder );
+                startTopNewsActivity(newsBeanItem, holder);
 
             }
         });
@@ -128,10 +126,9 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        startTopnewsActivity( newsBeanItem, holder );
+                        startTopNewsActivity(newsBeanItem, holder);
                     }
                 });
-
 
         Glide.with(mContext)
                 .load(newsBeanItem.getImgsrc())
@@ -171,24 +168,25 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         return false;
                     }
                 }).diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .centerCrop().override(widthPx, heighPx)
+                .centerCrop().override(mImageViewWidth, mImageViewHeight)
                 .into(new DribbbleTarget(holder.imageView, false));
 
 
     }
-    private void startTopnewsActivity(NewsBean newsBeanItem,RecyclerView.ViewHolder holder){
 
-            Intent intent = new Intent(mContext, TopNewsDescribeActivity.class);
-            intent.putExtra("docid", newsBeanItem.getDocid());
-            intent.putExtra("title", newsBeanItem.getTitle());
-            intent.putExtra("image", newsBeanItem.getImgsrc());
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+    private void startTopNewsActivity(NewsBean newsBeanItem, RecyclerView.ViewHolder holder) {
+
+        Intent intent = new Intent(mContext, TopNewsDescribeActivity.class);
+        intent.putExtra("docid", newsBeanItem.getDocid());
+        intent.putExtra("title", newsBeanItem.getTitle());
+        intent.putExtra("image", newsBeanItem.getImgsrc());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
-                    ((Activity) mContext, false,new android.support.v4.util.Pair<>(((TopNewsViewHolder)holder).imageView, mContext.getString(R.string.transition_topnew)),
-                            new android.support.v4.util.Pair<>(((TopNewsViewHolder)holder).linearLayout, mContext.getString(R.string.transition_topnew_linear)));
+                    ((Activity) mContext, false, new android.support.v4.util.Pair<>(((TopNewsViewHolder) holder).imageView, mContext.getString(R.string.transition_topnew)),
+                            new android.support.v4.util.Pair<>(((TopNewsViewHolder) holder).linearLayout, mContext.getString(R.string.transition_topnew_linear)));
             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
             mContext.startActivity(intent, options.toBundle());
-        }else {
+        } else {
 
             mContext.startActivity(intent);
 
@@ -198,16 +196,12 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return topNewitems.size();
+        return topNewsItems.size();
     }
 
-
     public void addItems(ArrayList<NewsBean> list) {
-//
-////        remove first unuse data
         list.remove(0);
-        int n = list.size();
-        topNewitems.addAll(list);
+        topNewsItems.addAll(list);
         notifyDataSetChanged();
     }
 
@@ -217,42 +211,41 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (position < getDataItemCount()
                 && getDataItemCount() > 0) {
 
-            return NOMAL_ITEM;
+            return TYPE_NORMAL;
         }
         return TYPE_LOADING_MORE;
     }
 
     private int getDataItemCount() {
-
-        return topNewitems.size();
+        return topNewsItems.size();
     }
 
     private int getLoadingMoreItemPosition() {
-        return showLoadingMore ? getItemCount() - 1 : RecyclerView.NO_POSITION;
+        return loadingMore ? getItemCount() - 1 : RecyclerView.NO_POSITION;
     }
 
     @Override
     public void loadingStart() {
-        if (showLoadingMore) return;
-        showLoadingMore = true;
+        if (loadingMore) return;
+        loadingMore = true;
         notifyItemInserted(getLoadingMoreItemPosition());
     }
 
     @Override
     public void loadingfinish() {
-        if (!showLoadingMore) return;
+        if (!loadingMore) return;
         final int loadingPos = getLoadingMoreItemPosition();
-        showLoadingMore = false;
+        loadingMore = false;
         notifyItemRemoved(loadingPos);
     }
 
 
     public void clearData() {
-        topNewitems.clear();
+        topNewsItems.clear();
         notifyDataSetChanged();
     }
 
-    public static class LoadingMoreHolder extends RecyclerView.ViewHolder {
+    private static class LoadingMoreHolder extends RecyclerView.ViewHolder {
         ProgressBar progressBar;
 
         public LoadingMoreHolder(View itemView) {
@@ -261,10 +254,10 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    class TopNewsViewHolder extends RecyclerView.ViewHolder {
-        final TextView textView;
-        final LinearLayout linearLayout;
-        final TextView sourceTextview;
+    private static class TopNewsViewHolder extends RecyclerView.ViewHolder {
+        TextView textView;
+        LinearLayout linearLayout;
+        TextView sourceTextview;
         BadgedFourThreeImageView imageView;
 
         TopNewsViewHolder(View itemView) {
@@ -272,7 +265,7 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             imageView = (BadgedFourThreeImageView) itemView.findViewById(R.id.item_image_id);
             textView = (TextView) itemView.findViewById(R.id.item_text_id);
             linearLayout = (LinearLayout) itemView.findViewById(R.id.zhihu_item_layout);
-            sourceTextview= (TextView) itemView.findViewById(R.id.item_text_source_id);
+            sourceTextview = (TextView) itemView.findViewById(R.id.item_text_source_id);
         }
     }
 

@@ -24,7 +24,7 @@
     android:layout_height="match_parent"
     app:dragDismissDistance="@dimen/drag_dismiss_distance"
     app:dragDismissScale="0.95"
-    tools:context=".Activity.ZhihuDescribeActivity">
+    tools:context=".activity.ZhihuDescribeActivity">
 
 
     <FrameLayout
@@ -108,7 +108,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="250dp"
+                android:layout_marginTop="220dp"
                 android:orientation="vertical">
                 <ProgressBar
                     android:id="@+id/progress"

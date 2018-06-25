@@ -22,12 +22,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.looklook.xinghongfei.looklook.Activity.MeiziPhotoDescribeActivity;
 import com.looklook.xinghongfei.looklook.MainActivity;
 import com.looklook.xinghongfei.looklook.R;
+import com.looklook.xinghongfei.looklook.activity.MeiziPhotoDescribeActivity;
 import com.looklook.xinghongfei.looklook.bean.meizi.Gank;
 import com.looklook.xinghongfei.looklook.bean.meizi.Meizi;
-import com.looklook.xinghongfei.looklook.util.DensityUtil;
 import com.looklook.xinghongfei.looklook.util.DribbbleTarget;
 import com.looklook.xinghongfei.looklook.util.Help;
 import com.looklook.xinghongfei.looklook.util.ObservableColorMatrix;
@@ -39,26 +38,21 @@ import java.util.ArrayList;
 public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements MainActivity.LoadingMore {
 
     private static final int TYPE_LOADING_MORE = -1;
-    private static final int NOMAL_ITEM = 1;
-    boolean showLoadingMore;
+    private static final int TYPE_NOMAL = 1;
+    private boolean loadingMore;
 
-    int[] decsi;
-    private ArrayList<Meizi> meiziItemes = new ArrayList<>();
+    private ArrayList<Meizi> meiziItems = new ArrayList<>();
     private Context mContext;
 
-
     public MeiziAdapter(Context context) {
-
         this.mContext = context;
-        decsi=DensityUtil.getDeviceInfo(mContext);
-
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         switch (viewType) {
-            case NOMAL_ITEM:
+            case TYPE_NOMAL:
                 return new MeiziViewHolder(LayoutInflater.from(mContext).inflate(R.layout.meizi_layout_item, parent, false));
 
             case TYPE_LOADING_MORE:
@@ -66,16 +60,14 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         }
         return null;
-
     }
-
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
 
         int type = getItemViewType(position);
         switch (type) {
-            case NOMAL_ITEM:
+            case TYPE_NOMAL:
                 bindViewHolderNormal((MeiziViewHolder) holder, position);
                 break;
             case TYPE_LOADING_MORE:
@@ -87,12 +79,12 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private void bindLoadingViewHold(LoadingMoreHolder holder, int position) {
-        holder.progressBar.setVisibility(showLoadingMore? View.VISIBLE : View.INVISIBLE);
+        holder.progressBar.setVisibility(loadingMore ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void bindViewHolderNormal(final MeiziViewHolder holder, final int position) {
 
-        final Meizi meizi = meiziItemes.get(holder.getAdapterPosition());
+        final Meizi meizi = meiziItems.get(holder.getAdapterPosition());
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,14 +92,7 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 startDescribeActivity(meizi,holder);
             }
         });
-//        holder.textView.setText("视频");
 
-//        holder.textView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startDescribeActivity(meizi,holder);
-//            }
-//        });
         Glide.with(mContext)
                 .load(meizi.getUrl())
                 .listener(new RequestListener<String, GlideDrawable>() {
@@ -155,6 +140,15 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private void startDescribeActivity(Meizi meizi,RecyclerView.ViewHolder holder){
 
         Intent intent = new Intent(mContext, MeiziPhotoDescribeActivity.class);
+        int location[] = new int[2];
+
+        BadgedFourThreeImageView imageView=((MeiziViewHolder)holder).getBitmap();
+        imageView.getLocationOnScreen(location);
+        intent.putExtra("left", location[0]);
+        intent.putExtra("top", location[1]);
+        intent.putExtra("height", imageView.getHeight());
+        intent.putExtra("width", imageView.getWidth());
+
         intent.putExtra("image",meizi.getUrl());
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
 
@@ -170,63 +164,58 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return meiziItemes.size();
+        return meiziItems.size();
     }
 
     public void addItems(ArrayList<Meizi> list) {
-        meiziItemes.addAll(list);
+        meiziItems.addAll(list);
         notifyDataSetChanged();
     }
 
 
     @Override
     public int getItemViewType(int position) {
-        if (position < getDataItemCount()
-                && getDataItemCount() > 0) {
-
-            return NOMAL_ITEM;
+        if (position < getDataItemCount() && getDataItemCount() > 0) {
+            return TYPE_NOMAL;
         }
         return TYPE_LOADING_MORE;
     }
 
     private int getDataItemCount() {
-
-        return meiziItemes.size();
+        return meiziItems.size();
     }
 
     private int getLoadingMoreItemPosition() {
-        return showLoadingMore ? getItemCount() - 1 : RecyclerView.NO_POSITION;
+        return loadingMore ? getItemCount() - 1 : RecyclerView.NO_POSITION;
     }
 
     // TODO: 16/8/13  don't forget call fellow method
     @Override
     public void loadingStart() {
-        if (showLoadingMore) return;
-        showLoadingMore = true;
+        if (loadingMore) return;
+        loadingMore = true;
         notifyItemInserted(getLoadingMoreItemPosition());
     }
 
     @Override
     public void loadingfinish() {
-        if (!showLoadingMore) return;
+        if (!loadingMore) return;
         final int loadingPos = getLoadingMoreItemPosition();
-        showLoadingMore = false;
+        loadingMore = false;
         notifyItemRemoved(loadingPos);
     }
-
 
     public void addVedioDes(ArrayList<Gank> list){
 
     }
 
     public void clearData() {
-        meiziItemes.clear();
+        meiziItems.clear();
         notifyDataSetChanged();
     }
 
     public static class LoadingMoreHolder extends RecyclerView.ViewHolder {
         ProgressBar progressBar;
-
         public LoadingMoreHolder(View itemView) {
             super(itemView);
             progressBar = (ProgressBar) itemView;
@@ -234,15 +223,14 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     class MeiziViewHolder extends RecyclerView.ViewHolder {
-//        final TextView textView;
-
         BadgedFourThreeImageView imageView;
-
         MeiziViewHolder(View itemView) {
             super(itemView);
             imageView = (BadgedFourThreeImageView) itemView.findViewById(R.id.item_image_id);
-//            textView = (TextView) itemView.findViewById(R.id.item_text_id);
 
+        }
+        public BadgedFourThreeImageView getBitmap(){
+            return imageView;
         }
     }
 

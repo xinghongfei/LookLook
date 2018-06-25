@@ -3,7 +3,7 @@ package com.looklook.xinghongfei.looklook.presenter.implPresenter;
 import android.content.Context;
 
 import com.google.gson.Gson;
-import com.looklook.xinghongfei.looklook.api.ApiManage;
+import com.looklook.xinghongfei.looklook.api.ApiManager;
 import com.looklook.xinghongfei.looklook.bean.zhihu.ZhihuDaily;
 import com.looklook.xinghongfei.looklook.bean.zhihu.ZhihuDailyItem;
 import com.looklook.xinghongfei.looklook.config.Config;
@@ -35,7 +35,7 @@ public class ZhihuPresenterImpl extends BasePresenterImpl implements IZhihuPrese
     @Override
     public void getLastZhihuNews() {
         mZhihuFragment.showProgressDialog();
-        Subscription subscription = ApiManage.getInstence().getZhihuApiService().getLastDaily()
+        Subscription subscription = ApiManager.getInstence().getZhihuApiService().getLastDaily()
                 .map(new Func1<ZhihuDaily, ZhihuDaily>() {
                     @Override
                     public ZhihuDaily call(ZhihuDaily zhihuDaily) {
@@ -72,7 +72,7 @@ public class ZhihuPresenterImpl extends BasePresenterImpl implements IZhihuPrese
 
     @Override
     public void getTheDaily(String date) {
-        Subscription subscription = ApiManage.getInstence().getZhihuApiService().getTheDaily(date)
+        Subscription subscription = com.looklook.xinghongfei.looklook.api.ApiManager.getInstence().getZhihuApiService().getTheDaily(date)
                 .map(new Func1<ZhihuDaily, ZhihuDaily>() {
                     @Override
                     public ZhihuDaily call(ZhihuDaily zhihuDaily) {

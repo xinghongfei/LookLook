@@ -1,6 +1,7 @@
 package com.looklook.xinghongfei.looklook.api;
 
 
+import com.looklook.xinghongfei.looklook.bean.image.ImageResponse;
 import com.looklook.xinghongfei.looklook.bean.zhihu.ZhihuDaily;
 import com.looklook.xinghongfei.looklook.bean.zhihu.ZhihuStory;
 
@@ -20,6 +21,7 @@ public interface ZhihuApi {
     @GET("/api/4/news/{id}")
     Observable<ZhihuStory> getZhihuStory(@Path("id") String id);
 
-
+    @GET("http://lab.zuimeia.com/wallpaper/category/1/?page_size=1")
+    Observable<ImageResponse> getImage();
 
 }

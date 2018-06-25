@@ -1,4 +1,4 @@
-package com.looklook.xinghongfei.looklook.Activity;
+package com.looklook.xinghongfei.looklook.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
@@ -21,7 +22,9 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -31,42 +34,33 @@ import com.looklook.xinghongfei.looklook.R;
 import com.looklook.xinghongfei.looklook.bean.news.NewsDetailBean;
 import com.looklook.xinghongfei.looklook.presenter.implPresenter.TopNewsDesPresenterImpl;
 import com.looklook.xinghongfei.looklook.presenter.implView.ITopNewsDesFragment;
-import com.looklook.xinghongfei.looklook.util.AnimUtils;
-import com.looklook.xinghongfei.looklook.util.ColorUtils;
-import com.looklook.xinghongfei.looklook.util.DensityUtil;
-import com.looklook.xinghongfei.looklook.util.GlideUtils;
-import com.looklook.xinghongfei.looklook.util.ViewUtils;
+import com.looklook.xinghongfei.looklook.util.*;
 import com.looklook.xinghongfei.looklook.widget.ElasticDragDismissFrameLayout;
 import com.looklook.xinghongfei.looklook.widget.ParallaxScrimageView;
 import com.looklook.xinghongfei.looklook.widget.TranslateYTextView;
-
 import org.sufficientlysecure.htmltextview.HtmlTextView;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 /**
  * Created by xinghongfei on 16/8/13.
  */
-public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDesFragment {
+public class TopNewsDescribeActivity extends AppCompatActivity implements ITopNewsDesFragment {
     private static final float SCRIM_ADJUSTMENT = 0.075f;
     int[] mDeviceInfo;
     int width;
     int heigh;
-    @InjectView(R.id.progress)
+    @BindView(R.id.progress)
     ProgressBar mProgress;
-    @InjectView(R.id.htNewsContent)
+    @BindView(R.id.htNewsContent)
     HtmlTextView mHtNewsContent;
-    @InjectView(R.id.shot)
+    @BindView(R.id.shot)
     ParallaxScrimageView mShot;
-    @InjectView(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @InjectView(R.id.draggable_frame)
+    @BindView(R.id.draggable_frame)
     ElasticDragDismissFrameLayout mDraggableFrame;
-    @InjectView(R.id.nest)
+    @BindView(R.id.nest)
     NestedScrollView mNest;
-    @InjectView(R.id.title)
+    @BindView(R.id.title)
     TranslateYTextView mTextView;
 
     private String id;
@@ -77,13 +71,102 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     private NestedScrollView.OnScrollChangeListener scrollListener;
     private Transition.TransitionListener mReturnHomeListener;
     private Transition.TransitionListener mEnterTrasitionListener;
+    private RequestListener glideLoadListener = new RequestListener<String, GlideDrawable>() {
+        @Override
+        public boolean onResourceReady(GlideDrawable resource, String model,
+                                       Target<GlideDrawable> target, boolean isFromMemoryCache,
+                                       boolean isFirstResource) {
+            final Bitmap bitmap = GlideUtils.getBitmap(resource);
+            final int twentyFourDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    24, TopNewsDescribeActivity.this.getResources().getDisplayMetrics());
+            Palette.from(bitmap)
+                    .maximumColorCount(3)
+                    .clearFilters() /* by default palette ignore certain hues
+                        (e.g. pure black/white) but we don't want this. */
+                    .setRegion(0, 0, bitmap.getWidth() - 1, twentyFourDip) /* - 1 to work around
+                        https://code.google.com/p/android/issues/detail?id=191013 */
+                    .generate(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(Palette palette) {
+                            boolean isDark;
+                            @ColorUtils.Lightness int lightness = ColorUtils.isDark(palette);
+                            if (lightness == ColorUtils.LIGHTNESS_UNKNOWN) {
+                                isDark = ColorUtils.isDark(bitmap, bitmap.getWidth() / 2, 0);
+                            } else {
+                                isDark = lightness == ColorUtils.IS_DARK;
+                            }
+                            // color the status bar. Set a complementary dark color on L,
+                            // light or dark color on M (with matching status bar icons)
+                            int statusBarColor = getWindow().getStatusBarColor();
+                            final Palette.Swatch topColor =
+                                    ColorUtils.getMostPopulousSwatch(palette);
+                            if (topColor != null &&
+                                    (isDark || Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
+                                statusBarColor = ColorUtils.scrimify(topColor.getRgb(),
+                                        isDark, SCRIM_ADJUSTMENT);
+                                // set a light status bar on M+
+                                if (!isDark && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    ViewUtils.setLightStatusBar(mShot);
+                                }
+                            }
 
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                                if (statusBarColor != getWindow().getStatusBarColor()) {
+                                    mShot.setScrimColor(statusBarColor);
+                                    ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
+                                            getWindow().getStatusBarColor(), statusBarColor);
+                                    statusBarColorAnim.addUpdateListener(new ValueAnimator
+                                            .AnimatorUpdateListener() {
+                                        @Override
+                                        public void onAnimationUpdate(ValueAnimator animation) {
+                                            getWindow().setStatusBarColor(
+                                                    (int) animation.getAnimatedValue());
+                                        }
+                                    });
+                                    statusBarColorAnim.setDuration(1000L);
+                                    statusBarColorAnim.setInterpolator(
+                                            new AccelerateInterpolator());
+                                    statusBarColorAnim.start();
+                                }
+                            }
+                        }
+                    });
+
+            Palette.from(bitmap)
+                    .clearFilters()
+                    .generate(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(Palette palette) {
+
+                            // slightly more opaque ripple on the pinned image to compensate
+                            // for the scrim
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                mShot.setForeground(ViewUtils.createRipple(palette, 0.3f, 0.6f,
+                                        ContextCompat.getColor(TopNewsDescribeActivity.this, R.color.mid_grey),
+                                        true));
+                            }
+
+                        }
+                    });
+
+            // TODO should keep the background if the image contains transparency?!
+            mShot.setBackground(null);
+            return false;
+        }
+
+        @Override
+        public boolean onException(Exception e, String model, Target<GlideDrawable> target,
+                                   boolean isFirstResource) {
+            return false;
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.topnews_describe);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         mDeviceInfo = DensityUtil.getDeviceInfo(this);
         width = mDeviceInfo[0];
@@ -101,8 +184,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
 
     }
 
-
-    private void initData() {
+    protected void initData() {
         id = getIntent().getStringExtra("docid");
         title = getIntent().getStringExtra("title");
         mTextView.setText(title);
@@ -148,7 +230,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                                 .alpha(0f)
                                 .setDuration(100)
                                 .setInterpolator(new AccelerateInterpolator());
-                        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             mShot.setElevation(1f);
                             mToolbar.setElevation(0f);
                         }
@@ -177,6 +259,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
 //                    mShot.setAlpha(0.5f);
 //                    mShot.animate().alpha(1f).setDuration(800L).start();
                     }
+
                     @Override
                     public void onTransitionResume(Transition transition) {
                         super.onTransitionResume(transition);
@@ -225,102 +308,10 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
             getWindow().getSharedElementEnterTransition().removeListener(mEnterTrasitionListener);
 
         }
-        mTopNewsDesPresenter.unsubcrible();
+        mTopNewsDesPresenter.unsubscrible();
         super.onDestroy();
 
     }
-
-    private RequestListener glideLoadListener = new RequestListener<String, GlideDrawable>() {
-        @Override
-        public boolean onResourceReady(GlideDrawable resource, String model,
-                                       Target<GlideDrawable> target, boolean isFromMemoryCache,
-                                       boolean isFirstResource) {
-            final Bitmap bitmap = GlideUtils.getBitmap(resource);
-            final int twentyFourDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    24, TopNewsDescribeActivity.this.getResources().getDisplayMetrics());
-            Palette.from(bitmap)
-                    .maximumColorCount(3)
-                    .clearFilters() /* by default palette ignore certain hues
-                        (e.g. pure black/white) but we don't want this. */
-                    .setRegion(0, 0, bitmap.getWidth() - 1, twentyFourDip) /* - 1 to work around
-                        https://code.google.com/p/android/issues/detail?id=191013 */
-                    .generate(new Palette.PaletteAsyncListener() {
-                        @Override
-                        public void onGenerated(Palette palette) {
-                            boolean isDark;
-                            @ColorUtils.Lightness int lightness = ColorUtils.isDark(palette);
-                            if (lightness == ColorUtils.LIGHTNESS_UNKNOWN) {
-                                isDark = ColorUtils.isDark(bitmap, bitmap.getWidth() / 2, 0);
-                            } else {
-                                isDark = lightness == ColorUtils.IS_DARK;
-                            }
-                            // color the status bar. Set a complementary dark color on L,
-                            // light or dark color on M (with matching status bar icons)
-                            int statusBarColor = getWindow().getStatusBarColor();
-                            final Palette.Swatch topColor =
-                                    ColorUtils.getMostPopulousSwatch(palette);
-                            if (topColor != null &&
-                                    (isDark || Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
-                                statusBarColor = ColorUtils.scrimify(topColor.getRgb(),
-                                        isDark, SCRIM_ADJUSTMENT);
-                                // set a light status bar on M+
-                                if (!isDark && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    ViewUtils.setLightStatusBar(mShot);
-                                }
-                            }
-
-                            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
-
-                                if (statusBarColor != getWindow().getStatusBarColor()) {
-                                    mShot.setScrimColor(statusBarColor);
-                                    ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
-                                            getWindow().getStatusBarColor(), statusBarColor);
-                                    statusBarColorAnim.addUpdateListener(new ValueAnimator
-                                            .AnimatorUpdateListener() {
-                                        @Override
-                                        public void onAnimationUpdate(ValueAnimator animation) {
-                                            getWindow().setStatusBarColor(
-                                                    (int) animation.getAnimatedValue());
-                                        }
-                                    });
-                                    statusBarColorAnim.setDuration(1000L);
-                                    statusBarColorAnim.setInterpolator(
-                                            new AccelerateInterpolator());
-                                    statusBarColorAnim.start();
-                                }
-                            }
-                        }
-                    });
-
-            Palette.from(bitmap)
-                    .clearFilters()
-                    .generate(new Palette.PaletteAsyncListener() {
-                        @Override
-                        public void onGenerated(Palette palette) {
-
-                            // slightly more opaque ripple on the pinned image to compensate
-                            // for the scrim
-                            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-                                mShot.setForeground(ViewUtils.createRipple(palette, 0.3f, 0.6f,
-                                        ContextCompat.getColor(TopNewsDescribeActivity.this, R.color.mid_grey),
-                                        true));
-                            }
-
-                        }
-                    });
-
-            // TODO should keep the background if the image contains transparency?!
-            mShot.setBackground(null);
-            return false;
-        }
-
-        @Override
-        public boolean onException(Exception e, String model, Target<GlideDrawable> target,
-                                   boolean isFirstResource) {
-            return false;
-        }
-    };
-
 
     @Override
     public void onBackPressed() {
@@ -330,7 +321,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     }
 
     private void getData() {
-        mTopNewsDesPresenter.getDescrible(id);
+        mTopNewsDesPresenter.getDescribleMessage(id);
 
     }
 
@@ -376,26 +367,19 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                     } else {
                         finish();
                     }
-                }});
-                expandImage.start();
-            }else{
-            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                }
+            });
+            expandImage.start();
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
-            }else {
+            } else {
                 finish();
             }
-            }
+        }
 
 
     }
-
-    @Override
-    public void upListItem(NewsDetailBean newsList) {
-        mProgress.setVisibility(View.INVISIBLE);
-        mHtNewsContent.setHtmlFromString(newsList.getBody(), new HtmlTextView.LocalImageGetter());
-
-    }
-
 
     private void enterAnimation() {
         float offSet = mToolbar.getHeight();
@@ -427,5 +411,11 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                 .setInterpolator(interp)
                 .setListener(null)
                 .start();
+    }
+
+    @Override
+    public void updateListItem(NewsDetailBean newsList) {
+        mProgress.setVisibility(View.INVISIBLE);
+        mHtNewsContent.setHtmlFromString(newsList.getBody(), new HtmlTextView.LocalImageGetter());
     }
 }

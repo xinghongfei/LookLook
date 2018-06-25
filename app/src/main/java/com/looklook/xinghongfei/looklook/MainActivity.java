@@ -2,15 +2,21 @@ package com.looklook.xinghongfei.looklook;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.SimpleArrayMap;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.ActionMenuView;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,49 +24,72 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.view.animation.AnimationUtils;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.looklook.xinghongfei.looklook.Activity.AboutActivity;
-import com.looklook.xinghongfei.looklook.Activity.BaseActivity;
+import com.looklook.xinghongfei.looklook.activity.AboutActivity;
+import com.looklook.xinghongfei.looklook.activity.BaseActivity;
 import com.looklook.xinghongfei.looklook.fragment.MeiziFragment;
 import com.looklook.xinghongfei.looklook.fragment.TopNewsFragment;
 import com.looklook.xinghongfei.looklook.fragment.ZhihuFragment;
+import com.looklook.xinghongfei.looklook.presenter.implPresenter.MainPresenterImpl;
+import com.looklook.xinghongfei.looklook.presenter.implView.IMain;
 import com.looklook.xinghongfei.looklook.util.AnimUtils;
 import com.looklook.xinghongfei.looklook.util.SharePreferenceUtil;
 import com.looklook.xinghongfei.looklook.util.ViewUtils;
 
+import java.io.File;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements IMain {
 
-
-    MenuItem currentMenuItem;
-    Fragment currentFragment;
-
-    @InjectView(R.id.fragment_container)
+    @BindView(R.id.fragment_container)
     FrameLayout mFragmentContainer;
-    @InjectView(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @InjectView(R.id.nav_view)
+    @BindView(R.id.nav_view)
     NavigationView navView;
-    @InjectView(R.id.drawer)
+    @BindView(R.id.drawer)
     DrawerLayout drawer;
-    int nevigationId;
 
-    SimpleArrayMap<Integer, String> mTitleArryMap = new SimpleArrayMap<>();
+    private int nevigationId;
+    private int mainColor;
 
+    private SimpleArrayMap<Integer, String> mTitleArryMap = new SimpleArrayMap<>();
+
+    private long exitTime = 0;
+    private SwitchCompat mThemeSwitch;
+    private MenuItem currentMenuItem;
+    private Fragment currentFragment;
+    private MainPresenterImpl IMainPresenter;
+
+    private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+
+            drawer.openDrawer(GravityCompat.END);
+            return true;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //我只加了一句话，测试git怎么用
         setContentView(R.layout.main_layout);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
+        IMainPresenter = new MainPresenterImpl(this, this);
+        IMainPresenter.getBackground();
+
         toolbar.setOnMenuItemClickListener(onMenuItemClick);
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             animateToolbar();
         }
         addfragmentsAndTitle();
@@ -74,7 +103,7 @@ public class MainActivity extends BaseActivity {
             if (nevigationId != -1) {
                 currentMenuItem = navView.getMenu().findItem(nevigationId);
             }
-            if (currentMenuItem==null){
+            if (currentMenuItem == null) {
                 currentMenuItem = navView.getMenu().findItem(R.id.zhihuitem);
             }
             if (currentMenuItem != null) {
@@ -87,25 +116,29 @@ public class MainActivity extends BaseActivity {
                 }
             }
         } else {
-            if (currentMenuItem!=null){
+            if (currentMenuItem != null) {
                 Fragment fragment = getFragmentById(currentMenuItem.getItemId());
                 String title = mTitleArryMap.get((Integer) currentMenuItem.getItemId());
                 if (fragment != null) {
                     switchFragment(fragment, title);
                 }
-            }else {
+            } else {
                 switchFragment(new ZhihuFragment(), " ");
-                currentMenuItem=navView.getMenu().findItem(R.id.zhihuitem);
+                currentMenuItem = navView.getMenu().findItem(R.id.zhihuitem);
 
             }
-
-
         }
-
 
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
+                if(currentMenuItem!=null&&item.getItemId()==R.id.menu_about)
+                {
+                    Intent intent = new Intent(getApplication(), AboutActivity.class);
+                    getApplication().startActivity(intent);
+                    return true;
+                }
+
 
                 if (currentMenuItem != item && currentMenuItem != null) {
                     currentMenuItem.setChecked(false);
@@ -113,52 +146,49 @@ public class MainActivity extends BaseActivity {
                     SharePreferenceUtil.putNevigationItem(MainActivity.this, id);
                     currentMenuItem = item;
                     currentMenuItem.setChecked(true);
-                    switchFragment(getFragmentById(currentMenuItem.getItemId()),mTitleArryMap.get(currentMenuItem.getItemId()));
+                    switchFragment(getFragmentById(currentMenuItem.getItemId()), mTitleArryMap.get(currentMenuItem.getItemId()));
                 }
                 drawer.closeDrawer(GravityCompat.END, true);
                 return true;
             }
         });
 
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-        drawer.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
-            @Override
-            public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
-                // inset the toolbar down by the status bar height
-                ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) toolbar
-                        .getLayoutParams();
-                lpToolbar.topMargin += insets.getSystemWindowInsetTop();
-                lpToolbar.rightMargin += insets.getSystemWindowInsetRight();
-                toolbar.setLayoutParams(lpToolbar);
+            drawer.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+                @Override
+                public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                    // inset the toolbar down by the status bar height
+                    ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) toolbar
+                            .getLayoutParams();
+                    lpToolbar.topMargin += insets.getSystemWindowInsetTop();
+                    lpToolbar.rightMargin += insets.getSystemWindowInsetRight();
+                    toolbar.setLayoutParams(lpToolbar);
 
-                // inset the grid top by statusbar+toolbar & the bottom by the navbar (don't clip)
-                mFragmentContainer.setPadding(mFragmentContainer.getPaddingLeft(),
-                        insets.getSystemWindowInsetTop() + ViewUtils.getActionBarSize
-                                (MainActivity.this),
-                        mFragmentContainer.getPaddingRight() + insets.getSystemWindowInsetRight(), // landscape
-                        mFragmentContainer.getPaddingBottom() + insets.getSystemWindowInsetBottom());
+                    // inset the grid top by statusbar+toolbar & the bottom by the navbar (don't clip)
+                    mFragmentContainer.setPadding(mFragmentContainer.getPaddingLeft(),
+                            insets.getSystemWindowInsetTop() + ViewUtils.getActionBarSize
+                                    (MainActivity.this),
+                            mFragmentContainer.getPaddingRight() + insets.getSystemWindowInsetRight(), // landscape
+                            mFragmentContainer.getPaddingBottom() + insets.getSystemWindowInsetBottom());
 
-                // we place a background behind the status bar to combine with it's semi-transparent
-                // color to get the desired appearance.  Set it's height to the status bar height
-                View statusBarBackground = findViewById(R.id.status_bar_background);
-                FrameLayout.LayoutParams lpStatus = (FrameLayout.LayoutParams)
-                        statusBarBackground.getLayoutParams();
-                lpStatus.height = insets.getSystemWindowInsetTop();
-                statusBarBackground.setLayoutParams(lpStatus);
+                    // we place a background behind the status bar to combine with it's semi-transparent
+                    // color to get the desired appearance.  Set it's height to the status bar height
+                    View statusBarBackground = findViewById(R.id.status_bar_background);
+                    FrameLayout.LayoutParams lpStatus = (FrameLayout.LayoutParams)
+                            statusBarBackground.getLayoutParams();
+                    lpStatus.height = insets.getSystemWindowInsetTop();
+                    statusBarBackground.setLayoutParams(lpStatus);
 
-                // inset the filters list for the status bar / navbar
-                // need to set the padding end for landscape case
+                    // inset the filters list for the status bar / navbar
+                    // need to set the padding end for landscape case
 
-                // clear this listener so insets aren't re-applied
-                drawer.setOnApplyWindowInsetsListener(null);
-
-                return insets.consumeSystemWindowInsets();
-            }
-        });
+                    // clear this listener so insets aren't re-applied
+                    drawer.setOnApplyWindowInsetsListener(null);
+                    return insets.consumeSystemWindowInsets();
+                }
+            });
         }
-
-
 
         int[][] state = new int[][]{
                 new int[]{-android.R.attr.state_checked}, // unchecked
@@ -166,12 +196,42 @@ public class MainActivity extends BaseActivity {
         };
 
         int[] color = new int[]{
-                Color.BLACK,Color.BLACK};
+                Color.BLACK, Color.BLACK};
         int[] iconcolor = new int[]{
-                Color.GRAY,Color.BLACK};
+                Color.GRAY, Color.BLACK};
         navView.setItemTextColor(new ColorStateList(state, color));
         navView.setItemIconTintList(new ColorStateList(state, iconcolor));
 
+        //主题变色
+        MenuItem item = navView.getMenu().findItem(R.id.nav_theme);
+        mThemeSwitch = (SwitchCompat) MenuItemCompat.getActionView(item).findViewById(R.id.view_switch);
+        mThemeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mThemeSwitch.setChecked(isChecked);
+                if (isChecked) {
+                    setThemeColor(Color.DKGRAY);
+                } else {
+                    setThemeColor(getResources().getColor(R.color.colorPrimaryDark));
+                }
+            }
+        });
+    }
+
+    private void setThemeColor(int color) {
+        getWindow().setStatusBarColor(color);
+        toolbar.setBackgroundColor(color);
+    }
+
+    private void setStatusColor() {
+        Bitmap bm = BitmapFactory.decodeResource(getResources(),
+                R.drawable.nav_icon);
+        Palette palette = Palette.generate(bm);
+        if (palette.getLightVibrantSwatch() != null) {
+            mainColor = palette.getLightVibrantSwatch().getRgb();
+            getWindow().setStatusBarColor(palette.getLightVibrantSwatch().getRgb());
+            toolbar.setBackgroundColor(palette.getLightVibrantSwatch().getRgb());
+        }
     }
 
     private Fragment getFragmentById(int id) {
@@ -181,10 +241,10 @@ public class MainActivity extends BaseActivity {
                 fragment = new ZhihuFragment();
                 break;
             case R.id.topnewsitem:
-                fragment=new TopNewsFragment();
+                fragment = new TopNewsFragment();
                 break;
             case R.id.meiziitem:
-                fragment=new MeiziFragment();
+                fragment = new MeiziFragment();
                 break;
 
         }
@@ -195,15 +255,12 @@ public class MainActivity extends BaseActivity {
         mTitleArryMap.put(R.id.zhihuitem, getResources().getString(R.string.zhihu));
         mTitleArryMap.put(R.id.topnewsitem, getResources().getString(R.string.topnews));
         mTitleArryMap.put(R.id.meiziitem, getResources().getString(R.string.meizi));
-
     }
-
 
     @Override
     protected void onResume() {
         super.onResume();
     }
-
 
     @Override
     protected void onDestroy() {
@@ -215,17 +272,24 @@ public class MainActivity extends BaseActivity {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
         } else {
-            super.onBackPressed();
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
+                Toast.makeText(MainActivity.this, "再点一次，退出", Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
     private void switchFragment(Fragment fragment, String title) {
 
-        if (currentFragment == null || !currentFragment.getClass().getName().equals(fragment.getClass().getName()))
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment)
-                    .commit();
-        currentFragment = fragment;
-
+        if (fragment != null) {
+            if (currentFragment == null || !currentFragment
+                    .getClass().getName().equals(fragment.getClass().getName()))
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment)
+                        .commit();
+            currentFragment = fragment;
+        }
     }
 
     private void animateToolbar() {
@@ -271,32 +335,22 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-    private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
-        @Override
-        public boolean onMenuItemClick(MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case R.id.menu_open:
-                    drawer.openDrawer(GravityCompat.END);
-                    break;
-                case R.id.menu_about:
-                    goAboutActivity();
-                    break;
-            }
-            return true;
-        }};
 
-    private  void goAboutActivity(){
-        Intent intent=new Intent(this, AboutActivity.class);
-                this.startActivity(intent);
+
+    @Override
+    public void getPic() {
+        View headerLayout = navView.getHeaderView(0);
+        LinearLayout llImage = (LinearLayout) headerLayout.findViewById(R.id.side_image);
+        if (new File(getFilesDir().getPath() + "/bg.jpg").exists()) {
+            BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), getFilesDir().getPath() + "/bg.jpg");
+            llImage.setBackground(bitmapDrawable);
+        }
     }
-
 
     //    when recycle view scroll bottom,need loading more date and show the more view.
     public interface LoadingMore {

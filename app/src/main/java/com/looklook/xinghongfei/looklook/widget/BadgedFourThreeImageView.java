@@ -58,8 +58,22 @@ public class BadgedFourThreeImageView extends FourThreeImageView {
             badgePadding = a.getDimensionPixelSize(R.styleable.BadgedImageView_badgePadding, 0);
             a.recycle();
         }
+    }
+
+    public BadgedFourThreeImageView(Context context, AttributeSet attrs, int defStyle){
+        super(context,attrs,defStyle);
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            badge = new GifBadge(context);
+            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BadgedImageView, 0, 0);
+            badgeGravity = a.getInt(R.styleable.BadgedImageView_badgeGravity, Gravity.END | Gravity
+                    .BOTTOM);
+            badgePadding = a.getDimensionPixelSize(R.styleable.BadgedImageView_badgePadding, 0);
+            a.recycle();
+        }
 
     }
+
+
 
     public void showBadge(boolean show) {
         drawBadge = show;

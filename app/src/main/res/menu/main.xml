@@ -20,14 +20,10 @@
       xmlns:tools="http://schemas.android.com/tools"
       xmlns:app="http://schemas.android.com/apk/res-auto"
       tools:context=".MainActivity">
-
     <item
         android:id="@+id/menu_open"
         android:title="@string/filter"
         android:icon="@drawable/open"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/menu_about"
-        android:title="@string/about"
-        app:showAsAction="never" />
+
 </menu>

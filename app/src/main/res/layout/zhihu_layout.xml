@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:clipToPadding="false"
     android:fitsSystemWindows="true"
-    tools:context=".Activity.ZhihuActivity">
+    tools:context=".activity.ZhihuActivity">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

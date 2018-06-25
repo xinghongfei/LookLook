@@ -43,5 +43,6 @@
     <string name="email" translatable="false">maat.xing@gmail.com</string>
 
 
+    <string name="share_dialog_title">分享</string>
 
 </resources>

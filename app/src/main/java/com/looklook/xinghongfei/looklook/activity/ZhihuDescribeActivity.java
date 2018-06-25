@@ -1,4 +1,4 @@
-package com.looklook.xinghongfei.looklook.Activity;
+package com.looklook.xinghongfei.looklook.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -27,49 +27,45 @@ import android.view.animation.LinearInterpolator;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.liuguangqiang.swipeback.SwipeBackActivity;
+import com.liuguangqiang.swipeback.SwipeBackLayout;
 import com.looklook.xinghongfei.looklook.R;
 import com.looklook.xinghongfei.looklook.bean.zhihu.ZhihuStory;
 import com.looklook.xinghongfei.looklook.config.Config;
 import com.looklook.xinghongfei.looklook.presenter.IZhihuStoryPresenter;
 import com.looklook.xinghongfei.looklook.presenter.implPresenter.ZhihuStoryPresenterImpl;
 import com.looklook.xinghongfei.looklook.presenter.implView.IZhihuStory;
-import com.looklook.xinghongfei.looklook.util.AnimUtils;
-import com.looklook.xinghongfei.looklook.util.ColorUtils;
-import com.looklook.xinghongfei.looklook.util.DensityUtil;
-import com.looklook.xinghongfei.looklook.util.GlideUtils;
-import com.looklook.xinghongfei.looklook.util.ViewUtils;
-import com.looklook.xinghongfei.looklook.util.WebUtil;
+import com.looklook.xinghongfei.looklook.util.*;
 import com.looklook.xinghongfei.looklook.widget.ElasticDragDismissFrameLayout;
 import com.looklook.xinghongfei.looklook.widget.ParallaxScrimageView;
 import com.looklook.xinghongfei.looklook.widget.TranslateYTextView;
 
 import java.lang.reflect.InvocationTargetException;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
-
 /**
  * Created by xinghongfei on 16/8/13.
  */
-public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
+public class ZhihuDescribeActivity extends SwipeBackActivity implements IZhihuStory {
     private static final float SCRIM_ADJUSTMENT = 0.075f;
 
-    @InjectView(R.id.shot)
+    @BindView(R.id.shot)
     ParallaxScrimageView mShot;
-    @InjectView(R.id.toolbar)
+    @Nullable
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @InjectView(R.id.wv_zhihu)
+    @BindView(R.id.wv_zhihu)
     WebView wvZhihu;
-    @InjectView(R.id.nest)
+    @BindView(R.id.nest)
     NestedScrollView mNest;
-    @InjectView(R.id.title)
+    @BindView(R.id.title)
     TranslateYTextView mTranslateYTextView;
 
     boolean isEmpty;
@@ -77,8 +73,8 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     String[] scc;
     String mImageUrl;
 
-    @InjectView(R.id.draggable_frame)
-    ElasticDragDismissFrameLayout mDraggableFrame;
+//    @BindView(R.id.draggable_frame)
+//    ElasticDragDismissFrameLayout mDraggableFrame;
 
     int[] mDeviceInfo;
     int width;
@@ -97,7 +93,8 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.zhihudescribe);
-        ButterKnife.inject(this);
+        setDragEdge(SwipeBackLayout.DragEdge.LEFT);
+        ButterKnife.bind(this);
         mDeviceInfo = DensityUtil.getDeviceInfo(this);
         width = mDeviceInfo[0];
         heigh = width * 3 / 4;
@@ -151,7 +148,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         };
     }
 
-    private void initData() {
+    protected void initData() {
         id = getIntent().getStringExtra("id");
         title = getIntent().getStringExtra("title");
         mImageUrl = getIntent().getStringExtra("image");
@@ -211,7 +208,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     protected void onResume() {
         super.onResume();
 
-        mDraggableFrame.addListener(chromeFader);
+//        mDraggableFrame.addListener(chromeFader);
         try {
             wvZhihu.getClass().getMethod("onResume").invoke(wvZhihu, (Object[]) null);
         } catch (IllegalAccessException e) {
@@ -226,7 +223,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     @Override
     protected void onPause() {
         super.onPause();
-        mDraggableFrame.removeListener(chromeFader);
+//        mDraggableFrame.removeListener(chromeFader);
         try {
             wvZhihu.getClass().getMethod("onPause").invoke(wvZhihu, (Object[]) null);
         } catch (IllegalAccessException e) {
@@ -250,7 +247,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
             wvZhihu.destroy();
             wvZhihu = null;
         }
-        mIZhihuStoryPresenter.unsubcrible();
+        mIZhihuStoryPresenter.unsubscrible();
         super.onDestroy();
 
     }
