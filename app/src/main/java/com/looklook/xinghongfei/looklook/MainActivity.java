@@ -55,6 +55,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //我只加了一句话，测试git怎么用
         setContentView(R.layout.main_layout);
         ButterKnife.inject(this);
         setSupportActionBar(toolbar);
